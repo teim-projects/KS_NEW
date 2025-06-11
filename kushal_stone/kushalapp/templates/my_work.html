@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>My Work - Assigned Leads</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    th {
+      background-color: #cec7c7;
+      color: rgb(0, 0, 0);
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      background-color: #27ae60;
+    }
+
+    .btn-disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+      padding: 8px 16px;
+      border-radius: 5px;
+      font-size: 14px;
+      display: inline-block;
+    }
+
+    td {
+      min-width: 150px;
+    }
+
+    .btn-history {
+      background-color: #3498db;
+      margin-top: 5px;
+    }
+
+    .btn-history:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+
+<body>
+  {% include 'Sales_Base.html' %}
+  <div class="main">
+    <div class="container-fluid" style="margin-top: 78px;">
+      <h2>My Assigned Leads</h2>
+      <div class="v" style="overflow-x: scroll;">
+        <table>
+          <thead class="myworktable">
+            <tr>
+              <th>Full Name</th>
+              <th>Mobile</th>
+              <th>Email</th>
+              <th>Requirements</th>
+              <th>Next Follow-Up Date</th>
+              <th>Action</th>
+              <th>View History</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in lead_data %}
+            <tr>
+              <td>{{ item.lead.full_name }}</td>
+              <td>{{ item.lead.mobile_number }}</td>
+              <td>{{ item.lead.email }}</td>
+              <td>{{ item.lead.requirements }}</td>
+              <td>
+                {% if item.followup_date %}
+                {{ item.followup_date|date:"M d, Y" }}
+                {% else %}
+                N/A
+                {% endif %}
+              </td>
+              <td>
+                {% if item.status.url_name %}
+                {% with f1=item.lead.followup1 f2=item.lead.followup2 f3=item.lead.followup3 f4=item.lead.followup4 %}
+                {% if f1 and not f2 %}
+                {% if f1.next_followup_person == user %}
+                <a href="{% url item.status.url_name item.lead.id %}" class="btn btn-outline-success" style="width: 205px;">{{ item.status.label }}</a>
+                {% else %}
+                <span class="btn btn-disabled">Assigned to {{ f1.next_followup_person.username }}</span>
+                {% endif %}
+                {% elif f2 and not f3 %}
+                {% if f2.next_followup_person == user %}
+                <a href="{% url item.status.url_name item.lead.id %}" class="btn btn-outline-success" style="width: 205px;">{{ item.status.label }}</a>
+                {% else %}
+                <span class="btn btn-disabled">Assigned to {{ f2.next_followup_person.username }}</span>
+                {% endif %}
+                {% elif f3 and not f4 %}
+                {% if f3.next_followup_person == user %}
+                <a href="{% url item.status.url_name item.lead.id %}" class="btn btn-outline-success" style="width: 205px;">{{ item.status.label }}</a>
+                {% else %}
+                <span class="btn btn-disabled">Assigned to {{ f3.next_followup_person.username }}</span>
+                {% endif %}
+                {% elif f4 %}
+                {% if f4.next_followup_person == user %}
+                <a href="{% url item.status.url_name item.lead.id %}" class="btn btn-outline-success" style="width: 205px;">{{ item.status.label }}</a>
+                {% else %}
+                <span class="btn btn-disabled">Assigned to {{ f4.next_followup_person.username }}</span>
+                {% endif %}
+                {% else %}
+                {% if item.lead.follow_up_person == user %}
+                <a href="{% url item.status.url_name item.lead.id %}" class="btn btn-outline-success" style="width: 205px;">{{ item.status.label }}</a>
+                {% else %}
+                <span class="btn btn-disabled">Assigned to {{ item.lead.follow_up_person.username }}</span>
+                {% endif %}
+                {% endif %}
+                {% endwith %}
+                {% else %}
+                <span class="btn btn-disabled">{{ item.status.label }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'work_history' item.lead.id %}" class="btn btn-history btn-outline-info">View History</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7">No leads assigned.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+      </div>
+      <div class="p">
+        <p class="scroll-instruction">Scroll to view more content</p>
+    </div>
+          <!-- From Uiverse.io by Jedi-hongbin -->
+          <div class="row mb-3" style="display: flex;      align-items: center; justify-content: center;
+          ">
+          
+                                      <button class="buttonback mr-5 "onclick="history.back()">
+                                          <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1"
+                                              viewBox="0 0 1024 1024">
+                                              <path
+                                                  d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+                                              </path>
+                                          </svg>
+                                          <span>Back</span>
+                                      </button>
+          
+                                      <button class="buttonback ">
+                                        <a href="{% url 'sales_dashboard' %}">                  <i class="fas fa-home"></i>              Home</a> 
+                                                                    </button>
+          
+                                  </div>
+    </div>
+  </div>
+  {% include 'footer.html' %}
+</body>
+
+</html>

@@ -1,0 +1,313 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Requirements - Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+        }
+
+        h2,
+        h3,
+        h4 {
+            margin-top: 40px;
+        }
+ /* From Uiverse.io by shah1345 */
+ .submit-buttons {
+    width: 100%;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px !important;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1.5em !important;
+}
+
+.submit-buttons:hover {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
+    transform: scale(1);
+    box-shadow: 0 10px 10px rgba(106, 17, 203, 0.5);
+}
+
+
+     
+ 
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            margin: 40px 0;
+        }
+
+        .messages {
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        .second-box {
+            margin-top: 70px;
+        }
+        .card-outside{
+            width: 100%;
+            
+         }
+        .card{
+            padding: 10px;
+            box-shadow: 0px 2px 10px rgb(85, 84, 84);
+        }
+        .card h3{
+            text-align: center;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .card-header{
+            border-radius: 10px;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px !important;
+            text-align: center;
+        }
+        .modal-actions {
+            margin-top: 20px;
+        }
+        .modal-actions button {
+            margin: 0 10px;
+            padding: 6px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-actions button:first-child {
+            background: #ccc;
+        }
+        .modal-actions button:last-child {
+            background: #e74c3c;
+            color: white;
+        }
+        a:hover{
+            text-decoration: none;
+
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'Admin_Base.html' %}
+    <div class="main">
+        <div class="container second-box">
+            <!-- <div class="row">
+                <div class="col-md-12">
+                    <h2 class="text-center">Requirements - Admin Panel</h2>
+
+                </div>
+            </div> -->
+
+
+            <div class="row">
+
+                <div class="col-md-6 col-12 col-sm-12 col-lg-6 card-outside">
+                   <div class="card">
+                    <h3>Add Service</h3>
+                <div class="card-header">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="text" name="service_name" placeholder="Service Name" required class="form-control">
+                        <button type="submit" name="add_service" class="submit-buttons">Add Service</button>
+                    </form>
+        
+                </div>
+                <div class="card-body">
+                    <h4 class="text-center">Service List</h4>
+                
+                    <!-- Scrollable Table Wrapper -->
+                    <div style="max-height: 400px; overflow-y: auto;" class="table-box">
+                        <table class="table table-bordered table-striped table-hover" style="min-width: 600px;">
+                            <thead class="thead-dark" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Service Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for service in services %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ service.name }}</td>
+                                    <td>
+                                        <a class="btn btn-outline-info text-center" style="width: 130px;" href="{% url 'edit_service' service.pk %}">Edit</a>
+                                        <a class="btn btn-outline-danger text-center delete-btn" style="width: 130px;" href="#"
+                                           data-url="{% url 'delete_service' service.pk %}"
+                                           data-name="{{ service.name }}">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3">No services added yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+             
+                
+                
+                
+                   </div>
+                </div>
+                   <!-- Modal -->
+                   <div id="confirmModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <p id="modalMessage">Are you sure you want to delete?</p>
+                        <div class="modal-actions">
+                            <button onclick="hideModal()">Cancel</button>
+                            <a id="confirmDeleteBtn" href="#"><button>Confirm</button></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 col-sm-12 col-lg-6 card-outside">
+                    <div class="card">
+                        <h3 class="text-center ">Add Product</h3>
+                
+                        <div class="card-header">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="text" name="product_name" placeholder="Product Name" required class="form-control mb-2">
+                                <button type="submit" name="add_product" class="submit-buttons btn btn-primary">Add Product</button>
+                            </form>
+                            
+                        </div>
+                
+                        <div class="card-body">
+                            <h4 class="text-center">Product List</h4>
+                
+                            <!-- Scrollable Table Wrapper -->
+                            <div style="max-height: 400px; overflow-y: auto;">
+                                <table class="table table-bordered table-striped table-hover" style="min-width: 600px;">
+                                    <thead class="thead-dark" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Product Name</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product in products %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ product.name }}</td>
+                                            <td>
+                                                <a class="btn btn-outline-info text-center" style="width: 130px;" href="{% url 'edit_product' product.pk %}">Edit</a>
+                                                <a class="btn btn-outline-danger text-center delete-btn" style="width: 130px;" href="#"
+                                                   data-url="{% url 'delete_product' product.pk %}"
+                                                   data-name="{{ product.name }}">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="3">No products added yet.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                
+                            <!-- Display messages -->
+                            <!-- {% if messages %}
+                            <div class="messages mt-3">
+                                <ul>
+                                    {% for message in messages %}
+                                    <li>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %} -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal (optional, if using delete confirmation) -->
+                <div id="confirmModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <p id="modalMessage">Are you sure you want to delete?</p>
+                        <div class="modal-actions">
+                            <button onclick="hideModal()">Cancel</button>
+                            <a id="confirmDeleteBtn" href="#"><button>Confirm</button></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- <div class="col-md-4"></div> -->
+            </div>
+ 
+          
+        </div>
+    </div>
+    <script>
+        const modal = document.getElementById('confirmModal');
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        const modalMessage = document.getElementById('modalMessage');
+        
+        function hideModal() {
+            modal.style.display = 'none';
+        }
+        
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.dataset.url;
+                const name = this.dataset.name;
+                modalMessage.innerText = `Are you sure you want to delete "${name}"?`;
+                confirmBtn.href = url;
+                modal.style.display = 'flex';
+            });
+        });
+        </script>
+        {%include 'footer.html'%}
+
+</body>
+
+</html>
