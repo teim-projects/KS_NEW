@@ -174,3 +174,40 @@ class FollowUp9(FollowUpBase):
 class FollowUp10(FollowUpBase):
     # No next follow-up
     pass
+
+
+# start
+
+class Quotation(models.Model):
+    lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True, blank=True)
+
+    full_name = models.CharField(max_length=100, blank=True)
+    mobile = models.CharField(max_length=15, blank=True)
+    email = models.EmailField(blank=True)
+    address = models.TextField(blank=True)
+
+    services = models.ManyToManyField('Service', blank=True)
+    products = models.ManyToManyField('Product', blank=True)
+
+    actual_price=models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    quantity = models.PositiveIntegerField(null=True, blank=True)
+    gst_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+    # terms_and_conditions = models.ManyToManyField('QuotationTerm', blank=True)
+
+    cgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    sgst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    igst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    gst_total = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_amount_with_gst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+
+    def __str__(self):
+        return f"Quotation for {self.full_name}"
+
+
+    
+
+
+    

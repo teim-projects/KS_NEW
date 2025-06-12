@@ -1113,3 +1113,93 @@ def closed_leads(request):
     closed = Lead.objects.filter(is_closed=True, follow_up_person=request.user)
     return render(request, 'close_lead.html', {'closed_leads': closed})
 
+
+
+# start
+
+# def quotation(request):
+#     if request.method == 'POST':
+#         mobile = request.POST.get('mobile')
+#         lead = Lead.objects.filter(mobile_number=mobile).first()
+
+#         quotation = Quotation()
+
+#         if lead:
+#             quotation.lead = lead
+#             quotation.full_name = lead.full_name
+#             quotation.mobile = lead.mobile_number
+#             quotation.email = lead.email
+#             quotation.address = lead.address
+#             quotation.save()  # Save first so we can add M2M later
+#             quotation.products.set(lead.products.all())
+#             quotation.services.set(lead.services.all())
+
+#         # Add logic to save quantity, gst, and other fields if they are part of form
+#         quotation.quantity = request.POST.get('quantity')
+#         quotation.gst_percentage = request.POST.get('gst_percentage')
+
+#         quotation.save()
+
+#         messages.success(request, 'Quotation created successfully.')
+#         return redirect('my_work')  # Adjust according to your flow
+
+#     return render(request, 'quotation.html')
+
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Lead, Quotation, Product, Service
+
+def quotation(request):
+    context = {
+        'products': Product.objects.all(),
+        'services': Service.objects.all()
+    }
+
+    if request.method == 'POST':
+        if 'fetch_lead' in request.POST:
+            mobile = request.POST.get('mobile')
+            lead = Lead.objects.filter(mobile_number=mobile).first()
+            if lead:
+                context['lead'] = lead
+            else:
+                messages.error(request, 'No lead found with this mobile number.')
+
+        elif 'submit_quotation' in request.POST:
+            mobile = request.POST.get('mobile')
+            lead = Lead.objects.filter(mobile_number=mobile).first()
+
+            if lead:
+                quotation = Quotation.objects.create(
+                    lead=lead,
+                    full_name=lead.full_name,
+                    mobile=lead.mobile_number,
+                    email=lead.email,
+                    address=lead.address,
+                    
+                    actual_price=request.POST.get('actual_price') or None,
+                    quantity=request.POST.get('quantity') or None,
+                    gst_percentage=request.POST.get('gst_percentage') or None,
+                    cgst=request.POST.get('cgst') or None,
+                    sgst=request.POST.get('sgst') or None,
+                    igst=request.POST.get('igst') or None,
+                    gst_total=request.POST.get('gst_total') or None,
+                    total_amount=request.POST.get('total_amount') or None,
+                    total_amount_with_gst=request.POST.get('total_amount_with_gst') or None,
+                )
+
+                selected_products = request.POST.getlist('products')
+                selected_services = request.POST.getlist('services')
+                quotation.products.set(selected_products)
+                quotation.services.set(selected_services)
+
+                messages.success(request, 'Quotation created successfully.')
+                return redirect('my_work')
+            else:
+                messages.error(request, 'No lead found to create quotation.')
+
+    return render(request, 'quotation.html', context)
+

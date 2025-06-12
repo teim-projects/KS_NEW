@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Quotation</title>
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+    </style>
+</head>
+<body>
+    <h2>Create Quotation</h2>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
+                    {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Step 1: Customer Info -->
+        <div class="step step-1 active">
+            <h3>Step 1: Customer Info</h3>
+
+            <label for="mobile">Mobile Number:</label>
+            <input type="text" id="mobile" name="mobile" value="{{ lead.mobile_number|default:'' }}" required>
+            <button type="submit" name="fetch_lead">Fetch Lead</button><br><br>
+
+            {% if lead %}
+                <label>Full Name:</label>
+                <input type="text" value="{{ lead.full_name }}" readonly><br><br>
+
+                <label>Email:</label>
+                <input type="email" value="{{ lead.email }}" readonly><br><br>
+
+                <label>Address:</label>
+                <textarea readonly>{{ lead.address }}</textarea><br><br>
+
+                <button type="button" onclick="goToStep(2)">Next</button>
+            {% endif %}
+        </div>
+
+        <!-- Step 2: Quotation Info -->
+        {% if lead %}
+        <div class="step step-2">
+            <h3>Step 2: Quotation Details</h3>
+
+            <label for="products">Select Products:</label><br>
+            {% for product in products %}
+                <input type="checkbox" name="products" value="{{ product.id }}"> {{ product.name }}<br>
+            {% endfor %}
+            <br>
+
+            <label for="services">Select Services:</label><br>
+            {% for service in services %}
+                <input type="checkbox" name="services" value="{{ service.id }}"> {{ service.name }}<br>
+            {% endfor %}
+            <br>
+
+            <label for="actual_price">actual_price</label>
+            <input type="number" name="actual_price" min="1"><br><br>
+
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" min="1"><br><br>
+
+            <label for="gst_percentage">GST Percentage (%):</label>
+            <input type="number" name="gst_percentage" step="0.01"><br><br>
+
+            <label for="cgst">CGST Amount:</label>
+            <input type="number" name="cgst" step="0.01"><br><br>
+
+            <label for="sgst">SGST Amount:</label>
+            <input type="number" name="sgst" step="0.01"><br><br>
+
+            <label for="igst">IGST Amount:</label>
+            <input type="number" name="igst" step="0.01"><br><br>
+
+            <label for="gst_total">GST Total:</label>
+            <input type="number" name="gst_total" step="0.01"><br><br>
+
+            <label for="total_amount">Total Amount:</label>
+            <input type="number" name="total_amount" step="0.01"><br><br>
+
+            <label for="total_amount_with_gst">Total with GST:</label>
+            <input type="number" name="total_amount_with_gst" step="0.01"><br><br>
+
+            <button type="submit" name="submit_quotation">Submit Quotation</button>
+        </div>
+        {% endif %}
+    </form>
+
+    <script>
+        function goToStep(stepNum) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.querySelector('.step-' + stepNum).classList.add('active');
+        }
+    </script>
+
+
+<script>
+    function goToStep(stepNum) {
+        document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+        document.querySelector('.step-' + stepNum).classList.add('active');
+    }
+
+    // Perform calculations
+    document.addEventListener('DOMContentLoaded', function () {
+        const actualPriceInput = document.querySelector('input[name="actual_price"]');
+        const quantityInput = document.querySelector('input[name="quantity"]');
+        const gstPercentInput = document.querySelector('input[name="gst_percentage"]');
+        const cgstInput = document.querySelector('input[name="cgst"]');
+        const sgstInput = document.querySelector('input[name="sgst"]');
+        const igstInput = document.querySelector('input[name="igst"]');
+        const gstTotalInput = document.querySelector('input[name="gst_total"]');
+        const totalAmountInput = document.querySelector('input[name="total_amount"]');
+        const totalWithGstInput = document.querySelector('input[name="total_amount_with_gst"]');
+
+        let gstType = 'cgst_sgst';  // Default selection, can toggle via radio buttons
+
+        // Add radio buttons for GST Type
+        const step2 = document.querySelector('.step-2');
+        const gstTypeDiv = document.createElement('div');
+        gstTypeDiv.innerHTML = `
+            <label>GST Type:</label>
+            <input type="radio" name="gst_type" value="cgst_sgst" checked> CGST + SGST
+            <input type="radio" name="gst_type" value="igst"> IGST
+            <br><br>
+        `;
+        step2.insertBefore(gstTypeDiv, totalAmountInput);
+
+        document.querySelectorAll('input[name="gst_type"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                gstType = this.value;
+                calculateAll();
+            });
+        });
+
+        [actualPriceInput, quantityInput, gstPercentInput].forEach(input => {
+            input.addEventListener('input', calculateAll);
+        });
+
+        function calculateAll() {
+            const actualPrice = parseFloat(actualPriceInput.value) || 0;
+            const quantity = parseInt(quantityInput.value) || 0;
+            const gstPercent = parseFloat(gstPercentInput.value) || 0;
+
+            const totalAmount = actualPrice * quantity;
+            totalAmountInput.value = totalAmount.toFixed(2);
+
+            const gstTotal = (gstPercent / 100) * totalAmount;
+            gstTotalInput.value = gstTotal.toFixed(2);
+
+            const totalWithGst = totalAmount + gstTotal;
+            totalWithGstInput.value = totalWithGst.toFixed(2);
+
+            if (gstType === 'cgst_sgst') {
+                const half = gstTotal / 2;
+                cgstInput.value = half.toFixed(2);
+                sgstInput.value = half.toFixed(2);
+                igstInput.value = '0.00';
+            } else if (gstType === 'igst') {
+                cgstInput.value = '0.00';
+                sgstInput.value = '0.00';
+                igstInput.value = gstTotal.toFixed(2);
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
