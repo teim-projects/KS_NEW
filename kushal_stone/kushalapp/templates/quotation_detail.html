@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quotation Details</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quotation Details for {{ quotation.full_name }}</h1>
+
+    <h3>Customer Information</h3>
+    <p><strong>Name:</strong> {{ quotation.full_name }}</p>
+    <p><strong>Mobile:</strong> {{ quotation.mobile }}</p>
+    <p><strong>Email:</strong> {{ quotation.email }}</p>
+    <p><strong>Address:</strong> {{ quotation.address }}</p>
+
+    <h3>Products</h3>
+    {% if quotation_products %}
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>GST %</th>
+                <th>Subtotal</th>
+                <th>GST Amount</th>
+                <th>Total</th>
+            </tr>
+            {% for qp in quotation_products %}
+                <tr>
+                    <td>{{ qp.product.name }}</td>
+                    <td>₹{{ qp.actual_price|floatformat:2 }}</td>
+                    <td>{{ qp.quantity }}</td>
+                    <td>{{ qp.gst_percent }}%</td>
+                    <td>₹{% widthratio qp.actual_price 1 qp.quantity %}.00</td>
+                    <td>₹{{ qp.gst_amount|floatformat:2 }}</td>
+                    <td>₹{{ qp.total|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No products selected.</p>
+    {% endif %}
+
+    <h3>Services</h3>
+    {% if quotation_services %}
+        <table>
+            <tr>
+                <th>Service</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>GST %</th>
+                <th>Subtotal</th>
+                <th>GST Amount</th>
+                <th>Total</th>
+            </tr>
+            {% for qs in quotation_services %}
+                <tr>
+                    <td>{{ qs.service.name }}</td>
+                    <td>₹{{ qs.actual_price|floatformat:2 }}</td>
+                    <td>{{ qs.quantity }}</td>
+                    <td>{{ qs.gst_percent }}%</td>
+                    <td>₹{% widthratio qs.actual_price 1 qs.quantity %}.00</td>
+                    <td>₹{{ qs.gst_amount|floatformat:2 }}</td>
+                    <td>₹{{ qs.total|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No services selected.</p>
+    {% endif %}
+
+    <h3>GST and Total Summary</h3>
+    <p><strong>CGST:</strong> ₹{{ quotation.cgst|floatformat:2 }}</p>
+    <p><strong>SGST:</strong> ₹{{ quotation.sgst|floatformat:2 }}</p>
+    <p><strong>IGST:</strong> ₹{{ quotation.igst|floatformat:2 }}</p>
+    <p><strong>GST Total:</strong> ₹{{ quotation.gst_total|floatformat:2 }}</p>
+    <p><strong>Total Amount (without GST):</strong> ₹{{ quotation.total_amount|floatformat:2 }}</p>
+    <p><strong>Total Amount (with GST):</strong> ₹{{ quotation.total_amount_with_gst|floatformat:2 }}</p>
+</body>
+</html>

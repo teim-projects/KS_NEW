@@ -41,6 +41,11 @@ urlpatterns = [
     # start
 
     path('quotation/',views.quotation,name='quotation'),
+    # path('quotation_detail/', views.quotation_detail, name='quotation_detail'),
+    # urls.py
+    path('quotation_detail/<int:quotation_id>/', views.quotation_detail, name='quotation_detail'),
+
+    # path('quotation_record/<int:quotation_id>/', views.quotation_record, name='quotation_record'),
 
 
     

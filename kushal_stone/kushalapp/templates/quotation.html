@@ -48,50 +48,46 @@
         <!-- Step 2: Quotation Info -->
         {% if lead %}
         <div class="step step-2">
-            <h3>Step 2: Quotation Details</h3>
+    <h3>Step 2: Quotation Details</h3>
 
-            <label for="products">Select Products:</label><br>
-            {% for product in products %}
-                <input type="checkbox" name="products" value="{{ product.id }}"> {{ product.name }}<br>
-            {% endfor %}
-            <br>
+    <label>Select Products:</label><br>
+    {% for product in products %}
+        <input type="checkbox" class="item-checkbox" data-type="product" value="{{ product.id }}" name="products"> {{ product.name }}<br>
+    {% endfor %}
+    <div id="product-fields"></div>
 
-            <label for="services">Select Services:</label><br>
-            {% for service in services %}
-                <input type="checkbox" name="services" value="{{ service.id }}"> {{ service.name }}<br>
-            {% endfor %}
-            <br>
+    <br><label>Select Services:</label><br>
+    {% for service in services %}
+        <input type="checkbox" class="item-checkbox" data-type="service" value="{{ service.id }}" name="services"> {{ service.name }}<br>
+    {% endfor %}
+    <div id="service-fields"></div>
 
-            <label for="actual_price">actual_price</label>
-            <input type="number" name="actual_price" min="1"><br><br>
+    <br><label>GST Type:</label>
+    <input type="radio" name="gst_type" value="cgst_sgst" checked> CGST + SGST
+    <input type="radio" name="gst_type" value="igst"> IGST
+    <br><br>
 
+    <label>Total Amount:</label>
+    <input type="number" name="total_amount" id="total_amount" readonly><br><br>
 
-            <label for="quantity">Quantity:</label>
-            <input type="number" name="quantity" min="1"><br><br>
+    <label>GST Total:</label>
+    <input type="number" name="gst_total" id="gst_total" readonly><br><br>
 
-            <label for="gst_percentage">GST Percentage (%):</label>
-            <input type="number" name="gst_percentage" step="0.01"><br><br>
+    <label>CGST:</label>
+    <input type="number" name="cgst" id="cgst" readonly><br><br>
 
-            <label for="cgst">CGST Amount:</label>
-            <input type="number" name="cgst" step="0.01"><br><br>
+    <label>SGST:</label>
+    <input type="number" name="sgst" id="sgst" readonly><br><br>
 
-            <label for="sgst">SGST Amount:</label>
-            <input type="number" name="sgst" step="0.01"><br><br>
+    <label>IGST:</label>
+    <input type="number" name="igst" id="igst" readonly><br><br>
 
-            <label for="igst">IGST Amount:</label>
-            <input type="number" name="igst" step="0.01"><br><br>
+    <label>Total Amount with GST:</label>
+    <input type="number" name="total_amount_with_gst" id="total_amount_with_gst" readonly><br><br>
 
-            <label for="gst_total">GST Total:</label>
-            <input type="number" name="gst_total" step="0.01"><br><br>
+    <button type="submit" name="submit_quotation">Submit Quotation</button>
+</div>
 
-            <label for="total_amount">Total Amount:</label>
-            <input type="number" name="total_amount" step="0.01"><br><br>
-
-            <label for="total_amount_with_gst">Total with GST:</label>
-            <input type="number" name="total_amount_with_gst" step="0.01"><br><br>
-
-            <button type="submit" name="submit_quotation">Submit Quotation</button>
-        </div>
         {% endif %}
     </form>
 
@@ -104,74 +100,90 @@
 
 
 <script>
-    function goToStep(stepNum) {
-        document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-        document.querySelector('.step-' + stepNum).classList.add('active');
-    }
+    // function goToStep(stepNum) {
+    //     document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+    //     document.querySelector('.step-' + stepNum).classList.add('active');
+    // }
 
     // Perform calculations
+    
     document.addEventListener('DOMContentLoaded', function () {
-        const actualPriceInput = document.querySelector('input[name="actual_price"]');
-        const quantityInput = document.querySelector('input[name="quantity"]');
-        const gstPercentInput = document.querySelector('input[name="gst_percentage"]');
-        const cgstInput = document.querySelector('input[name="cgst"]');
-        const sgstInput = document.querySelector('input[name="sgst"]');
-        const igstInput = document.querySelector('input[name="igst"]');
-        const gstTotalInput = document.querySelector('input[name="gst_total"]');
-        const totalAmountInput = document.querySelector('input[name="total_amount"]');
-        const totalWithGstInput = document.querySelector('input[name="total_amount_with_gst"]');
+        const productFields = document.getElementById('product-fields');
+        const serviceFields = document.getElementById('service-fields');
+        const gstTypeRadios = document.querySelectorAll('input[name="gst_type"]');
+        let gstType = 'cgst_sgst';
 
-        let gstType = 'cgst_sgst';  // Default selection, can toggle via radio buttons
+        document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const type = this.getAttribute('data-type');
+                const container = type === 'product' ? productFields : serviceFields;
 
-        // Add radio buttons for GST Type
-        const step2 = document.querySelector('.step-2');
-        const gstTypeDiv = document.createElement('div');
-        gstTypeDiv.innerHTML = `
-            <label>GST Type:</label>
-            <input type="radio" name="gst_type" value="cgst_sgst" checked> CGST + SGST
-            <input type="radio" name="gst_type" value="igst"> IGST
-            <br><br>
-        `;
-        step2.insertBefore(gstTypeDiv, totalAmountInput);
-
-        document.querySelectorAll('input[name="gst_type"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                gstType = this.value;
-                calculateAll();
+                if (this.checked) {
+                    const id = this.value;
+                    const fieldHTML = `
+                        <div class="item-group" data-id="${id}" data-type="${type}">
+                            <strong>${type.toUpperCase()} ID: ${id}</strong><br>
+                            Price: <input type="number" class="price" name="${type}_price_${id}" min="1"><br>
+                            Quantity: <input type="number" class="quantity" name="${type}_quantity_${id}" min="1"><br>
+                            GST %: <input type="number" class="gst" name="${type}_gst_${id}" step="0.01"><br><br>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', fieldHTML);
+                    attachInputListeners();
+                } else {
+                    container.querySelector(`[data-id="${this.value}"]`)?.remove();
+                    calculateTotals();
+                }
             });
         });
 
-        [actualPriceInput, quantityInput, gstPercentInput].forEach(input => {
-            input.addEventListener('input', calculateAll);
+        gstTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                gstType = this.value;
+                calculateTotals();
+            });
         });
 
-        function calculateAll() {
-            const actualPrice = parseFloat(actualPriceInput.value) || 0;
-            const quantity = parseInt(quantityInput.value) || 0;
-            const gstPercent = parseFloat(gstPercentInput.value) || 0;
+        function attachInputListeners() {
+            document.querySelectorAll('.price, .quantity, .gst').forEach(input => {
+                input.removeEventListener('input', calculateTotals);
+                input.addEventListener('input', calculateTotals);
+            });
+        }
 
-            const totalAmount = actualPrice * quantity;
-            totalAmountInput.value = totalAmount.toFixed(2);
+        function calculateTotals() {
+            let totalAmount = 0;
+            let totalGST = 0;
 
-            const gstTotal = (gstPercent / 100) * totalAmount;
-            gstTotalInput.value = gstTotal.toFixed(2);
+            document.querySelectorAll('.item-group').forEach(group => {
+                const price = parseFloat(group.querySelector('.price')?.value) || 0;
+                const qty = parseFloat(group.querySelector('.quantity')?.value) || 0;
+                const gst = parseFloat(group.querySelector('.gst')?.value) || 0;
 
-            const totalWithGst = totalAmount + gstTotal;
-            totalWithGstInput.value = totalWithGst.toFixed(2);
+                const itemTotal = price * qty;
+                const gstAmount = (itemTotal * gst) / 100;
+
+                totalAmount += itemTotal;
+                totalGST += gstAmount;
+            });
+
+            document.getElementById('total_amount').value = totalAmount.toFixed(2);
+            document.getElementById('gst_total').value = totalGST.toFixed(2);
+            document.getElementById('total_amount_with_gst').value = (totalAmount + totalGST).toFixed(2);
 
             if (gstType === 'cgst_sgst') {
-                const half = gstTotal / 2;
-                cgstInput.value = half.toFixed(2);
-                sgstInput.value = half.toFixed(2);
-                igstInput.value = '0.00';
-            } else if (gstType === 'igst') {
-                cgstInput.value = '0.00';
-                sgstInput.value = '0.00';
-                igstInput.value = gstTotal.toFixed(2);
+                document.getElementById('cgst').value = (totalGST / 2).toFixed(2);
+                document.getElementById('sgst').value = (totalGST / 2).toFixed(2);
+                document.getElementById('igst').value = '0.00';
+            } else {
+                document.getElementById('cgst').value = '0.00';
+                document.getElementById('sgst').value = '0.00';
+                document.getElementById('igst').value = totalGST.toFixed(2);
             }
         }
     });
 </script>
+
 
 </body>
 </html>

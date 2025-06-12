@@ -189,9 +189,9 @@ class Quotation(models.Model):
     services = models.ManyToManyField('Service', blank=True)
     products = models.ManyToManyField('Product', blank=True)
 
-    actual_price=models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    quantity = models.PositiveIntegerField(null=True, blank=True)
-    gst_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    # actual_price=models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # quantity = models.PositiveIntegerField(null=True, blank=True)
+    # gst_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
     # terms_and_conditions = models.ManyToManyField('QuotationTerm', blank=True)
 
@@ -201,13 +201,26 @@ class Quotation(models.Model):
     gst_total = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_amount_with_gst = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
+
 
     def __str__(self):
         return f"Quotation for {self.full_name}"
 
 
     
+class QuotationProduct(models.Model):
+    quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+    gst_percent = models.DecimalField(max_digits=5, decimal_places=2)
+
+class QuotationService(models.Model):
+    quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    actual_price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+    gst_percent = models.DecimalField(max_digits=5, decimal_places=2)
 
 
     

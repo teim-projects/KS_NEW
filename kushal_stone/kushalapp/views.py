@@ -1152,6 +1152,9 @@ def closed_leads(request):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Lead, Quotation, Product, Service
+from .models import QuotationProduct, QuotationService
+
+
 
 def quotation(request):
     context = {
@@ -1192,9 +1195,33 @@ def quotation(request):
                 )
 
                 selected_products = request.POST.getlist('products')
+                for pid in selected_products:
+                    price = request.POST.get(f'product_price_{pid}') or 0
+                    quantity = request.POST.get(f'product_quantity_{pid}') or 1
+                    gst_percent = request.POST.get(f'product_gst_{pid}') or 0
+
+                    QuotationProduct.objects.create(
+                        quotation=quotation,
+                        product_id=pid,
+                        actual_price=price,
+                        quantity=quantity,
+                        gst_percent=gst_percent
+                        )
+
                 selected_services = request.POST.getlist('services')
-                quotation.products.set(selected_products)
-                quotation.services.set(selected_services)
+                for sid in selected_services:
+                    price = request.POST.get(f'service_price_{sid}') or 0
+                    quantity = request.POST.get(f'service_quantity_{sid}') or 1
+                    gst_percent = request.POST.get(f'service_gst_{sid}') or 0
+
+                    QuotationService.objects.create(
+                        quotation=quotation,
+                        service_id=sid,
+                        actual_price=price,
+                        quantity=quantity,
+                        gst_percent=gst_percent
+                        )        
+
 
                 messages.success(request, 'Quotation created successfully.')
                 return redirect('my_work')
@@ -1202,4 +1229,51 @@ def quotation(request):
                 messages.error(request, 'No lead found to create quotation.')
 
     return render(request, 'quotation.html', context)
+
+
+
+from django.shortcuts import get_object_or_404
+
+def quotation_detail(request, quotation_id):
+    quotation = get_object_or_404(Quotation, id=quotation_id)
+    
+    # Calculate product details
+    quotation_products = []
+    for qp in QuotationProduct.objects.filter(quotation=quotation):
+        subtotal = qp.actual_price * qp.quantity
+        gst_amount = subtotal * qp.gst_percent / 100
+        total = subtotal + gst_amount
+        quotation_products.append({
+            'product': qp.product,
+            'actual_price': qp.actual_price,
+            'quantity': qp.quantity,
+            'gst_percent': qp.gst_percent,
+            'subtotal': subtotal,
+            'gst_amount': gst_amount,
+            'total': total
+        })
+    
+    # Calculate service details
+    quotation_services = []
+    for qs in QuotationService.objects.filter(quotation=quotation):
+        subtotal = qs.actual_price * qs.quantity
+        gst_amount = subtotal * qs.gst_percent / 100
+        total = subtotal + gst_amount
+        quotation_services.append({
+            'service': qs.service,
+            'actual_price': qs.actual_price,
+            'quantity': qs.quantity,
+            'gst_percent': qs.gst_percent,
+            'subtotal': subtotal,
+            'gst_amount': gst_amount,
+            'total': total
+        })
+    
+    context = {
+        'quotation': quotation,
+        'quotation_products': quotation_products,
+        'quotation_services': quotation_services
+    }
+    
+    return render(request, 'quotation_detail.html', context)
 
