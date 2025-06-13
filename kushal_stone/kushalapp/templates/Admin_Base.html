@@ -62,11 +62,11 @@
       cursor: pointer;
     }
 
-    .sidebar {
+ .sidebar {
       height: 100%;
       width: 290px;
       position: fixed;
-      top: 0;
+      top: 0 !important;
       left: -300px;
       /* Hidden by default */
       padding: 20px 0 0 0;
@@ -78,10 +78,8 @@
       box-shadow: 2px 0px 10px rgba(101, 117, 255, 0.984);
       border-radius: 1px !important;
       /* Optional for better aesthetics */
-      margin-top: 5%;
-      z-index: 900 !important;
+       z-index: 1100;
     }
-
 
     .open-sidebar .sidebar {
       left: 0;
