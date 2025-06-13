@@ -16,15 +16,17 @@
       height: 300px;
       width: 100%;
     }
+ 
   </style>
 </head>
 <body>
 
 {% include 'Sales_Base.html' %}
 
-<div class="main"><div class="container mt-5 pt-5">
-  <!-- Dashboard cards -->
-  <div class="row text-center">
+<div class="main" style="min-height: 100vh;">
+  <div class="container mt-5 pt-5">
+   <!-- Dashboard cards -->
+    <div class="row text-center">
     <div class="col-md-4 mb-4">
       <div class="card shadow-sm p-4">
         <h5>Total Leads</h5>
@@ -71,7 +73,7 @@
       </div>
     </div>
 
-    <div class="col-md-7">
+    <div class="col-md-7 mt-4">
       <div class="card p-3">
         <h5>Win/Loss</h5>
         <canvas id="winLossChart"></canvas>
@@ -80,7 +82,12 @@
   
   </div>
 
-<script>
+</div>
+</div>
+
+{% include 'footer.html' %}
+
+  <script>
   // // Lead Type Chart
   // const leadTypeCtx = document.getElementById('leadTypeChart').getContext('2d');
   // new Chart(leadTypeCtx, {
@@ -252,6 +259,5 @@ new Chart(sourceCtx, {
 });
 </script>
 
-{% include 'footer.html' %}
 </body>
 </html>

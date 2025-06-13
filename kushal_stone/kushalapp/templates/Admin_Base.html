@@ -79,7 +79,7 @@
       border-radius: 1px !important;
       /* Optional for better aesthetics */
       margin-top: 5%;
-      z-index: auto;
+      z-index: 900 !important;
     }
 
 
@@ -1280,7 +1280,7 @@
         <img src="{% static 'images/Logo.webp' %}" alt="Logo">
       </div> -->
       <ul class="ull">
-        <a class="anac" href="#" style="text-decoration: none;">
+        <a class="anac" href="{% url 'admin_dashboard' %}" style="text-decoration: none;">
           <li>
             <i class="fas fa-home"></i>Admin Dashboard
           </li>
