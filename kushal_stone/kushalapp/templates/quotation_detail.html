@@ -54,7 +54,7 @@
 
    
     <div class="container" style="margin-top: 100px;">
-        <div class="section">
+        <div class="section Quotation-section">
             <h1>Quotation Details for {{ quotation.full_name }}</h1>
 
             <h3>Customer Information</h3>
@@ -64,12 +64,12 @@
             <p><strong>Address:</strong> {{ quotation.address }}</p>
         </div>
 
-        <div class="section">
+        <div class="section  Quotation-section">
             <h3>Products</h3>
             {% if quotation_products %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead>
+            <div class="table-responsive  Quotation-section">
+                <table class="table table-bordered table-hover  Quotation-section">
+                    <thead class=" Quotation-section">
                         <tr>
                             <th>Product</th>
                             <th>Price</th>
@@ -100,11 +100,11 @@
             {% endif %}
         </div>
 
-        <div class="section">
+        <div class="section  Quotation-section">
             <h3>Services</h3>
             {% if quotation_services %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
+            <div class="table-responsive  Quotation-section">
+                <table class="table table-bordered table-hover  Quotation-section">
                     <thead>
                         <tr>
                             <th>Service</th>
@@ -136,7 +136,7 @@
             {% endif %}
         </div>
 
-        <div class="section">
+        <div class="section  Quotation-section" >
             <h3>GST and Total Summary</h3>
             <p><strong>CGST:</strong> ₹{{ quotation.cgst|floatformat:2 }}</p>
             <p><strong>SGST:</strong> ₹{{ quotation.sgst|floatformat:2 }}</p>
