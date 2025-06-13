@@ -22,17 +22,21 @@
         label {
             font-weight: bold;
         }
-h2{
-    border-bottom: 2px solid rgb(69, 167, 242) !important;
-}
- 
+        h2 {
+            border-bottom: 2px solid rgb(69, 167, 242) !important;
+        }
+        .gst-section {
+            display: none;
+        }
+        .gst-section.active {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
     {% include 'Sales_Base.html' %}
     <div class="main" style="min-height: 100vh;">
-
 
         <div class="container" style="margin-top: 100px;">
 
@@ -84,15 +88,15 @@ h2{
                             <center>
                                 <button type="button" class="btn btn-primary" onclick="goToStep(2)"
                                     style="width: 200px;">Next</button>
-
-                            </center> {% endif %}
+                            </center> 
+                            {% endif %}
                         </div>
 
                         {% if lead %}
                         <!-- Step 2 -->
                         <div class="step step-2">
                             <div class="row">
-                                                            <h2 class="mb-4 text-center text-primary">Create Quotation</h2>
+                                <h2 class="mb-4 text-center text-primary">Create Quotation</h2>
 
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -104,12 +108,10 @@ h2{
                                                 value="{{ product.id }}" name="products">
                                             <label class="form-check-label">{{ product.name }}</label>
                                         </div>
-
                                         {% endfor %}
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-
                                     <div class="mb-3">
                                         <label class="form-label">Select Services:</label>
                                         {% for service in services %}
@@ -121,71 +123,82 @@ h2{
                                         </div>
                                         {% endfor %}
                                     </div>
-
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-12">
                                     <div id="product-fields" class="mt-3"></div>
-
                                 </div>
                                 <div class="col-md-12">
-
                                     <div id="service-fields" class="mt-3"></div>
-
                                 </div>
                             </div>
 
+                            <!-- GST Toggle -->
                             <div class="mb-3">
-                                <label class="form-label">GST Type:</label><br>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" name="gst_type" value="cgst_sgst"
-                                        checked>
-                                    <label class="form-check-label">CGST + SGST</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" name="gst_type" value="igst">
-                                    <label class="form-check-label">IGST</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="gstToggle" name="enable_gst">
+                                    <label class="form-check-label" for="gstToggle">Enable GST</label>
                                 </div>
                             </div>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Total Amount:</label>
-                                    <input type="number" class="form-control" name="total_amount" id="total_amount"
-                                        readonly>
+                            <!-- GST Section (hidden by default) -->
+                            <div id="gstSection" class="gst-section">
+                                <div class="mb-3">
+                                    <label class="form-label">GST Type:</label><br>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="form-check-input" name="gst_type" value="cgst_sgst" checked>
+                                        <label class="form-check-label">CGST + SGST</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="form-check-input" name="gst_type" value="igst">
+                                        <label class="form-check-label">IGST</label>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">GST Total:</label>
-                                    <input type="number" class="form-control" name="gst_total" id="gst_total" readonly>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Total Amount:</label>
+                                        <input type="number" class="form-control" name="total_amount" id="total_amount" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">GST Total:</label>
+                                        <input type="number" class="form-control" name="gst_total" id="gst_total" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">CGST:</label>
+                                        <input type="number" class="form-control" name="cgst" id="cgst" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">SGST:</label>
+                                        <input type="number" class="form-control" name="sgst" id="sgst" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">IGST:</label>
+                                        <input type="number" class="form-control" name="igst" id="igst" readonly>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Total Amount with GST:</label>
+                                        <input type="number" class="form-control" name="total_amount_with_gst" id="total_amount_with_gst" readonly>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">CGST:</label>
-                                    <input type="number" class="form-control" name="cgst" id="cgst" readonly>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">SGST:</label>
-                                    <input type="number" class="form-control" name="sgst" id="sgst" readonly>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">IGST:</label>
-                                    <input type="number" class="form-control" name="igst" id="igst" readonly>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Total Amount with GST:</label>
-                                    <input type="number" class="form-control" name="total_amount_with_gst"
-                                        id="total_amount_with_gst" readonly>
+                            </div>
+
+                            <!-- If GST is disabled, show simple total -->
+                            <div id="simpleTotalSection" class="mt-3">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class="form-label">Total Amount:</label>
+                                        <input type="number" class="form-control" name="simple_total" id="simple_total" readonly>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-between mt-4">
-                                <button type="button" class="btn btn-secondary w-50 me-2"
-                                    onclick="goToStep(1)">Previous</button>
-                                <button type="submit" name="submit_quotation" class="btn btn-success w-50">Submit
-                                    Quotation</button>
+                                <button type="button" class="btn btn-secondary w-50 me-2" onclick="goToStep(1)">Previous</button>
+                                <button type="submit" name="submit_quotation" class="btn btn-success w-50">Submit Quotation</button>
                             </div>
-
                         </div>
                         {% endif %}
                     </form>
@@ -202,8 +215,33 @@ h2{
         document.addEventListener('DOMContentLoaded', function () {
             const productFields = document.getElementById('product-fields');
             const serviceFields = document.getElementById('service-fields');
-            const gstTypeRadios = document.querySelectorAll('input[name="gst_type"]');
+            const gstToggle = document.getElementById('gstToggle');
+            const gstSection = document.getElementById('gstSection');
+            const simpleTotalSection = document.getElementById('simpleTotalSection');
             let gstType = 'cgst_sgst';
+
+            // Toggle GST section visibility
+            gstToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    gstSection.classList.add('active');
+                    simpleTotalSection.style.display = 'none';
+                } else {
+                    gstSection.classList.remove('active');
+                    simpleTotalSection.style.display = 'block';
+                }
+                calculateTotals();
+            });
+
+            // Initialize with GST disabled
+            gstSection.classList.remove('active');
+            simpleTotalSection.style.display = 'block';
+
+            document.querySelectorAll('input[name="gst_type"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    gstType = this.value;
+                    calculateTotals();
+                });
+            });
 
             document.querySelectorAll('.item-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
@@ -227,26 +265,17 @@ h2{
         </div>
         <div class="col-md-4">
             <label class="form-label">GST %:</label>
-            <input type="number" class="form-control gst" name="${type}_gst_${id}" step="0.01">
+            <input type="number" class="form-control gst" name="${type}_gst_${id}" step="0.01" ${gstToggle.checked ? '' : 'disabled'}>
         </div>
     </div>
 </div>
 `;
-
-
                         container.insertAdjacentHTML('beforeend', fieldHTML);
                         attachInputListeners();
                     } else {
                         container.querySelector(`[data-id="${id}"]`)?.remove();
                         calculateTotals();
                     }
-                });
-            });
-
-            gstTypeRadios.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    gstType = this.value;
-                    calculateTotals();
                 });
             });
 
@@ -264,7 +293,7 @@ h2{
                 document.querySelectorAll('.item-group').forEach(group => {
                     const price = parseFloat(group.querySelector('.price')?.value) || 0;
                     const qty = parseFloat(group.querySelector('.quantity')?.value) || 0;
-                    const gst = parseFloat(group.querySelector('.gst')?.value) || 0;
+                    const gst = gstToggle.checked ? (parseFloat(group.querySelector('.gst')?.value) || 0) : 0;
 
                     const itemTotal = price * qty;
                     const gstAmount = (itemTotal * gst) / 100;
@@ -273,24 +302,36 @@ h2{
                     totalGST += gstAmount;
                 });
 
-                document.getElementById('total_amount').value = totalAmount.toFixed(2);
-                document.getElementById('gst_total').value = totalGST.toFixed(2);
-                document.getElementById('total_amount_with_gst').value = (totalAmount + totalGST).toFixed(2);
+                if (gstToggle.checked) {
+                    // GST enabled calculations
+                    document.getElementById('total_amount').value = totalAmount.toFixed(2);
+                    document.getElementById('gst_total').value = totalGST.toFixed(2);
+                    document.getElementById('total_amount_with_gst').value = (totalAmount + totalGST).toFixed(2);
+                    document.getElementById('simple_total').value = '';
 
-                if (gstType === 'cgst_sgst') {
-                    document.getElementById('cgst').value = (totalGST / 2).toFixed(2);
-                    document.getElementById('sgst').value = (totalGST / 2).toFixed(2);
-                    document.getElementById('igst').value = '0.00';
+                    if (gstType === 'cgst_sgst') {
+                        document.getElementById('cgst').value = (totalGST / 2).toFixed(2);
+                        document.getElementById('sgst').value = (totalGST / 2).toFixed(2);
+                        document.getElementById('igst').value = '0.00';
+                    } else {
+                        document.getElementById('cgst').value = '0.00';
+                        document.getElementById('sgst').value = '0.00';
+                        document.getElementById('igst').value = totalGST.toFixed(2);
+                    }
                 } else {
-                    document.getElementById('cgst').value = '0.00';
-                    document.getElementById('sgst').value = '0.00';
-                    document.getElementById('igst').value = totalGST.toFixed(2);
+                    // GST disabled - simple total
+                    document.getElementById('simple_total').value = totalAmount.toFixed(2);
+                    // Clear all GST fields
+                    document.getElementById('total_amount').value = '';
+                    document.getElementById('gst_total').value = '';
+                    document.getElementById('total_amount_with_gst').value = '';
+                    document.getElementById('cgst').value = '';
+                    document.getElementById('sgst').value = '';
+                    document.getElementById('igst').value = '';
                 }
             }
         });
     </script>
     {% include 'footer.html' %}
-
 </body>
-
 </html>

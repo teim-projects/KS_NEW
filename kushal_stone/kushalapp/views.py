@@ -1156,6 +1156,84 @@ from .models import QuotationProduct, QuotationService
 
 
 
+# def quotation(request):
+#     context = {
+#         'products': Product.objects.all(),
+#         'services': Service.objects.all()
+#     }
+
+#     if request.method == 'POST':
+#         if 'fetch_lead' in request.POST:
+#             mobile = request.POST.get('mobile')
+#             lead = Lead.objects.filter(mobile_number=mobile).first()
+#             if lead:
+#                 context['lead'] = lead
+#             else:
+#                 messages.error(request, 'No lead found with this mobile number.')
+
+#         elif 'submit_quotation' in request.POST:
+#             mobile = request.POST.get('mobile')
+#             lead = Lead.objects.filter(mobile_number=mobile).first()
+
+#             if lead:
+#                 quotation = Quotation.objects.create(
+#                     lead=lead,
+#                     full_name=request.POST.get('full_name') or lead.full_name,
+#                     mobile=lead.mobile_number,
+#                     email=request.POST.get('email') or lead.email,
+#                     address=request.POST.get('address') or lead.address,
+
+                    
+#                     # actual_price=request.POST.get('actual_price') or None,
+#                     # quantity=request.POST.get('quantity') or None,
+#                     # gst_percentage=request.POST.get('gst_percentage') or None,
+#                     cgst=request.POST.get('cgst') or None,
+#                     sgst=request.POST.get('sgst') or None,
+#                     igst=request.POST.get('igst') or None,
+#                     gst_total=request.POST.get('gst_total') or None,
+#                     total_amount=request.POST.get('total_amount') or None,
+#                     total_amount_with_gst=request.POST.get('total_amount_with_gst') or None,
+#                 )
+
+#                 selected_products = request.POST.getlist('products')
+#                 for pid in selected_products:
+#                     price = request.POST.get(f'product_price_{pid}') or 0
+#                     quantity = request.POST.get(f'product_quantity_{pid}') or 1
+#                     gst_percent = request.POST.get(f'product_gst_{pid}') or 0
+
+#                     QuotationProduct.objects.create(
+#                         quotation=quotation,
+#                         product_id=pid,
+#                         actual_price=price,
+#                         quantity=quantity,
+#                         gst_percent=gst_percent
+#                         )
+
+#                 selected_services = request.POST.getlist('services')
+#                 for sid in selected_services:
+#                     price = request.POST.get(f'service_price_{sid}') or 0
+#                     quantity = request.POST.get(f'service_quantity_{sid}') or 1
+#                     gst_percent = request.POST.get(f'service_gst_{sid}') or 0
+
+#                     QuotationService.objects.create(
+#                         quotation=quotation,
+#                         service_id=sid,
+#                         actual_price=price,
+#                         quantity=quantity,
+#                         gst_percent=gst_percent
+#                         )        
+
+
+#                 messages.success(request, 'Quotation created successfully.')
+#                 return redirect('my_work')
+#             else:
+#                 messages.error(request, 'No lead found to create quotation.')
+
+#     return render(request, 'quotation.html', context)
+
+
+
+
 def quotation(request):
     context = {
         'products': Product.objects.all(),
@@ -1174,6 +1252,7 @@ def quotation(request):
         elif 'submit_quotation' in request.POST:
             mobile = request.POST.get('mobile')
             lead = Lead.objects.filter(mobile_number=mobile).first()
+            enable_gst = 'enable_gst' in request.POST  # Check if GST is enabled
 
             if lead:
                 quotation = Quotation.objects.create(
@@ -1182,24 +1261,20 @@ def quotation(request):
                     mobile=lead.mobile_number,
                     email=request.POST.get('email') or lead.email,
                     address=request.POST.get('address') or lead.address,
-
-                    
-                    actual_price=request.POST.get('actual_price') or None,
-                    quantity=request.POST.get('quantity') or None,
-                    gst_percentage=request.POST.get('gst_percentage') or None,
-                    cgst=request.POST.get('cgst') or None,
-                    sgst=request.POST.get('sgst') or None,
-                    igst=request.POST.get('igst') or None,
-                    gst_total=request.POST.get('gst_total') or None,
-                    total_amount=request.POST.get('total_amount') or None,
-                    total_amount_with_gst=request.POST.get('total_amount_with_gst') or None,
+                    enable_gst=enable_gst,
+                    cgst=request.POST.get('cgst') if enable_gst else None,
+                    sgst=request.POST.get('sgst') if enable_gst else None,
+                    igst=request.POST.get('igst') if enable_gst else None,
+                    gst_total=request.POST.get('gst_total') if enable_gst else None,
+                    total_amount=request.POST.get('total_amount') if enable_gst else request.POST.get('simple_total'),
+                    total_amount_with_gst=request.POST.get('total_amount_with_gst') if enable_gst else request.POST.get('simple_total'),
                 )
 
                 selected_products = request.POST.getlist('products')
                 for pid in selected_products:
                     price = request.POST.get(f'product_price_{pid}') or 0
                     quantity = request.POST.get(f'product_quantity_{pid}') or 1
-                    gst_percent = request.POST.get(f'product_gst_{pid}') or 0
+                    gst_percent = request.POST.get(f'product_gst_{pid}') or 0 if enable_gst else 0
 
                     QuotationProduct.objects.create(
                         quotation=quotation,
@@ -1207,13 +1282,13 @@ def quotation(request):
                         actual_price=price,
                         quantity=quantity,
                         gst_percent=gst_percent
-                        )
+                    )
 
                 selected_services = request.POST.getlist('services')
                 for sid in selected_services:
                     price = request.POST.get(f'service_price_{sid}') or 0
                     quantity = request.POST.get(f'service_quantity_{sid}') or 1
-                    gst_percent = request.POST.get(f'service_gst_{sid}') or 0
+                    gst_percent = request.POST.get(f'service_gst_{sid}') or 0 if enable_gst else 0
 
                     QuotationService.objects.create(
                         quotation=quotation,
@@ -1221,8 +1296,7 @@ def quotation(request):
                         actual_price=price,
                         quantity=quantity,
                         gst_percent=gst_percent
-                        )        
-
+                    )        
 
                 messages.success(request, 'Quotation created successfully.')
                 return redirect('my_work')
@@ -1230,6 +1304,8 @@ def quotation(request):
                 messages.error(request, 'No lead found to create quotation.')
 
     return render(request, 'quotation.html', context)
+
+
 
 
 
@@ -1278,3 +1354,8 @@ def quotation_detail(request, quotation_id):
     
     return render(request, 'quotation_detail.html', context)
 
+
+
+def quotation_list(request):
+    quotations = Quotation.objects.all().order_by('-id')  # latest first
+    return render(request, 'quotation_list.html', {'quotations': quotations})

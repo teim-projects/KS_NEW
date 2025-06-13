@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Quotations</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Quotations</h1>
+
+    {% if quotations %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Quotation ID</th>
+                    <th>Full Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in quotations %}
+                    <tr>
+                        <td>{{ q.id }}</td>
+                        <td>{{ q.full_name }}</td>
+                        <td>{{ q.mobile }}</td>
+                        <td>{{ q.email }}</td>
+                        <td>
+                            <a href="{% url 'quotation_detail' q.id %}">View Quotation</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No quotations found.</p>
+    {% endif %}
+</body>
+</html>
