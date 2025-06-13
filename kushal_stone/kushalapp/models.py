@@ -189,9 +189,9 @@ class Quotation(models.Model):
     services = models.ManyToManyField('Service', blank=True)
     products = models.ManyToManyField('Product', blank=True)
 
-    # actual_price=models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    # quantity = models.PositiveIntegerField(null=True, blank=True)
-    # gst_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    actual_price=models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    quantity = models.PositiveIntegerField(null=True, blank=True)
+    gst_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
     # terms_and_conditions = models.ManyToManyField('QuotationTerm', blank=True)
 

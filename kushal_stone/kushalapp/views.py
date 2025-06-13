@@ -1178,10 +1178,11 @@ def quotation(request):
             if lead:
                 quotation = Quotation.objects.create(
                     lead=lead,
-                    full_name=lead.full_name,
+                    full_name=request.POST.get('full_name') or lead.full_name,
                     mobile=lead.mobile_number,
-                    email=lead.email,
-                    address=lead.address,
+                    email=request.POST.get('email') or lead.email,
+                    address=request.POST.get('address') or lead.address,
+
                     
                     actual_price=request.POST.get('actual_price') or None,
                     quantity=request.POST.get('quantity') or None,
