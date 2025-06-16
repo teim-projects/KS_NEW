@@ -1200,11 +1200,12 @@ top: 45px;
         <img src="{% static 'images/Logo.webp' %}" alt="Logo">
       </div> -->
       <ul class="ull">
-        <a class="anac" href="#" style="text-decoration: none;">
-          <li>
-            <i class="fas fa-home"></i>Operation Dashboard
-          </li>
-        </a>
+      <a class="anac" href="{% url 'operations_dashboard' %}" style="text-decoration: none;">
+  <li>
+    <i class="fas fa-home"></i> Operation Dashboard
+  </li>
+</a>
+
 
         <a class="anac" href="{% url 'operations_assigned_leads' %}" style="text-decoration: none;">
   <li>
