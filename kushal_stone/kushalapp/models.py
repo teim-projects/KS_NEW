@@ -46,6 +46,21 @@ class Service(models.Model):
 
 
 from django.db import models
+
+class QuotationTerm(models.Model):
+    description = models.TextField()
+
+    def __str__(self):
+        return self.description[:50]
+
+class InvoiceTerm(models.Model):
+    description = models.TextField()
+
+    def __str__(self):
+        return self.description[:50]
+
+
+from django.db import models
 from django.contrib.auth import get_user_model
 
 CustomUser = get_user_model()
@@ -79,15 +94,38 @@ class Lead(models.Model):
     source = models.CharField(max_length=50, choices=SOURCE_CHOICES)
     source_other = models.CharField(max_length=100, blank=True, null=True)
     enquiry_date = models.DateField()
-    sales_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='sales_person')
+    sales_person = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='sales_person'
+    )
     customer_segment = models.CharField(max_length=50, choices=CUSTOMER_SEGMENT_CHOICES)
     next_followup_date = models.DateField(null=True, blank=True)
-    follow_up_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='follow_up_person')
+    follow_up_person = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='follow_up_person'
+    )
     is_closed = models.BooleanField(default=False)
-    win_status = models.BooleanField(null=True, blank=True)  
-    closed_by = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL, related_name='closed_leads')
+    win_status = models.BooleanField(null=True, blank=True)
+    closed_by = models.ForeignKey(
+        CustomUser,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='closed_leads'
+    )
 
-    # assigned_to = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_leads')
+    # New field to assign closed win leads to Operations
+    assigned_to_operations = models.ForeignKey(
+    CustomUser,
+    null=True,
+    blank=True,
+    on_delete=models.SET_NULL,
+    related_name='assigned_operations_leads'
+)
 
 
     def __str__(self):

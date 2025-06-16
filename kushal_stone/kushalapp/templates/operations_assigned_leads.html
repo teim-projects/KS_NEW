@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assigned Leads</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      padding: 40px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px 18px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #2c3e50;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      font-size: 16px;
+      color: #888;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Work Assigned to {{ request.user.first_name }}</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Lead Name</th>
+        <th>Mobile</th>
+        <th>Email</th>
+        <th>Assigned By</th>
+      </tr>
+    </thead>
+   <tbody>
+  {% for lead in assigned_leads %}
+  <tr>
+    <td>{{ lead.full_name }}</td>
+    <td>{{ lead.mobile_number }}</td>
+    <td>{{ lead.email }}</td>
+    <td>{{ lead.sales_person.username }}</td>
+    <td>
+      <a href="{% url 'operation_lead_detail' lead.id %}">
+        <button style="padding: 6px 12px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+          View Info
+        </button>
+      </a>
+    </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="5" class="no-data">No work assigned.</td>
+  </tr>
+  {% endfor %}
+</tbody>
+
+
+  </table>
+</div>
+
+</body>
+</html>

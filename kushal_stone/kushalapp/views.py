@@ -63,8 +63,66 @@ def admin_dashboard(request):
 
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import QuotationTerm, InvoiceTerm
 
+# --- QUOTATION TERMS ---
 
+def quotation_term_list(request):
+    terms = QuotationTerm.objects.all()
+    return render(request, 'quotation_term_view.html', {'terms': terms})
+
+def add_quotation_term(request):
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        if description:
+            QuotationTerm.objects.create(description=description)
+        return redirect('quotation_term_list')
+    return render(request, 'quotation_term_add.html')
+
+def edit_quotation_term(request, pk):
+    term = get_object_or_404(QuotationTerm, pk=pk)
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        if description:
+            term.description = description
+            term.save()
+        return redirect('quotation_term_list')
+    return render(request, 'quotation_term_edit.html', {'term': term})
+
+def delete_quotation_term(request, pk):
+    term = get_object_or_404(QuotationTerm, pk=pk)
+    term.delete()
+    return redirect('quotation_term_list')
+
+# --- INVOICE TERMS ---
+
+def invoice_term_list(request):
+    terms = InvoiceTerm.objects.all()
+    return render(request, 'invoice_term_view.html', {'terms': terms})
+
+def add_invoice_term(request):
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        if description:
+            InvoiceTerm.objects.create(description=description)
+        return redirect('invoice_term_list')
+    return render(request, 'invoice_term_add.html')
+
+def edit_invoice_term(request, pk):
+    term = get_object_or_404(InvoiceTerm, pk=pk)
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        if description:
+            term.description = description
+            term.save()
+        return redirect('invoice_term_list')
+    return render(request, 'invoice_term_edit.html', {'term': term})
+
+def delete_invoice_term(request, pk):
+    term = get_object_or_404(InvoiceTerm, pk=pk)
+    term.delete()
+    return redirect('invoice_term_list')
 
 
 
@@ -153,24 +211,84 @@ def manager_dashboard(request):
 def finance_dashboard(request):
     return render(request, 'finance_dashboard.html')
 
+from django.contrib.auth import get_user_model
+CustomUser = get_user_model()
+
+
+
+
+
 def create_user(request):
     if request.method == 'POST':
-        name = request.POST['name']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
         email = request.POST['email']
         mobile = request.POST['mobile']
         role = request.POST['role']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
+
         if password != confirm_password:
             messages.error(request, 'Passwords do not match')
             return redirect('create_user')
+
         if CustomUser.objects.filter(mobile_number=mobile, role=role).exists():
             messages.error(request, 'User with this mobile number and role already exists')
             return redirect('create_user')
-        user = CustomUser.objects.create_user(username=email, email=email, password=password, mobile_number=mobile, role=role)
+
+        user = CustomUser.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            mobile_number=mobile,
+            role=role,
+            first_name=first_name,
+            last_name=last_name,
+        )
         messages.success(request, 'User created successfully')
         return redirect('admin_dashboard')
+
     return render(request, 'create_user.html')
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import CustomUser
+
+def view_users(request):
+    users = CustomUser.objects.all()
+    return render(request, 'view_users.html', {'users': users})
+
+def edit_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    if request.method == 'POST':
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        user.username = user.email  # keep username in sync
+        user.mobile_number = request.POST.get('mobile')
+        user.role = request.POST.get('role')
+
+        new_password = request.POST.get('password')
+        if new_password:
+            user.set_password(new_password)
+
+        user.save()
+        messages.success(request, 'User updated successfully')
+        return redirect('view_users')
+
+    return render(request, 'edit_user.html', {'user': user})
+
+def delete_user(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "User deleted successfully.")
+        return redirect('view_users')
+    return redirect('view_users')
+
+
 
 
 
@@ -1107,11 +1225,20 @@ def assign_lead(request, lead_id):
     
     return redirect('my_work')
 
-#close lead function
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Lead, CustomUser
+from django.contrib import messages
+
 @login_required
 def closed_leads(request):
     closed = Lead.objects.filter(is_closed=True, follow_up_person=request.user)
-    return render(request, 'close_lead.html', {'closed_leads': closed})
+    operation_users = CustomUser.objects.filter(role='Operations')
+    return render(request, 'close_lead.html', {
+        'closed_leads': closed,
+        'operation_users': operation_users
+    })
+
 
 
 
@@ -1359,3 +1486,41 @@ def quotation_detail(request, quotation_id):
 def quotation_list(request):
     quotations = Quotation.objects.all().order_by('-id')  # latest first
     return render(request, 'quotation_list.html', {'quotations': quotations})
+
+
+
+@login_required
+def assign_to_operations(request, lead_id):
+    if request.method == 'POST':
+        lead = get_object_or_404(Lead, id=lead_id)
+        operation_user_id = request.POST.get('operation_user_id')
+        try:
+            operation_user = CustomUser.objects.get(id=operation_user_id, role='Operations')
+            lead.assigned_to_operations = operation_user
+            lead.save()
+            messages.success(request, "Lead assigned successfully to Operations.")
+        except CustomUser.DoesNotExist:
+            messages.error(request, "Invalid operations user selected.")
+    return redirect('closed_leads')
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Lead
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def operation_lead_detail(request, lead_id):
+    lead = get_object_or_404(Lead, id=lead_id, assigned_to_operations=request.user)
+    return render(request, 'operation_lead_detail.html', {'lead': lead})
+
+
+
+@login_required
+def operations_assigned_leads(request):
+    leads = Lead.objects.filter(assigned_to_operations=request.user)
+    print("Logged in user ID:", request.user.id)
+    print("Assigned leads count:", leads.count())
+    for lead in leads:
+        print(lead.full_name, "->", lead.assigned_to_operations_id)
+    return render(request, 'operations_assigned_leads.html', {'assigned_leads': leads})
+

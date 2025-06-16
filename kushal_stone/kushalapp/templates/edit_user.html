@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit User</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #f9f9f9;
+      padding: 40px;
+    }
+    .form-container {
+      width: 400px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #27ae60;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Edit User</h2>
+  <form method="POST">
+    {% csrf_token %}
+
+    <label>First Name</label>
+    <input type="text" name="first_name" value="{{ user.first_name }}" required>
+
+    <label>Last Name</label>
+    <input type="text" name="last_name" value="{{ user.last_name }}" required>
+
+    <label>Email</label>
+    <input type="email" name="email" value="{{ user.email }}" required>
+
+    <label>Mobile Number</label>
+    <input type="text" name="mobile" value="{{ user.mobile_number }}" required>
+
+    <label>Role</label>
+    <select name="role" required>
+      <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+      <option value="Sales" {% if user.role == 'Sales' %}selected{% endif %}>Sales</option>
+      <option value="Operations" {% if user.role == 'Operations' %}selected{% endif %}>Operations</option>
+      <option value="Manager" {% if user.role == 'Manager' %}selected{% endif %}>Manager</option>
+      <option value="Finance" {% if user.role == 'Finance' %}selected{% endif %}>Finance</option>
+    </select>
+
+    <label>New Password (optional)</label>
+    <input type="password" name="password">
+
+    <button type="submit">Update</button>
+  </form>
+</div>
+
+</body>
+</html>

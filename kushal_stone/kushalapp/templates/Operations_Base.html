@@ -1205,53 +1205,13 @@ top: 45px;
             <i class="fas fa-home"></i>Operation Dashboard
           </li>
         </a>
-        <li class="has-submenu">
-          <i class="fas fa-box"></i> Demo <span class="arrow-down"></span>
-          <div class="submenu">
-            <ul>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
 
-
-              </a>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
-
-
-              </a>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
-
-
-              </a>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
-
-
-              </a>
-            </ul>
-          </div>
-        </li>
-        <li class="has-submenu">
-          <i class="fas fa-user-cog"></i> Demo <span class="arrow-down"></span>
-          <div class="submenu">
-            <ul>
-              <a class="anac" href="#">
-                <li>1 Demo</li>
-              </a>
-              <a class="anac" href="#">
-                <li>2 Demo</li>
-              </a>
-              <a class="anac" href="#">
-                <li>3 Demo</li>
-              </a>
-            </ul>
-          </div>
-        </li>
-        <li class="has-submenu" onclick="window.location.href='#'">
-          <i class="fas fa-tasks"></i> Demo
-        </li>
-      </ul>
+        <a class="anac" href="{% url 'operations_assigned_leads' %}" style="text-decoration: none;">
+  <li>
+    <i class="fas fa-tasks"></i> Assigned Leads
+  </li>
+</a>
+          </ul>
       <script>
         // Check if the URL contains the schedule_success parameter
         const urlParams = new URLSearchParams(window.location.search);

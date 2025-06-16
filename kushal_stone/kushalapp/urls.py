@@ -13,6 +13,30 @@ urlpatterns = [
    path('finance_dashboard/', views.finance_dashboard, name='finance_dashboard'),
    path('create_user/', views.create_user, name='create_user'),
    path('requirements/', views.requirements_dashboard, name='requirements_dashboard'),
+
+
+    # Quotation Term URLs
+    path('quotation-terms/', views.quotation_term_list, name='quotation_term_list'),
+    path('quotation-terms/add/', views.add_quotation_term, name='add_quotation_term'),
+    path('quotation-terms/edit/<int:pk>/', views.edit_quotation_term, name='edit_quotation_term'),
+    path('quotation-terms/delete/<int:pk>/', views.delete_quotation_term, name='delete_quotation_term'),
+
+    # Invoice Term URLs
+    path('invoice-terms/', views.invoice_term_list, name='invoice_term_list'),
+    path('invoice-terms/add/', views.add_invoice_term, name='add_invoice_term'),
+    path('invoice-terms/edit/<int:pk>/', views.edit_invoice_term, name='edit_invoice_term'),
+    path('invoice-terms/delete/<int:pk>/', views.delete_invoice_term, name='delete_invoice_term'),
+
+    path('users/', views.view_users, name='view_users'),
+    path('users/edit/<int:user_id>/', views.edit_user, name='edit_user'),
+    path('delete_user/<int:pk>/', views.delete_user, name='delete_user'),
+
+    path('operations/leads/', views.operations_assigned_leads, name='operations_assigned_leads'),
+    path('assign-to-operations/<int:lead_id>/', views.assign_to_operations, name='assign_to_operations'),
+    path('operations/lead/<int:lead_id>/', views.operation_lead_detail, name='operation_lead_detail'),
+
+
+
  
     path('product/delete/<int:pk>/', views.delete_product, name='delete_product'),
     path('service/delete/<int:pk>/', views.delete_service, name='delete_service'),
@@ -47,20 +71,6 @@ urlpatterns = [
 
 
 
-    path('quotations/', views.quotation_list, name='quotation_list'),
-
-
-    
-
-    
-
-
-    
-
-
-
-
-
-   
+    path('quotations/', views.quotation_list, name='quotation_list'),   
     
 ]

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lead Details</title>
+  <style>
+    body { font-family: Arial; padding: 40px; background: #f9f9f9; }
+    .card { background: #fff; padding: 20px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 10px; }
+    h2 { text-align: center; color: #2c3e50; }
+    .field { margin: 10px 0; }
+    .label { font-weight: bold; color: #555; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Lead Details</h2>
+  <div class="field"><span class="label">Full Name:</span> {{ lead.full_name }}</div>
+  <div class="field"><span class="label">Mobile:</span> {{ lead.mobile_number }}</div>
+  <div class="field"><span class="label">Email:</span> {{ lead.email }}</div>
+  <div class="field"><span class="label">Requirements:</span> {{ lead.requirements }}</div>
+  <div class="field"><span class="label">Address:</span> {{ lead.address }}</div>
+  <div class="field"><span class="label">Architect:</span> {{ lead.architect_name }} ({{ lead.architect_number }})</div>
+  <div class="field"><span class="label">Source:</span> {{ lead.source }}</div>
+  <div class="field"><span class="label">Enquiry Date:</span> {{ lead.enquiry_date }}</div>
+  <div class="field"><span class="label">Customer Segment:</span> {{ lead.customer_segment }}</div>
+  <div class="field"><span class="label">Assigned By:</span> {{ lead.sales_person.username }}</div>
+</div>
+
+</body>
+</html>

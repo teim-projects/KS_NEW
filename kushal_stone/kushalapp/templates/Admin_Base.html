@@ -1276,18 +1276,34 @@
     <div class="siderbar-inner mt-5">
       <!-- <div class="logo">
         <img src="{% static 'images/Logo.webp' %}" alt="Logo">
-      </div> -->
+      </div> --> <br>
+      <br>
       <ul class="ull">
-        <a class="anac" href="{% url 'admin_dashboard' %}" style="text-decoration: none;">
-          <li>
-            <i class="fas fa-home"></i>Admin Dashboard
-          </li>
-        </a>
-        <a class="anac" href="{% url 'requirements_dashboard' %}" style="text-decoration: none;">
-          <li>
-            <i class="fas fa-home"></i>Requirements
-          </li>
-        </a>
+    <a class="anac" href="{% url 'admin_dashboard' %}" style="text-decoration: none;">
+  <li>
+    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+  </li>
+</a>
+
+<a class="anac" href="{% url 'requirements_dashboard' %}" style="text-decoration: none;">
+  <li>
+    <i class="fas fa-tasks"></i> Requirements
+  </li>
+</a>
+
+<a class="anac" href="{% url 'create_user' %}" style="text-decoration: none;">
+  <li>
+    <i class="fas fa-user-plus"></i> Create Users
+  </li>
+</a>
+
+<a class="anac" href="{% url 'view_users' %}" style="text-decoration: none;">
+  <li>
+    <i class="fas fa-users"></i> View Users
+  </li>
+</a>
+
+
         <!-- <li class="has-submenu">
           <i class="fas fa-box"></i> Demo <span class="arrow-down"></span>
           <div class="submenu">
@@ -1333,11 +1349,7 @@
       </script>
       <center>
 
-        <button class="  mt-5 logoutbtn2  ">
-          <a href="{% url 'create_user' %}" class="text-dark text-center"
-            style="text-align: center; padding-left: 20px;"> Create User</a>
-
-        </button>
+      
 
 
         <button class="mb-5  logoutbtn">

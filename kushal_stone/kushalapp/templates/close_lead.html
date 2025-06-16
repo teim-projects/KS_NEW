@@ -55,6 +55,56 @@
     .up {
       font-size: 20px;
     }
+
+.assign-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.assign-select {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s ease-in-out;
+}
+
+.assign-select:focus {
+  border-color: #3b6e6e;
+  background-color: #fff;
+}
+
+.assign-button {
+  background-color: #3b6e6e;
+  color: #fff;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.assign-button:hover {
+  background-color: #2d5a5a;
+}
+
+.assigned-label {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #d6f5d6;
+  border: 1px solid #87c787;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #2c662d;
+}
+
+
   </style>
 </head>
 
@@ -92,6 +142,25 @@
                       style="border-radius: 5px; width:150px;">Win</span>{% else %}<span class="btn  btn-danger p-2 "
                       style="border-radius: 5px;  width:150px;">Loss</span>{% endif %}</td>
                   <td>{{ lead.enquiry_date }}</td>
+                  <td>
+  {% if lead.win_status %}
+    {% if not lead.assigned_to_operations %}
+      <form action="{% url 'assign_to_operations' lead.id %}" method="POST" class="assign-form">
+        {% csrf_token %}
+        <select name="operation_user_id" class="assign-select" required>
+          <option value="" disabled selected>Select Ops</option>
+          {% for user in operation_users %}
+            <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="assign-button">Assign</button>
+      </form>
+    {% else %}
+      <span class="assigned-label">Assigned to <strong>{{ lead.assigned_to_operations.first_name }}</strong></span>
+    {% endif %}
+  {% endif %}
+</td>
+
                 </tr>
                 {% endfor %}
               </tbody>
