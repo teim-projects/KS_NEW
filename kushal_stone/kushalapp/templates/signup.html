@@ -509,24 +509,33 @@
     
       </div>
 
-    <div class="main">
-        <div class="container signup-container">
-           <div class="row row-signup " >
-            <div class="col-md-6 col-12 bg-img" data-aos="fade-right">
-
-            </div>
+   <div class="main">
+    <div class="container signup-container">
+        <div class="row row-signup">
+            <div class="col-md-6 col-12 bg-img" data-aos="fade-right"></div>
             <div class="col-md-6 col-12 signup-form" data-aos="fade-left">
                 <h3>Signup</h3>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
                 <form method="post">
                     {% csrf_token %}
-
                     <div class="form-group">
                         <label>User Name</label>
-                        <input class="form-control" type="text" name="username" placeholder="Username" required />
+                        <input class="form-control" type="text" name="username" id="username" placeholder="Username" required />
+                        <small id="username-error" class="text-danger"></small>
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input class="form-control" type="email" name="email" placeholder="Email" required />
+                        <input class="form-control" type="email" name="email" id="email" placeholder="Email" required />
+                        <small id="email-error" class="text-danger"></small>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
@@ -534,28 +543,51 @@
                     </div>
                     <div class="form-group">
                         <label>Confirm Password</label>
-                        <input class="form-control" type="password" name="confirm_password" placeholder="Password" required />
+                        <input class="form-control" type="password" name="confirm_password" placeholder="Confirm Password" required />
                     </div>
                     <div class="form-group">
-                      <button   type="submit">Signup</button>
-                      <center><p style="margin-top: 15px; font-size: 14px; color: #555;">
-                        Already have an account? 
-                        <a href="/login" style="color: #007bff; text-decoration: none;">Login</a>
-                    </p></center>
-                  </div>
-
-
-                    <!-- <input type="text" name="username" placeholder="Username" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="password" name="password" placeholder="Password" required>
-                    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-                    <button type="submit">Signup</button> -->
+                        <button type="submit" class="btn btn-primary" id="submit-btn">Signup</button>
+                        <center>
+                            <p style="margin-top: 15px; font-size: 14px; color: #555;">
+                                Already have an account?
+                                <a href="/login" style="color: #007bff; text-decoration: none;">Login</a>
+                            </p>
+                        </center>
+                    </div>
                 </form>
-              
             </div>
-           </div>
         </div>
     </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const usernameInput = document.getElementById("username");
+    const emailInput = document.getElementById("email");
+    const usernameError = document.getElementById("username-error");
+    const emailError = document.getElementById("email-error");
+    const submitBtn = document.getElementById("submit-btn");
+
+    function validateFields() {
+        const username = usernameInput.value;
+        const email = emailInput.value;
+
+        fetch(`/signup?username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}`, {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(res => res.json())
+        .then(data => {
+            usernameError.textContent = data.username_error || "";
+            emailError.textContent = data.email_error || "";
+            submitBtn.disabled = !!(data.username_error || data.email_error);
+        });
+    }
+
+    usernameInput.addEventListener("blur", validateFields);
+    emailInput.addEventListener("blur", validateFields);
+});
+</script>
+
     {%include 'footer.html'%}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>

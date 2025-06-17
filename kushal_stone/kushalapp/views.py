@@ -8,18 +8,47 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     return render(request, 'index.html')
 
+
+
+from django.http import JsonResponse
+from .models import CustomUser
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
 def signup(request):
+    if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        username = request.GET.get('username')
+        email = request.GET.get('email')
+        response = {}
+
+        if username and CustomUser.objects.filter(username=username).exists():
+            response['username_error'] = "Username already exists"
+
+        if email and CustomUser.objects.filter(email=email).exists():
+            response['email_error'] = "Email already registered"
+
+        return JsonResponse(response)
+
     if request.method == 'POST':
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
+
+        if CustomUser.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists')
+            return redirect('signup')
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, 'Email already registered')
+            return redirect('signup')
         if password != confirm_password:
             messages.error(request, 'Passwords do not match')
             return redirect('signup')
-        user = CustomUser.objects.create_user(username=username, email=email, password=password, role='Admin')
+
+        CustomUser.objects.create_user(username=username, email=email, password=password, role='Admin')
         messages.success(request, 'Admin registered successfully')
         return redirect('login')
+
     return render(request, 'signup.html')
 
 from django.shortcuts import render, redirect
@@ -30,25 +59,35 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()  # Ensure you are using the correct user model
 
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from .models import CustomUser  # Import your custom user model
+
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
+        email = request.POST['username']  # Form field still named 'username'
         password = request.POST['password']
 
-        print(f"Attempting login: Username={username}, Password={password}")  # Debugging
+        print(f"Attempting login: Email={email}, Password={password}")  # Debugging
 
-        user = authenticate(request, username=username, password=password)
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'Email does not exist.')
+            return render(request, 'login.html')
 
-        if user:
-            print(f"Authenticated User: {user.username} - {user.role}")  # Debugging
-            login(request, user)
+        # Now check password
+        user_auth = authenticate(request, username=user.username, password=password)
 
-            # Redirect based on user role
-            role = user.role.lower()  # Ensure lowercase match
+        if user_auth:
+            print(f"Authenticated User: {user_auth.username} - {user_auth.role}")  # Debugging
+            login(request, user_auth)
+            role = user_auth.role.lower()
             return redirect(reverse(f'{role}_dashboard'))
         else:
-            print("Authentication failed")  # Debugging
-            messages.error(request, 'Invalid username or password.')
+            messages.error(request, 'Incorrect password.')
 
     return render(request, 'login.html')
 
@@ -217,8 +256,25 @@ CustomUser = get_user_model()
 
 
 
+from django.http import JsonResponse
 
 def create_user(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        email = request.GET.get('email')
+        mobile = request.GET.get('mobile')
+        role = request.GET.get('role')
+
+        response = {}
+
+        if email and CustomUser.objects.filter(email=email).exists():
+            response['email_error'] = 'Email already exists'
+
+        if mobile and role and CustomUser.objects.filter(mobile_number=mobile, role=role).exists():
+            response['mobile_error'] = 'User with this mobile number and role already exists'
+
+        return JsonResponse(response)
+
+    # Standard POST handling
     if request.method == 'POST':
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
@@ -234,6 +290,10 @@ def create_user(request):
 
         if CustomUser.objects.filter(mobile_number=mobile, role=role).exists():
             messages.error(request, 'User with this mobile number and role already exists')
+            return redirect('create_user')
+
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, 'Email already exists')
             return redirect('create_user')
 
         user = CustomUser.objects.create_user(

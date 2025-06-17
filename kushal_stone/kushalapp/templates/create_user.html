@@ -343,48 +343,50 @@
                     </form> -->
                 <div class="col-md-6 col-12 login-form-1" data-aos="fade-right">
                     <h3>Create User</h3>
-                    <form class="form-width" method="post">
-                      {% csrf_token %}
-                      <div class="form-row">
-                        <div class="form-group col-md-6">
-                          <label for="inputEmail4">First Name</label>
-                          <input type="text" class="form-control" id="inputEmail4" name="first_name" placeholder="First Name" required >
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputEmail4">Last Name</label>
-                          <input type="text" class="form-control" id="inputEmail4" name="last_name" placeholder="Last Name" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label for="inputPassword4">Email</label>
-                          <input type="email" class="form-control" id="inputPassword4" name="email" placeholder="Email" required>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="inputAddress">Mobile Number</label>
-                        <input type="number" class="form-control" id="inputCity" name="mobile" placeholder="Mobile Number" required>
-                      </div>
-                      <div class="form-row">
-                        <div class="form-group col-md-4">
-                          <label for="inputCity">Password</label>
-                          <input type="password" class="form-control" id="inputCity" name="password" placeholder="Password" required>
-                        </div>
-                        <div class="form-group col-md-4">
-                          <label for="inputZip">Confirm Password</label>
-                          <input type="password" class="form-control" id="inputZip"  name="confirm_password" placeholder="Confirm Password" required>
-                        </div>
-                        <div class="form-group col-md-4">
-                          <label for="inputState">Select</label>
-                          <select id="inputState" class="form-control" name="role">
-                            <option value="Sales">Sales</option>
-                            <option value="Operations">Operations</option>
-                            <option value="Manager">Manager</option>
-                            <option value="Finance">Finance</option>
-                        </select>
-                        </div>
-                      </div>
-                      <button class="submitbutton" type="submit" value="Login">Create User</button>
-                      <!-- <button type="submit" class="btn btn-primary">Sign in</button> -->
-                    </form>
+                  <form class="form-width" method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="first_name">First Name</label>
+            <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="last_name">Last Name</label>
+            <input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+            <small id="email-error" class="text-danger"></small>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="mobile">Mobile Number</label>
+        <input type="number" class="form-control" name="mobile" id="mobile" placeholder="Mobile Number" required>
+        <small id="mobile-error" class="text-danger"></small>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Confirm Password</label>
+            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="role">Select</label>
+            <select class="form-control" name="role" id="role">
+                <option value="Sales">Sales</option>
+                <option value="Operations">Operations</option>
+                <option value="Manager">Manager</option>
+                <option value="Finance">Finance</option>
+            </select>
+        </div>
+    </div>
+    <button class="submitbutton" type="submit" id="submit-btn">Create User</button>
+</form>
+
                 </div>
                 <div class="col-md-6 col-12 bg-img" data-aos="fade-left">
                     <!-- <img class="login-img" src="{% static 'images/login.jpg' %}" alt="gf"> -->
@@ -395,6 +397,38 @@
     </div>
     </div>
     {%include 'footer.html'%}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const emailInput = document.getElementById("email");
+    const mobileInput = document.getElementById("mobile");
+    const roleInput = document.getElementById("role");
+    const emailError = document.getElementById("email-error");
+    const mobileError = document.getElementById("mobile-error");
+    const submitBtn = document.getElementById("submit-btn");
+
+    function validateInputs() {
+        const email = emailInput.value;
+        const mobile = mobileInput.value;
+        const role = roleInput.value;
+
+        if (!email && !mobile) return;
+
+        fetch(`/create_user?email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}&role=${encodeURIComponent(role)}`, {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(res => res.json())
+        .then(data => {
+            emailError.textContent = data.email_error || "";
+            mobileError.textContent = data.mobile_error || "";
+            submitBtn.disabled = !!(data.email_error || data.mobile_error);
+        });
+    }
+
+    emailInput.addEventListener("blur", validateInputs);
+    mobileInput.addEventListener("blur", validateInputs);
+    roleInput.addEventListener("change", validateInputs);
+});
+</script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {

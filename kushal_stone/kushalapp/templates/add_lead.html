@@ -126,16 +126,14 @@
                         <div id="product_list" style="display:none;">
                             <p><strong>Choose Products:</strong></p>
                             {% for product in products %}
-                            <label><input type="checkbox" name="products" value="{{ product.id }}"> {{ product.name
-                                }}</label><br>
+                            <label><input type="checkbox" name="products" value="{{ product.id }}"> {{ product.name}}</label><br>
                             {% endfor %}
                         </div>
 
                         <div id="service_list" style="display:none;">
                             <p><strong>Choose Services:</strong></p>
                             {% for service in services %}
-                            <label><input type="checkbox" name="services" value="{{ service.id }}"> {{ service.name
-                                }}</label><br>
+                            <label><input type="checkbox" name="services" value="{{ service.id }}"> {{ service.name}}</label><br>
                             {% endfor %}
                         </div>
 
