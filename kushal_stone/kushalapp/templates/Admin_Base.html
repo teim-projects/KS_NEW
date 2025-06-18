@@ -30,7 +30,7 @@
       color: rgb(0, 0, 0);
       position: fixed;
       width: 100%;
-      z-index: 1000;
+      z-index: 100;
       position: fixed;
       top: 0%;
       box-shadow: 0px 5px 5px rgb(169, 169, 169);
@@ -78,7 +78,7 @@
       box-shadow: 2px 0px 10px rgba(101, 117, 255, 0.984);
       border-radius: 1px !important;
       /* Optional for better aesthetics */
-       z-index: 1100;
+       z-index: 1000;
     }
 
     .open-sidebar .sidebar {
@@ -768,6 +768,18 @@
       /* Dark background */
       color: white !important;
     }
+           .applaydarkmode{
+      background: #ffffff;
+      /* Dark background */
+      color: rgb(0, 0, 0) !important;
+    }
+
+     .dark-mode .applaydarkmode{
+      background: #000000;
+      /* Dark background */
+      color: rgb(255, 255, 255) !important;
+    }
+
 
     .dark-mode .sidebar {
       background: #3a3a3a;
@@ -1267,13 +1279,13 @@
 
   </div>
 
-  <div class="sidebar " style="z-index:1;">
+  <div class="sidebar "  >
 
 
     <div class="close-button" id="closeButton">
       <i class="fas fa-times"></i>
     </div>
-    <div class="siderbar-inner mt-5">
+    <div class="siderbar-inner">
       <!-- <div class="logo">
         <img src="{% static 'images/Logo.webp' %}" alt="Logo">
       </div> --> <br>
@@ -1357,6 +1369,7 @@
           <div class="arrow-wrapper">
             <div class="arrow"></div>
           </div>
+        </button>
 
       </center>
     </div>

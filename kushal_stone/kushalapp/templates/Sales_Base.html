@@ -79,12 +79,13 @@
 
     .sidebar {
       height: 100%;
-      width: 290px;
-      position: fixed;
+      width: 300px !important ;
+       position: fixed;
       top: 0 !important;
       left: -300px;
       /* Hidden by default */
       padding: 20px 0 0 0;
+      
       /* Only padding on the top for space */
       overflow-y: auto;
       transition: left 0.3s ease-in-out;
@@ -262,10 +263,7 @@
         height: 80px !important;
       }
 
-      .sidebar {
-        left: -400px;
-         padding-top: 36px !important;
-      }
+     
 
       .header .colaps_icon {
         display: block;
@@ -290,7 +288,7 @@
 
     @media (min-width: 769px) {
       .sidebar {
-        left: -300px;
+        left: -700px;
         /* Sidebar always visible on larger screens */
       }
 
@@ -384,10 +382,7 @@
         /* Show the button on small screens */
       }
 
-      .sidebar {
-        margin-top: 23%;
-        width: 320px;
-      }
+  
     }
 
     .notification {
@@ -465,10 +460,7 @@
         width: 90%;
         /* Adjust width for smaller screens */
       }
-
-      .close-button {
-        padding-top: 40px;
-      }
+ 
     }
 
     .notification {
@@ -1383,147 +1375,65 @@
 
   </div>
 
-  <div class="sidebar ">
-
-
-    <div class="close-button" id="closeButton">
-      <i class="fas fa-times"></i>
-    </div>
-    <div class="siderbar-inner mt-5">
-      <!-- <div class="logo">
-        <img src="{% static 'images/Logo.webp' %}" alt="Logo">
-      </div> -->
-      <ul class="ull">
-        <a class="anac" href="{% url 'sales_dashboard' %}" style="text-decoration: none;">
-          <li>
-            <i class="fas fa-home"></i>Sales Dashboard
-          </li>
-        </a>
-        <a class="anac" href="{% url 'add_lead' %}" style="text-decoration: none;">
-          <li>
-            <i class="fa-regular fa-calendar-plus"></i>Add Lead
-          </li>
-        </a>
-
-        <a class="anac" href="{% url 'my_work' %}" style="text-decoration: none;">
-          <li>
-            <i class="fa-solid fa-check-to-slot"></i>My Work
-          </li>
-        </a> 
-
-                        <a class="anac" href="{% url 'add_quotation_term' %}" style="text-decoration: none;">
-                  <li><i class="fas fa-plus-circle"></i> Create Quotation Term</li>
-                </a>
-
-                <!-- Quotation Term - View -->
-                <a class="anac" href="{% url 'quotation_term_list' %}" style="text-decoration: none;">
-                  <li><i class="fas fa-eye"></i> View Quotation Terms</li>
-                </a>
-                <a class="anac" href="{% url 'quotation'  %}" style="text-decoration: none;">
-                  <li><i class="fas fa-eye"></i> Quotation</li>
-                </a>
-
-                <a class="anac" href="/quotations" style="text-decoration: none;">
-                          <li>
-                      <i class="fa-solid fa-check-to-slot"></i>quotation details
-                    </li>
-                  </a> 
-                          <!-- Invoice Term - Create -->
-                <a class="anac" href="{% url 'add_invoice_term' %}" style="text-decoration: none;">
-                  <li><i class="fas fa-plus-square"></i> Create Invoice Term</li>
-                </a>
-
-                <!-- Invoice Term - View -->
-                <a class="anac" href="{% url 'invoice_term_list' %}" style="text-decoration: none;">
-                  <li><i class="fas fa-eye"></i> View Invoice Terms</li>
-                </a>
-
-
-        
-
-        
-        
-        
-        <a class="anac" href="{% url 'closed_leads' %}" style="text-decoration: none;">
-          <li>
-            <i class="fa-solid fa-store-slash"></i>Close Leads
-          </li>
-        </a>
-
-
-
-
-        </a>
-        <!-- <li class="has-submenu">
-          <i class="fas fa-box"></i> Demo <span class="arrow-down"></span>
-          <div class="submenu">
-            <ul>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
-
-
-              </a>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
-
-
-              </a>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
-
-
-              </a>
-              <a class="anac" href="#">
-                <li>1. Demo</li>
-
-
-              </a>
-            </ul>
-          </div>
-        </li>
-        <li class="has-submenu">
-          <i class="fas fa-user-cog"></i> Demo <span class="arrow-down"></span>
-          <div class="submenu">
-            <ul>
-              <a class="anac" href="#">
-                <li>1 Demo</li>
-              </a>
-              <a class="anac" href="#">
-                <li>2 Demo</li>
-              </a>
-              <a class="anac" href="#">
-                <li>3 Demo</li>
-              </a>
-            </ul>
-          </div>
-        </li> -->
-
-      </ul>
-      <script>
-        // Check if the URL contains the schedule_success parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('schedule_success') === '1') {
-          // Show the notification for 3 seconds
-          const notification = document.getElementById('notification');
-          notification.style.display = 'block';
-          setTimeout(() => {
-            notification.style.display = 'none';
-          }, 3000); // Hide after 3 seconds
-        }
-      </script>
-      <center>
-
-
-
-
-        <button class="mb-5  logoutbtn" data-aos="fade-down">
-          <a href="/logout">Logout</a>
-          <div class="arrow-wrapper">
-            <div class="arrow"></div>
-          </div>
-      </center>
-    </div>
+<div class="sidebar">
+  <div class="close-button" id="closeButton">
+    <i class="fas fa-times"></i>
   </div>
+  <div class="siderbar-inner mt-5">
+    <ul class="ull">
+
+      <a class="anac" href="{% url 'sales_dashboard' %}" style="text-decoration: none;">
+        <li><i class="fas fa-chart-line"></i> Sales Dashboard</li>
+      </a>
+
+      <a class="anac" href="{% url 'add_lead' %}" style="text-decoration: none;">
+        <li><i class="fas fa-user-plus"></i> Add Lead</li>
+      </a>
+
+      <a class="anac" href="{% url 'my_work' %}" style="text-decoration: none;">
+        <li><i class="fas fa-tasks"></i> My Work</li>
+      </a>
+
+      <a class="anac" href="{% url 'add_quotation_term' %}" style="text-decoration: none;">
+        <li><i class="fas fa-file-signature"></i> Create Quotation Term</li>
+      </a>
+
+      <a class="anac" href="{% url 'quotation_term_list' %}" style="text-decoration: none;">
+        <li><i class="fas fa-list"></i> View Quotation Terms</li>
+      </a>
+
+      <a class="anac" href="{% url 'quotation' %}" style="text-decoration: none;">
+        <li><i class="fas fa-file-invoice"></i> Quotation</li>
+      </a>
+
+      <a class="anac" href="/quotations" style="text-decoration: none;">
+        <li><i class="fas fa-file-alt"></i> Quotation Details</li>
+      </a>
+
+      <a class="anac" href="{% url 'add_invoice_term' %}" style="text-decoration: none;">
+        <li><i class="fas fa-file-invoice-dollar"></i> Create Invoice Term</li>
+      </a>
+
+      <a class="anac" href="{% url 'invoice_term_list' %}" style="text-decoration: none;">
+        <li><i class="fas fa-clipboard-list"></i> View Invoice Terms</li>
+      </a>
+
+      <a class="anac" href="{% url 'closed_leads' %}" style="text-decoration: none;">
+        <li><i class="fas fa-user-slash"></i> Close Leads</li>
+      </a>
+    </ul>
+
+    <center>
+      <button class="mb-5 mt-5 logoutbtn">
+        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <div class="arrow-wrapper">
+          <div class="arrow"></div>
+        </div>
+      </button>
+    </center>
+  </div>
+</div>
+
 
   <!-- Your HTML content -->
 
