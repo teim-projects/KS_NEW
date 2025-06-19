@@ -426,30 +426,27 @@ def edit_service(request, pk):
 
 
 
-
-# views.py
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Product, Service, Lead, CustomUser
-from django.contrib.auth.decorators import login_required
-
 
 @login_required
 def add_lead(request):
     products = Product.objects.all()
     services = Service.objects.all()
-    sales_persons = CustomUser.objects.filter(role='Sales')  # corrected
+    sales_persons = CustomUser.objects.filter(role='Sales')
     follow_up_persons = CustomUser.objects.filter(role='Sales')
 
     if request.method == 'POST':
         data = request.POST
+        files = request.FILES
         errors = {}
 
         required_fields = [
-            'full_name', 'mobile_number', 'email', 'requirements',
-            'address', 'architect_name', 'architect_number',
-            'source', 'enquiry_date', 'sales_person',
-            'customer_segment', 'next_followup_date', 'follow_up_person'
+            'full_name', 'mobile_number', 'email', 'requirements', 'address',
+            'architect_name', 'architect_number', 'source', 'enquiry_date',
+            'sales_person', 'customer_segment', 'next_followup_date', 'follow_up_person'
         ]
 
         for field in required_fields:
@@ -458,6 +455,9 @@ def add_lead(request):
 
         if data.get('source') == 'Other' and not data.get('source_other'):
             errors['source_other'] = "Please specify other source."
+
+        if data.get('quotation_given') == 'Yes' and not data.get('quotation_amount'):
+            errors['quotation_amount'] = "Enter the quotation amount."
 
         if errors:
             return render(request, 'add_lead.html', {
@@ -483,7 +483,15 @@ def add_lead(request):
             sales_person_id=data['sales_person'],
             customer_segment=data['customer_segment'],
             next_followup_date=data['next_followup_date'],
-            follow_up_person_id=data['follow_up_person']
+            follow_up_person_id=data['follow_up_person'],
+            first_call_date=data.get('first_call_date') or None,
+            customer_visited=data.get('customer_visited'),
+            inspection_done=data.get('inspection_done'),
+            lead_type=data.get('lead_type'),
+            quotation_given=data.get('quotation_given'),
+            quotation_amount=data.get('quotation_amount') or None,
+            description=data.get('description'),
+            file_upload=files.get('file_upload')
         )
 
         if data['requirements'] == 'products':
@@ -503,6 +511,7 @@ def add_lead(request):
         'sales_persons': sales_persons,
         'follow_up_persons': follow_up_persons
     })
+
 
 
 @login_required

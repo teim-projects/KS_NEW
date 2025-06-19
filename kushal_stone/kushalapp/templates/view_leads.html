@@ -31,44 +31,101 @@
 <div class="main">
     <div class="container form-row">
         <div class="row form-row-inner">
-            <!-- <div class="col-md-2"></div> -->
             <div class="col-md-12 form-box ">
-                
-    <h2 class="text-center">Leads List</h2>
-    <a href="{% url 'add_lead' %}" class="btn btn-outline-info">+ Add New Lead</a><br><br>
 
-    <div style="max-height: 400px; overflow-y: auto;" class="table-box">
-        <table class="table table-bordered table-striped table-hover" style="min-width: 600px;">
-            <thead class="thead-dark" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
-        <tr>
-            <th>Full Name</th>
-            <th>Mobile</th>
-            <th>Email</th>
-            <th>Sales Person</th>
-            <th style="width: 100px;">Follow-up Date</th>
-           
-        </tr>
-        </thead>
-        {% for lead in leads %}
-        <tr>
-            <td>{{ lead.full_name }}</td>
-            <td>{{ lead.mobile_number }}</td>
-            <td>{{ lead.email }}</td>
-            <td>{{ lead.sales_person.username }}</td>
-            <td>{{ lead.next_followup_date }}</td>
-           
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="6">No leads found.</td>
-        </tr>
-        {% endfor %}
-    </table>
-   </div>
+                <h2 class="text-center">Leads List</h2>
+                <a href="{% url 'add_lead' %}" class="btn btn-outline-info">+ Add New Lead</a><br><br>
+
+                <div style="max-height: 500px; overflow-x: auto; overflow-y: auto;" class="table-box">
+                    <table class="table table-bordered table-striped table-hover" style="min-width: 1200px;">
+                        <thead class="thead-dark" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Mobile</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Architect Name</th>
+                                <th>Architect Number</th>
+                                <th>Source</th>
+                                <th>Other Source</th>
+                                <th>Enquiry Date</th>
+                                <th>Sales Person</th>
+                                <th>Follow-Up Person</th>
+                                <th>Customer Segment</th>
+                                <th>Follow-Up Date</th>
+                                <th>First Call Date</th>
+                                <th>Customer Visited</th>
+                                <th>Inspection Done</th>
+                                <th>Type of Lead</th>
+                                <th>Quotation Given</th>
+                                <th>Quotation Amount</th>
+                                <th>Description</th>
+                                <th>File Upload</th>
+                                <th>Products</th>
+                                <th>Services</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lead in leads %}
+                            <tr>
+                                <td>{{ lead.full_name }}</td>
+                                <td>{{ lead.mobile_number }}</td>
+                                <td>{{ lead.email }}</td>
+                                <td>{{ lead.address }}</td>
+                                <td>{{ lead.architect_name }}</td>
+                                <td>{{ lead.architect_number }}</td>
+                                <td>{{ lead.source }}</td>
+                                <td>{{ lead.source_other }}</td>
+                                <td>{{ lead.enquiry_date }}</td>
+                                <td>{{ lead.sales_person.username }}</td>
+                                <td>{{ lead.follow_up_person.username }}</td>
+                                <td>{{ lead.customer_segment }}</td>
+                                <td>{{ lead.next_followup_date }}</td>
+                                <td>{{ lead.first_call_date }}</td>
+                                <td>{{ lead.customer_visited }}</td>
+                                <td>{{ lead.inspection_done }}</td>
+                                <td>{{ lead.lead_type }}</td>
+                                <td>{{ lead.quotation_given }}</td>
+                                <td>
+                                    {% if lead.quotation_amount %}
+                                        ₹{{ lead.quotation_amount|floatformat:2 }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>{{ lead.description }}</td>
+                                <td>
+                                    {% if lead.file_upload %}
+                                        <a href="{{ lead.file_upload.url }}" target="_blank">View</a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% for product in lead.products.all %}
+                                        <span class="badge bg-secondary">{{ product.name }}</span><br>
+                                    {% empty %}
+                                        -
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for service in lead.services.all %}
+                                        <span class="badge bg-primary">{{ service.name }}</span><br>
+                                    {% empty %}
+                                        -
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="23" class="text-center">No leads found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
             </div>
-            <!-- <div class="col-md-2"></div> -->
-
         </div>
     </div>
 </div>

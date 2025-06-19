@@ -54,112 +54,180 @@
                     <a href="{% url 'view_leads' %}" class="btn btn-outline-dark form-control mt-5">View All
                         Leads</a><br><br>
 
-                    <form method="post" id="leadForm">
-                        {% csrf_token %}
+                   <form method="post" id="leadForm" enctype="multipart/form-data">
+    {% csrf_token %}
 
-                        <label>Full Name:</label>
-                        <input class="form-control" type="text" name="full_name" required><br>
+    <label>Full Name:</label>
+    <input class="form-control" type="text" name="full_name" required><br>
 
-                        <label>Mobile Number:</label>
-                        <input class="form-control" type="text" name="mobile_number" required><br>
+    <label>Mobile Number:</label>
+    <input class="form-control" type="text" name="mobile_number" required><br>
 
-                        <label>Email:</label>
-                        <input class="form-control" type="email" name="email" required><br>
+    <label>Email:</label>
+    <input class="form-control" type="email" name="email" required><br>
 
-                        <label>Address:</label>
-                        <textarea class="form-control" name="address" required></textarea><br>
+    <label>Address:</label>
+    <textarea class="form-control" name="address" required></textarea><br>
 
-                        <label>Architect Name:</label>
-                        <input class="form-control" type="text" name="architect_name"><br>
+    <label>Architect Name:</label>
+    <input class="form-control" type="text" name="architect_name"><br>
 
-                        <label>Architect Contact:</label>
-                        <input class="form-control" type="text" name="architect_number"><br>
+    <label>Architect Contact:</label>
+    <input class="form-control" type="text" name="architect_number"><br>
 
-                        <label>Enquiry Date:</label>
-                        <input class="form-control" type="date" name="enquiry_date"><br>
+    <label>Enquiry Date:</label>
+    <input class="form-control" type="date" name="enquiry_date"><br>
 
-                        <label>Sales Person:</label>
-                        <select name="sales_person" class="form-control">
-                            {% for person in sales_persons %}
-                            <option value="{{ person.id }}">{{ person.username }}</option>
-                            {% endfor %}
-                        </select><br>
+    <label>Sales Person:</label>
+    <select name="sales_person" class="form-control">
+        {% for person in sales_persons %}
+        <option value="{{ person.id }}">{{ person.username }}</option>
+        {% endfor %}
+    </select><br>
 
-                        <label>Follow-Up Person:</label>
-                        <select class="form-control" name="follow_up_person">
-                            {% for person in follow_up_persons %}
-                            <option value="{{ person.id }}">{{ person.username }}</option>
-                            {% endfor %}
-                        </select><br>
+    <label>Follow-Up Person:</label>
+    <select class="form-control" name="follow_up_person">
+        {% for person in follow_up_persons %}
+        <option value="{{ person.id }}">{{ person.username }}</option>
+        {% endfor %}
+    </select><br>
 
-                        <label>Customer Segment:</label>
-                        <select class="form-control" name="customer_segment">
-                            <option value="Retail/individual">Retail/individual</option>
-                            <option value="B2B">B2B</option>
-                            <option value="Reseller">Reseller</option>
-                            <option value="Commercial/Corporate">Commercial/Corporate</option>
-                        </select><br>
+    <label>Customer Segment:</label>
+    <select class="form-control" name="customer_segment">
+        <option value="Retail/individual">Retail/individual</option>
+        <option value="B2B">B2B</option>
+        <option value="Reseller">Reseller</option>
+        <option value="Commercial/Corporate">Commercial/Corporate</option>
+    </select><br>
 
-                        <label>Follow-Up Date:</label>
-                        <input class="form-control" type="date" name="next_followup_date"><br>
+    <label>Follow-Up Date:</label>
+    <input class="form-control" type="date" name="next_followup_date"><br>
 
-                        <label>Source:</label>
-                        <select class="form-control" name="source" onchange="toggleOtherSource(this)">
-                            <option value="">--Select--</option>
-                            <option value="Instagram">Instagram</option>
-                            <option value="Facebook">Facebook</option>
-                            <option value="Indiamart">Indiamart</option>
-                            <option value="Google">Google</option>
-                            <option value="Reference">Reference</option>
-                            <option value="Other">Other</option>
-                        </select><br>
+    <label>Source:</label>
+    <select class="form-control" name="source" onchange="toggleOtherSource(this)">
+        <option value="">--Select--</option>
+        <option value="Instagram">Instagram</option>
+        <option value="Facebook">Facebook</option>
+        <option value="Indiamart">Indiamart</option>
+        <option value="Google">Google</option>
+        <option value="Reference">Reference</option>
+        <option value="Other">Other</option>
+    </select><br>
 
-                        <div id="other_source_field" style="display:none;">
-                            <label>Other Source:</label>
-                            <input class="form-control" type="text" name="source_other"><br>
-                        </div>
+    <div id="other_source_field" style="display:none;">
+        <label>Other Source:</label>
+        <input class="form-control" type="text" name="source_other"><br>
+    </div>
 
-                        <label><input type="checkbox" id="show_products" onchange="toggleProducts()"> Products</label>
-                        <label><input type="checkbox" id="show_services" onchange="toggleServices()">
-                            Services</label><br>
+    <label><input type="checkbox" id="show_products" onchange="toggleProducts()"> Products</label>
+    <label><input type="checkbox" id="show_services" onchange="toggleServices()"> Services</label><br>
 
-                        <div id="product_list" style="display:none;">
-                            <p><strong>Choose Products:</strong></p>
-                            {% for product in products %}
-                            <label><input type="checkbox" name="products" value="{{ product.id }}"> {{ product.name}}</label><br>
-                            {% endfor %}
-                        </div>
+    <div id="product_list" style="display:none;">
+        <p><strong>Choose Products:</strong></p>
+        {% for product in products %}
+        <label><input type="checkbox" name="products" value="{{ product.id }}"> {{ product.name}}</label><br>
+        {% endfor %}
+    </div>
 
-                        <div id="service_list" style="display:none;">
-                            <p><strong>Choose Services:</strong></p>
-                            {% for service in services %}
-                            <label><input type="checkbox" name="services" value="{{ service.id }}"> {{ service.name}}</label><br>
-                            {% endfor %}
-                        </div>
+    <div id="service_list" style="display:none;">
+        <p><strong>Choose Services:</strong></p>
+        {% for service in services %}
+        <label><input type="checkbox" name="services" value="{{ service.id }}"> {{ service.name}}</label><br>
+        {% endfor %}
+    </div>
 
-                        <input class="form-control" type="hidden" name="requirements" id="requirements">
+    <input class="form-control" type="hidden" name="requirements" id="requirements">
 
-                        <button type="submit" class="submit-buttons mb-5">Submit</button>
-                        <!-- From Uiverse.io by Jedi-hongbin -->
-                        <div class="row mb-3" style="display: flex;      align-items: center; justify-content: center;
-">
+    <!-- NEW FIELDS -->
+    <label>First Call Date:</label>
+    <input class="form-control" type="date" name="first_call_date"><br>
 
-                            <button class="buttonback mr-5 " onclick="history.back()">
-                                <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1"
-                                    viewBox="0 0 1024 1024">
-                                    <path
-                                        d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
-                                    </path>
-                                </svg>
-                                <span>Back</span>
-                            </button>
+    <label>Customer Visited:</label>
+    <select class="form-control" name="customer_visited">
+        <option value="">--Select--</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </select><br>
 
-                            <button class="buttonback ">
-<a href="{% url 'sales_dashboard' %}">                                Home</a> 
-                            </button>
+    <label>Inspection Onsite Done?</label>
+    <select class="form-control" name="inspection_done">
+        <option value="">--Select--</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </select><br>
 
-                        </div>
-                    </form>
+    <label>Type of Lead:</label>
+    <select class="form-control" name="lead_type">
+        <option value="">--Select--</option>
+        <option value="Hot">Hot</option>
+        <option value="Warm">Warm</option>
+        <option value="Cold">Cold</option>
+        <option value="Not Interested">Not Interested</option>
+        <option value="Irrelevant">Irrelevant</option>
+    </select><br>
+
+    <label>Quotation Given:</label>
+    <select class="form-control" name="quotation_given" onchange="toggleQuotationAmount(this)">
+        <option value="">--Select--</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </select><br>
+
+    <div id="quotation_amount_field" style="display:none;">
+        <label>Quotation Amount (₹):</label>
+        <input class="form-control" type="number" step="0.01" name="quotation_amount"><br>
+    </div>
+
+    <label>Description:</label>
+    <textarea class="form-control" name="description" rows="4"></textarea><br>
+
+    <label>Upload File (PDF/Image):</label>
+    <input class="form-control" type="file" name="file_upload" accept=".pdf,image/*"><br>
+
+    <button type="submit" class="submit-buttons mb-5">Submit</button>
+
+    <div class="row mb-3" style="display: flex; align-items: center; justify-content: center;">
+        <button class="buttonback mr-5" onclick="history.back()">
+            <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+                <path
+                    d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+                </path>
+            </svg>
+            <span>Back</span>
+        </button>
+
+        <button class="buttonback">
+            <a href="{% url 'sales_dashboard' %}">Home</a>
+        </button>
+    </div>
+</form>
+
+<script>
+    function toggleOtherSource(select) {
+        document.getElementById('other_source_field').style.display = (select.value === 'Other') ? 'block' : 'none';
+    }
+
+    function toggleQuotationAmount(select) {
+        document.getElementById('quotation_amount_field').style.display = (select.value === 'Yes') ? 'block' : 'none';
+    }
+
+    function toggleProducts() {
+        const products = document.getElementById('product_list');
+        const services = document.getElementById('service_list');
+        document.getElementById('requirements').value = 'products';
+        products.style.display = 'block';
+        services.style.display = 'none';
+    }
+
+    function toggleServices() {
+        const products = document.getElementById('product_list');
+        const services = document.getElementById('service_list');
+        document.getElementById('requirements').value = 'services';
+        services.style.display = 'block';
+        products.style.display = 'none';
+    }
+</script>
+
                     {% if errors %}
                     <div class="error">
                         <ul>

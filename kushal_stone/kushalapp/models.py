@@ -59,7 +59,6 @@ class InvoiceTerm(models.Model):
     def __str__(self):
         return self.description[:50]
 
-
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -82,6 +81,19 @@ class Lead(models.Model):
         ('Other', 'Other')
     ]
 
+    LEAD_TYPE_CHOICES = [
+        ('Hot', 'Hot'),
+        ('Warm', 'Warm'),
+        ('Cold', 'Cold'),
+        ('Not Interested', 'Not Interested'),
+        ('Irrelevant', 'Irrelevant'),
+    ]
+
+    YES_NO_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No'),
+    ]
+
     full_name = models.CharField(max_length=100)
     mobile_number = models.CharField(max_length=15)
     email = models.EmailField()
@@ -94,43 +106,28 @@ class Lead(models.Model):
     source = models.CharField(max_length=50, choices=SOURCE_CHOICES)
     source_other = models.CharField(max_length=100, blank=True, null=True)
     enquiry_date = models.DateField()
-    sales_person = models.ForeignKey(
-        CustomUser,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='sales_person'
-    )
+    sales_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='sales_person')
     customer_segment = models.CharField(max_length=50, choices=CUSTOMER_SEGMENT_CHOICES)
     next_followup_date = models.DateField(null=True, blank=True)
-    follow_up_person = models.ForeignKey(
-        CustomUser,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='follow_up_person'
-    )
+    follow_up_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='follow_up_person')
     is_closed = models.BooleanField(default=False)
     win_status = models.BooleanField(null=True, blank=True)
-    closed_by = models.ForeignKey(
-        CustomUser,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='closed_leads'
-    )
+    closed_by = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL, related_name='closed_leads')
+    assigned_to_operations = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL, related_name='assigned_operations_leads')
 
-    # New field to assign closed win leads to Operations
-    assigned_to_operations = models.ForeignKey(
-    CustomUser,
-    null=True,
-    blank=True,
-    on_delete=models.SET_NULL,
-    related_name='assigned_operations_leads'
-)
-
+    # New Fields
+    first_call_date = models.DateField(null=True, blank=True)
+    customer_visited = models.CharField(max_length=10, choices=YES_NO_CHOICES, null=True, blank=True)
+    inspection_done = models.CharField(max_length=10, choices=YES_NO_CHOICES, null=True, blank=True)
+    lead_type = models.CharField(max_length=20, choices=LEAD_TYPE_CHOICES, null=True, blank=True)
+    quotation_given = models.CharField(max_length=10, choices=YES_NO_CHOICES, null=True, blank=True)
+    quotation_amount = models.FloatField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    file_upload = models.FileField(upload_to='lead_files/', null=True, blank=True)
 
     def __str__(self):
         return self.full_name
-    
+
 from django.utils import timezone
 
 
