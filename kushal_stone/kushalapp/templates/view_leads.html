@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <title>All Leads</title>
     <style>
         .form-row{
@@ -28,107 +30,122 @@
 </head>
 <body>
     {% include 'Sales_Base.html' %}
+<!-- Include Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <div class="main">
-    <div class="container form-row">
-        <div class="row form-row-inner">
-            <div class="col-md-12 form-box ">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
 
-                <h2 class="text-center">Leads List</h2>
-                <a href="{% url 'add_lead' %}" class="btn btn-outline-info">+ Add New Lead</a><br><br>
+                <h2 class="text-center mt-3">Leads List</h2>
+                <a href="{% url 'add_lead' %}" class="btn btn-outline-info mb-3">+ Add New Lead</a>
 
-                <div style="max-height: 500px; overflow-x: auto; overflow-y: auto;" class="table-box">
-                    <table class="table table-bordered table-striped table-hover" style="min-width: 1200px;">
-                        <thead class="thead-dark" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light sticky-top">
                             <tr>
+                                <th>S.No.</th>
+                                <th>+</th>
                                 <th>Full Name</th>
                                 <th>Mobile</th>
                                 <th>Email</th>
-                                <th>Address</th>
-                                <th>Architect Name</th>
-                                <th>Architect Number</th>
-                                <th>Source</th>
-                                <th>Other Source</th>
-                                <th>Enquiry Date</th>
                                 <th>Sales Person</th>
-                                <th>Follow-Up Person</th>
-                                <th>Customer Segment</th>
                                 <th>Follow-Up Date</th>
-                                <th>First Call Date</th>
-                                <th>Customer Visited</th>
-                                <th>Inspection Done</th>
-                                <th>Type of Lead</th>
-                                <th>Quotation Given</th>
-                                <th>Quotation Amount</th>
-                                <th>Description</th>
-                                <th>File Upload</th>
-                                <th>Products</th>
-                                <th>Services</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for lead in leads %}
                             <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
+                                        +
+                                    </button>
+                                </td>
                                 <td>{{ lead.full_name }}</td>
                                 <td>{{ lead.mobile_number }}</td>
                                 <td>{{ lead.email }}</td>
-                                <td>{{ lead.address }}</td>
-                                <td>{{ lead.architect_name }}</td>
-                                <td>{{ lead.architect_number }}</td>
-                                <td>{{ lead.source }}</td>
-                                <td>{{ lead.source_other }}</td>
-                                <td>{{ lead.enquiry_date }}</td>
                                 <td>{{ lead.sales_person.username }}</td>
-                                <td>{{ lead.follow_up_person.username }}</td>
-                                <td>{{ lead.customer_segment }}</td>
                                 <td>{{ lead.next_followup_date }}</td>
-                                <td>{{ lead.first_call_date }}</td>
-                                <td>{{ lead.customer_visited }}</td>
-                                <td>{{ lead.inspection_done }}</td>
-                                <td>{{ lead.lead_type }}</td>
-                                <td>{{ lead.quotation_given }}</td>
-                                <td>
-                                    {% if lead.quotation_amount %}
-                                        ₹{{ lead.quotation_amount|floatformat:2 }}
-                                    {% else %}
-                                        -
-                                    {% endif %}
-                                </td>
-                                <td>{{ lead.description }}</td>
-                                <td>
-                                    {% if lead.file_upload %}
-                                        <a href="{{ lead.file_upload.url }}" target="_blank">View</a>
-                                    {% else %}
-                                        -
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% for product in lead.products.all %}
-                                        <span class="badge bg-secondary">{{ product.name }}</span><br>
-                                    {% empty %}
-                                        -
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for service in lead.services.all %}
-                                        <span class="badge bg-primary">{{ service.name }}</span><br>
-                                    {% empty %}
-                                        -
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="23" class="text-center">No leads found.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
 
+                {% for lead in leads %}
+                <!-- Lead Detail Modal -->
+                <div class="modal fade" id="leadModal{{ forloop.counter }}" tabindex="-1" aria-labelledby="leadModalLabel{{ forloop.counter }}" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Lead Details - {{ lead.full_name }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr><th>Full Name</th><td>{{ lead.full_name }}</td></tr>
+                                        <tr><th>Mobile</th><td>{{ lead.mobile_number }}</td></tr>
+                                        <tr><th>Email</th><td>{{ lead.email }}</td></tr>
+                                        <tr><th>Address</th><td>{{ lead.address }}</td></tr>
+                                        <tr><th>Architect Name</th><td>{{ lead.architect_name }}</td></tr>
+                                        <tr><th>Architect Number</th><td>{{ lead.architect_number }}</td></tr>
+                                        <tr><th>Source</th><td>{{ lead.source }}</td></tr>
+                                        <tr><th>Other Source</th><td>{{ lead.source_other }}</td></tr>
+                                        <tr><th>Enquiry Date</th><td>{{ lead.enquiry_date }}</td></tr>
+                                        <tr><th>Sales Person</th><td>{{ lead.sales_person.username }}</td></tr>
+                                        <tr><th>Follow-Up Person</th><td>{{ lead.follow_up_person.username }}</td></tr>
+                                        <tr><th>Customer Segment</th><td>{{ lead.customer_segment }}</td></tr>
+                                        <tr><th>Follow-Up Date</th><td>{{ lead.next_followup_date }}</td></tr>
+                                        <tr><th>First Call Date</th><td>{{ lead.first_call_date }}</td></tr>
+                                        <tr><th>Customer Visited</th><td>{{ lead.customer_visited }}</td></tr>
+                                        <tr><th>Inspection Done</th><td>{{ lead.inspection_done }}</td></tr>
+                                        <tr><th>Type of Lead</th><td>{{ lead.lead_type }}</td></tr>
+                                        <tr><th>Quotation Given</th><td>{{ lead.quotation_given }}</td></tr>
+                                        <tr><th>Quotation Amount</th><td>₹{{ lead.quotation_amount|floatformat:2 }}</td></tr>
+                                        <tr><th>Description</th><td>{{ lead.description }}</td></tr>
+                                        <tr>
+                                            <th>File Upload</th>
+                                            <td>
+                                                {% if lead.file_upload %}
+                                                <a href="{{ lead.file_upload.url }}" target="_blank">View File</a>
+                                                {% else %}-{% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Products</th>
+                                            <td>
+                                                {% for product in lead.products.all %}
+                                                <span class="badge bg-secondary">{{ product.name }}</span>
+                                                {% empty %}-{% endfor %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Services</th>
+                                            <td>
+                                                {% for service in lead.services.all %}
+                                                <span class="badge bg-primary">{{ service.name }}</span>
+                                                {% empty %}-{% endfor %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
             </div>
         </div>
     </div>
 </div>
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     {%include 'footer.html'%}
 
 </body>
