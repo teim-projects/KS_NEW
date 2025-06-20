@@ -5,10 +5,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Bootstrap CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Your Custom CSS -->
-  <link rel="stylesheet" href="{% static 'css/customer.css' %}">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   <!-- FontAwesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <!-- Google Fonts -->
@@ -84,6 +84,13 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+    .close-btn {
+      float: right;
+      cursor: pointer;
+      font-size: 35px;
+      color: red;
+    }
 
 /* Header */
 .header {
@@ -742,85 +749,55 @@ li{
   <link rel='stylesheet' href='https://unpkg.com/aos@2.3.0/dist/aos.css'>
 
 </head>
-
 <body>
-  <script>
-        function goBackAndRefresh() {
-            let count = 0;
-            const maxSteps = 20; // prevent infinite loop
-            const delay = 300;
-
-            const interval = setInterval(() => {
-                // Stop condition
-                if (count >= maxSteps || !document.referrer.includes(location.hostname)) {
-                    clearInterval(interval);
-                    location.reload(); // 🔄 Refresh the final page
-                    return;
-                }
-
-                history.back(); // ⬅ Go back one page
-                count++;
-            }, delay);
-        }
-    </script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init(); // Initialize AOS
-  </script>
+  <!-- Dark Mode Toggle -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const modeEmoji = document.getElementById("modeEmoji");
-
-      // Check user preference in localStorage
       if (localStorage.getItem("darkMode") === "enabled") {
         document.body.classList.add("dark-mode");
-        modeEmoji.innerHTML = "🌙"; // Show Moon in dark mode
+        modeEmoji.innerHTML = "🌙";
       }
     });
 
     function toggleDarkMode() {
       const modeEmoji = document.getElementById("modeEmoji");
       document.body.classList.toggle("dark-mode");
-
-      // Toggle emoji based on mode
       if (document.body.classList.contains("dark-mode")) {
         localStorage.setItem("darkMode", "enabled");
-        modeEmoji.innerHTML = "🌙"; // Show Moon in dark mode
+        modeEmoji.innerHTML = "🌙";
       } else {
         localStorage.setItem("darkMode", "disabled");
-        modeEmoji.innerHTML = "🔆"; // Show Sun in light mode
+        modeEmoji.innerHTML = "🔆";
       }
     }
   </script>
+
+  <!-- Header Section -->
   <div class="header" style="width: 100%;" data-aos="fade-down">
     <div class="colaps_icon" id="colaps_icon">
       <i class="fas fa-bars"></i>
     </div>
 
-    <div class="navbar-header ">
-      <a class="navbar-brand " href="https://www.kushalstone.com/" target="_blank">
-        <span class="navbar-header_logo" style="color: #1C144D; font-waight: 700px;">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="https://www.kushalstone.com/" target="_blank">
+        <span class="navbar-header_logo" style="color: #1C144D; font-weight: 700;">
           Kushal Stone
         </span>
-        <!-- <img src="{% static 'images/Logo.webp' %}" alt="Logo" style="height: 90px;   margin-bottom: 5px; " class="navbar-header_logo"> -->
       </a>
     </div>
 
     <span class="headdingsalse btn-shine">Sales Dashboard</span>
 
     <div class="navbar-header tem">
-      <a class="navbar-brand " href="https://chronoanalytics.in/">
-        <img
-          src="https://png.pngtree.com/png-clipart/20240316/original/pngtree-man-profile-account-picture-character-png-image_14599291.png"
-          alt="Logo" class="imgg" style="height: 50px;   margin-bottom: 8px; ">
+      <a class="navbar-brand" href="https://chronoanalytics.in/">
+        <img src="https://png.pngtree.com/png-clipart/20240316/original/pngtree-man-profile-account-picture-character-png-image_14599291.png"
+             alt="Logo" class="imgg" style="height: 50px; margin-bottom: 8px;">
       </a>
     </div>
 
-
-
-    <!-- From Uiverse.io by JustCode14 -->
-    <label class="switch toggle-btn" style="position: fixed; right:80px; top:15px;">
+    <!-- Dark Mode Switch -->
+    <label class="switch toggle-btn" style="position: fixed; right: 80px; top: 15px;">
       <input checked="true" id="checkbox" onclick="toggleDarkMode()" type="checkbox" />
       <span class="slider">
         <div class="star star_1"></div>
@@ -828,119 +805,83 @@ li{
         <div class="star star_3"></div>
         <svg viewBox="0 0 16 16" class="cloud_1 cloud">
           <path transform="matrix(.77976 0 0 .78395-299.99-418.63)" fill="#fff"
-            d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925">
+                d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925">
           </path>
         </svg>
       </span>
     </label>
-
   </div>
 
-<div class="sidebar">
-  <div class="close-button" id="closeButton">
-    <i class="fas fa-times"></i>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="close-button" id="closeButton">
+      <i class="fas fa-times"></i>
+    </div>
+    <div class="siderbar-inner mt-5">
+      <ul class="ull">
+        <a class="anac" href="{% url 'sales_dashboard' %}">
+          <li><i class="fas fa-chart-line"></i> Sales Dashboard</li>
+        </a>
+        <a class="anac" href="{% url 'add_lead' %}">
+          <li><i class="fas fa-user-plus"></i> Add Lead</li>
+        </a>
+        <a class="anac" href="{% url 'my_work' %}">
+          <li><i class="fas fa-tasks"></i> My Work</li>
+        </a>
+        <a class="anac" href="{% url 'add_quotation_term' %}">
+          <li><i class="fas fa-file-signature"></i> Create Quotation Term</li>
+        </a>
+        <a class="anac" href="{% url 'quotation_term_list' %}">
+          <li><i class="fas fa-list"></i> View Quotation Terms</li>
+        </a>
+        <a class="anac" href="{% url 'quotation' %}">
+          <li><i class="fas fa-file-invoice"></i> Quotation</li>
+        </a>
+        <a class="anac" href="/quotations">
+          <li><i class="fas fa-file-alt"></i> Quotation Details</li>
+        </a>
+        <a class="anac" href="{% url 'add_invoice_term' %}">
+          <li><i class="fas fa-file-invoice-dollar"></i> Create Invoice Term</li>
+        </a>
+        <a class="anac" href="{% url 'invoice_term_list' %}">
+          <li><i class="fas fa-clipboard-list"></i> View Invoice Terms</li>
+        </a>
+        <a class="anac" href="{% url 'closed_leads' %}">
+          <li><i class="fas fa-user-slash"></i> Close Leads</li>
+        </a>
+      </ul>
+
+      <center>
+        <button class="mb-5 mt-5 logoutbtn">
+          <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <div class="arrow-wrapper"><div class="arrow"></div></div>
+        </button>
+      </center>
+    </div>
   </div>
-  <div class="siderbar-inner mt-5">
-    <ul class="ull">
 
-      <a class="anac" href="{% url 'sales_dashboard' %}" style="text-decoration: none;">
-        <li><i class="fas fa-chart-line"></i> Sales Dashboard</li>
-      </a>
-
-      <a class="anac" href="{% url 'add_lead' %}" style="text-decoration: none;">
-        <li><i class="fas fa-user-plus"></i> Add Lead</li>
-      </a>
-
-      <a class="anac" href="{% url 'my_work' %}" style="text-decoration: none;">
-        <li><i class="fas fa-tasks"></i> My Work</li>
-      </a>
-
-      <a class="anac" href="{% url 'add_quotation_term' %}" style="text-decoration: none;">
-        <li><i class="fas fa-file-signature"></i> Create Quotation Term</li>
-      </a>
-
-      <a class="anac" href="{% url 'quotation_term_list' %}" style="text-decoration: none;">
-        <li><i class="fas fa-list"></i> View Quotation Terms</li>
-      </a>
-
-      <a class="anac" href="{% url 'quotation' %}" style="text-decoration: none;">
-        <li><i class="fas fa-file-invoice"></i> Quotation</li>
-      </a>
-
-      <a class="anac" href="/quotations" style="text-decoration: none;">
-        <li><i class="fas fa-file-alt"></i> Quotation Details</li>
-      </a>
-
-      <a class="anac" href="{% url 'add_invoice_term' %}" style="text-decoration: none;">
-        <li><i class="fas fa-file-invoice-dollar"></i> Create Invoice Term</li>
-      </a>
-
-      <a class="anac" href="{% url 'invoice_term_list' %}" style="text-decoration: none;">
-        <li><i class="fas fa-clipboard-list"></i> View Invoice Terms</li>
-      </a>
-
-      <a class="anac" href="{% url 'closed_leads' %}" style="text-decoration: none;">
-        <li><i class="fas fa-user-slash"></i> Close Leads</li>
-      </a>
-    </ul>
-
-    <center>
-      <button class="mb-5 mt-5 logoutbtn">
-        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        <div class="arrow-wrapper">
-          <div class="arrow"></div>
-        </div>
-      </button>
-    </center>
-  </div>
-</div>
-
-
-  <!-- Your HTML content -->
-
-  <!-- Move the script here -->
+  <!-- Sidebar Logic -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const submenuItems = document.querySelectorAll('.has-submenu');
-
-      submenuItems.forEach(item => {
-        item.addEventListener('click', () => {
-          // Toggle the submenu visibility
-          const submenu = item.querySelector('.submenu');
-          if (submenu) {
-            submenu.classList.toggle('show');
-          }
-        });
-      });
-
       const colaps_icon = document.getElementById('colaps_icon');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('overlay');
       const closeButton = document.getElementById('closeButton');
 
-      if (colaps_icon) {
-        colaps_icon.addEventListener('click', () => {
-          document.body.classList.toggle('open-sidebar');
-        });
-      }
+      colaps_icon?.addEventListener('click', () => {
+        document.body.classList.toggle('open-sidebar');
+      });
 
-      if (overlay) {
-        overlay.addEventListener('click', () => {
-          document.body.classList.remove('open-sidebar');
-        });
-      }
-
-      if (closeButton) {
-        closeButton.addEventListener('click', () => {
-          document.body.classList.remove('open-sidebar');
-        });
-      }
+      closeButton?.addEventListener('click', () => {
+        document.body.classList.remove('open-sidebar');
+      });
     });
   </script>
 
-  <!-- Bootstrap JS (Popper.js included) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+ 
+  <!-- AOS Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
 </body>
 
 </html>
