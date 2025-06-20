@@ -90,16 +90,22 @@
 <div class="main" style="min-height: 100vh;">
   <div class="container" style="margin-top:100px;">
         <div class="form-container animate__animated animate__fadeInUp">
+                 <div class="backgo">
+                                  <span onclick="goBackAndRefresh()"
+                                style="float: right; cursor: pointer; color:red; font-size:20px;" class="mb-1">X</span>
+        </div>
             <h2>Add Quotation Term</h2>
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="description">Description:</label>
+                    <label for="description">Description <span class="star">*</span></label>
                     <textarea name="description" id="description" rows="4" class="form-control" required placeholder="Enter quotation term here..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-submit">Add Term</button>
-            </form>
-            <a href="{% url 'quotation_term_list' %}" class="back-link">← Back to Quotation Terms</a>
+<center>
+                    <button type="submit" class="btn btn-success mt-3 mb-3 btn-submit w-50">Add Term</button>
+
+</center>            </form>
+            <a href="{% url 'quotation_term_list' %}" class="back-link text-start"> View Quotation Terms</a>
         </div>
     </div>
 </div>
