@@ -88,7 +88,7 @@ body {
     .close-btn {
       float: right;
       cursor: pointer;
-      font-size: 35px;
+      font-size: 20px;
       color: red;
     }
 
@@ -741,10 +741,70 @@ body {
   .header .colaps_icon {
     display: inline-block;
   }
+  
 }
 li{
   padding: 0px;
 }
+
+/* Default for desktop/laptop */
+.toggle-btndark {
+  position: fixed;
+  right: 90px;
+  top: 15px;
+}
+
+.nblaptop{
+  display: block;
+}
+/* For mobile and tablets */
+@media (max-width: 769px) {
+  .toggle-btndark {
+    right: 80px !important;
+  }
+
+ 
+  .nblaptop{
+  display: none;
+}
+}
+ 
+.nbmobile {
+  display: none;
+}
+
+/* Show only on mobile (≤ 768px) */
+@media (max-width: 768px) {
+  .nbmobile {
+    display: block;
+  }
+} .custom-dropdown-toggle {
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+  }
+
+  .custom-dropdown-toggle:focus {
+    box-shadow: none;
+  }
+
+  .custom-dropdown-menu {
+    min-width: 140px;
+    font-size: 13px;
+    border: 1px solid #ddd;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+    padding: 5px 0;
+  }
+
+  .custom-dropdown-menu .dropdown-item {
+    padding: 6px 15px;
+    color: #333;
+  }
+
+  .custom-dropdown-menu .dropdown-item:hover {
+    background-color: #f2f2f2;
+    color: #000;
+  }
 </style>
   <link rel='stylesheet' href='https://unpkg.com/aos@2.3.0/dist/aos.css'>
 
@@ -780,7 +840,7 @@ li{
     </div>
 
     <div class="navbar-header">
-      <a class="navbar-brand" href="https://www.kushalstone.com/" target="_blank">
+      <a class="navbar-brand nblaptop" href="https://www.kushalstone.com/" target="_blank">
         <span class="navbar-header_logo" style="color: #1C144D; font-weight: 700;">
           Kushal Stone
         </span>
@@ -797,7 +857,7 @@ li{
     </div>
 
     <!-- Dark Mode Switch -->
-    <label class="switch toggle-btn" style="position: fixed; right: 80px; top: 15px;">
+    <label class="switch toggle-btndark"  >
       <input checked="true" id="checkbox" onclick="toggleDarkMode()" type="checkbox" />
       <span class="slider">
         <div class="star star_1"></div>
@@ -817,11 +877,17 @@ li{
     <div class="close-button" id="closeButton">
       <i class="fas fa-times"></i>
     </div>
+    
     <div class="siderbar-inner mt-5">
+      <a class="navbar-brand nbmobile" href="https://www.kushalstone.com/" target="_blank">
+        <span class="navbar-header_logo" style="color: #1C144D; font-weight: 700;">
+          Kushal Stone
+        </span>
       <ul class="ull">
         <a class="anac" href="{% url 'sales_dashboard' %}">
           <li><i class="fas fa-chart-line"></i> Sales Dashboard</li>
-        </a>
+        </a><!-- CRM-style Dropdown -->
+ 
         <a class="anac" href="{% url 'add_lead' %}">
           <li><i class="fas fa-user-plus"></i> Add Lead</li>
         </a>
@@ -853,7 +919,7 @@ li{
 
       <center>
         <button class="mb-5 mt-5 logoutbtn">
-          <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a href="/logout">  Logout</a>
           <div class="arrow-wrapper"><div class="arrow"></div></div>
         </button>
       </center>

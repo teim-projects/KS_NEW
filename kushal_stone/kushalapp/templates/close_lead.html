@@ -4,198 +4,139 @@
 <head>
   <meta charset="UTF-8">
   <title>Closed Leads</title>
+  <!-- Bootstrap 4 CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th,
-    td {
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-
-    th {
-      background-color: #f2f2f2;
-    }
-
-    h2 {
-      margin-top: 20px;
-    }
-
-    .second-box {
-      margin-top: 75px !important;
+    body {
+      background-color: #f8f9fa;
+      color: #212529;
+      font-family: 'Segoe UI', sans-serif;
+      padding-top: 60px;
     }
 
     .form-boxx {
-      box-shadow: 0px 0px 10px rgb(92, 128, 128), inset 0px 0px 10px rgb(255, 255, 255);
-      padding: 50px;
+      background-color: #ffffff;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+padding: 20px 40px 40px 40px;
       border-radius: 10px;
+      margin-bottom: 30px;
     }
 
-    .srcoleble {
-      overflow-x: scroll;
-
-    }
-
-    .user_name {
+    .user_namee {
       font-size: 20px;
-      color: rgb(59, 109, 101);
-      transition: ease-in 1s;
+      color: #007bff;
+      font-weight: 600;
     }
 
-    .user_name:hover {
-      font-size: 20px;
-      color: rgb(59, 109, 101);
-      font-weight: bold;
+    .assign-form select {
+      min-width: 150px;
     }
 
-    .up {
-      font-size: 20px;
+    .assigned-label {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #d4edda;
+      border: 1px solid #28a745;
+      border-radius: 6px;
+      color: #155724;
+      font-weight: 500;
     }
 
-.assign-form {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+ 
 
-.assign-select {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #f9f9f9;
-  font-size: 14px;
-  outline: none;
-  transition: 0.3s ease-in-out;
-}
+    .buttonback a {
+      color: #fff;
+      text-decoration: none;
+    }
 
-.assign-select:focus {
-  border-color: #3b6e6e;
-  background-color: #fff;
-}
+    .scroll-instruction {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
 
-.assign-button {
-  background-color: #3b6e6e;
-  color: #fff;
-  padding: 6px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-}
-
-.assign-button:hover {
-  background-color: #2d5a5a;
-}
-
-.assigned-label {
-  display: inline-block;
-  padding: 6px 12px;
-  background-color: #d6f5d6;
-  border: 1px solid #87c787;
-  border-radius: 6px;
-  font-weight: 500;
-  color: #2c662d;
-}
-
-
+    table thead {
+      background-color: #e9ecef;
+    }
   </style>
 </head>
 
 <body>
   {% include 'Sales_Base.html' %}
+<div class="main" style="min-height: 100vh;">
 
-  <div class="main">
-    <div class="container">
-      <div class="row second-box">
 
-        <div class="raper form-boxx">
-           <p class="text-center mt-1 mb-5 up">Closed Leads for <span class="user_name"> {{request.user.username}}</span></p>
+  <div class="container">
+    <div style="margin-top: 100px;">
 
-          <div class="srcoleble">
-            {% if closed_leads %}
-            <table>
-              <thead>
-                <tr>
-                  <th>Lead Name</th>
-                  <th>Mobile</th>
-                  <th>Email</th>
-                  <!-- <th>Closed By</th> -->
-                  <th>Status</th>
-                  <th>Enquiry Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for lead in closed_leads %}
-                <tr>
-                  <td>{{ lead.full_name }}</td>
-                  <td>{{ lead.mobile_number }}</td>
-                  <td>{{ lead.email }}</td>
-                  <!-- <td>{{ lead.sales_person.username }}</td> -->
-                  <td>{% if lead.win_status %}<span class="btn  btn-success p-2"
-                      style="border-radius: 5px; width:150px;">Win</span>{% else %}<span class="btn  btn-danger p-2 "
-                      style="border-radius: 5px;  width:150px;">Loss</span>{% endif %}</td>
-                  <td>{{ lead.enquiry_date }}</td>
-                  <td>
-  {% if lead.win_status %}
-    {% if not lead.assigned_to_operations %}
-      <form action="{% url 'assign_to_operations' lead.id %}" method="POST" class="assign-form">
-        {% csrf_token %}
-        <select name="operation_user_id" class="assign-select" required>
-          <option value="" disabled selected>Select Ops</option>
-          {% for user in operation_users %}
-            <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
-          {% endfor %}
-        </select>
-        <button type="submit" class="assign-button">Assign</button>
-      </form>
-    {% else %}
-      <span class="assigned-label">Assigned to <strong>{{ lead.assigned_to_operations.first_name }}</strong></span>
-    {% endif %}
-  {% endif %}
-</td>
+      <div class="col-lg-12 col-md-12 form-boxx">                
+  <span onclick="goBackAndRefresh()" class="close-btn" title="Close" style="font-size: 30px;">×</span>
 
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-            {% else %}
-            <p>No closed leads found.</p>
-            {% endif %}
-          </div>   <div class="p">
-            <p class="scroll-instruction">Scroll to view more content</p>
+        <p class="text-center up">Closed Leads for <span class="user_namee">{{ request.user.username }}</span></p>
+
+        {% if closed_leads %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>Lead Name</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Enquiry Date</th>
+                <th>Assign Ops</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for lead in closed_leads %}
+              <tr>
+                <td>{{ lead.full_name }}</td>
+                <td>{{ lead.mobile_number }}</td>
+                <td>{{ lead.email }}</td>
+                <td>
+                  {% if lead.win_status %}
+                  <span class="btn btn-success btn-sm px-3">Win</span>
+                  {% else %}
+                  <span class="btn btn-danger btn-sm px-3">Loss</span>
+                  {% endif %}
+                </td>
+                <td>{{ lead.enquiry_date }}</td>
+                <td>
+                  {% if lead.win_status %}
+                    {% if not lead.assigned_to_operations %}
+                    <form action="{% url 'assign_to_operations' lead.id %}" method="POST" class="form-inline assign-form">
+                      {% csrf_token %}
+                      <select name="operation_user_id" class="form-control form-control-sm mr-2" required>
+                        <option value="" disabled selected>Select Ops</option>
+                        {% for user in operation_users %}
+                        <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit" class="btn btn-info btn-sm">Assign</button>
+                    </form>
+                    {% else %}
+                    <span class="assigned-label">Assigned to <strong>{{ lead.assigned_to_operations.first_name }}</strong></span>
+                    {% endif %}
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-          <!-- From Uiverse.io by Jedi-hongbin -->
-          <div class="row mb-3" style="display: flex;      align-items: center; justify-content: center;
-  ">
+        {% else %}
+        <p class="text-center">No closed leads found.</p>
+        {% endif %}
 
-            <button class="buttonback mr-5 " onclick="history.back()">
-              <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
-                <path
-                  d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
-                </path>
-              </svg>
-              <span>Back</span>
-            </button>
+        <!-- <p class="scroll-instruction mt-3">Scroll to view more content if necessary</p> -->
 
-            <button class="buttonback ">
-              <a href="{% url 'sales_dashboard' %}"> <i class="fas fa-home"></i> Home</a>
-            </button>
-
-          </div>
-        </div>
-
+         
       </div>
     </div>
   </div>
-  {%include 'footer.html'%}
-
+</div>
+  {% include 'footer.html' %}
 </body>
 
 </html>
