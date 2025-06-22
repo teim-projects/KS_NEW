@@ -1,17 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Add Invoice Term</title>
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+    
+    <!-- Animate.css for entrance animation -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        body {
+            background: linear-gradient(to right, #f9f9f9, #e0f7fa);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 80px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            background: white;
+            margin: auto;
+            padding: 30px 40px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        label {
+            font-weight: 600;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+     
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.5);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 242, 254, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
+            }
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .close-btn {
+            float: right;
+            cursor: pointer;
+            color: red;
+            font-size: 20px;
+        }
+
+        @media (max-width: 576px) {
+            .form-container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Add Invoice Term</h2>
-    <form method="POST">
+
+{% include 'Sales_Base.html' %}
+
+<div class="main" style="min-height: 100vh;">
+  <div class="container" style="margin-top:100px;">
+    <div class="form-container animate__animated animate__fadeInUp">
+      
+      <div class="close-btn" onclick="goBackAndRefresh()">X</div>
+
+      <h2>Add Invoice Term</h2>
+
+      <form method="POST">
         {% csrf_token %}
-        <label>Description:</label><br>
-        <textarea name="description" rows="4" cols="50" required></textarea><br><br>
-        <button type="submit">Add Term</button>
-    </form>
-    <br>
-    <a href="{% url 'invoice_term_list' %}">Back to Invoice Terms</a>
+        <div class="form-group">
+          <label for="description">Description <span class="text-danger">*</span></label>
+          <textarea name="description" id="description" rows="4" class="form-control" required placeholder="Enter invoice term..."></textarea>
+        </div>
+
+        <center>
+          <button type="submit" class=" btn-submit btn btn-success mt-3 mb-3 w-50">Add Term</button>
+        </center>
+      </form>
+
+      <a href="{% url 'invoice_term_list' %}" class="back-link text-start">Back to Invoice Terms</a>
+
+    </div>
+  </div>
+</div>
+
+{% include 'footer.html' %}
+
+<script>
+  function goBackAndRefresh() {
+    window.history.back();
+    setTimeout(() => location.reload(), 300);
+  }
+</script>
+
 </body>
 </html>
