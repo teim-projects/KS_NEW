@@ -1,5 +1,7 @@
 from . import views
 from django.urls import path # type: ignore
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
    path('', views.index, name='index'),
@@ -13,6 +15,8 @@ urlpatterns = [
    path('finance_dashboard/', views.finance_dashboard, name='finance_dashboard'),
    path('create_user/', views.create_user, name='create_user'),
    path('requirements/', views.requirements_dashboard, name='requirements_dashboard'),
+   path('lead/pdf/<int:lead_id>/', views.view_pdf, name='view_pdf'),
+
 
 
     # Quotation Term URLs
@@ -74,3 +78,7 @@ urlpatterns = [
     path('quotations/', views.quotation_list, name='quotation_list'),   
     
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -108,11 +108,16 @@
                                         <tr><th>Description</th><td>{{ lead.description }}</td></tr>
                                         <tr>
                                             <th>File Upload</th>
-                                            <td>
-                                                {% if lead.file_upload %}
-                                                <a href="{{ lead.file_upload.url }}" target="_blank">View File</a>
-                                                {% else %}-{% endif %}
-                                            </td>
+                                         <td>
+    {% if lead.file_upload %}
+        <!-- <a href="{% url 'view_pdf' lead.id %}" class="btn btn-sm btn-primary" target="_blank">👁️ View</a> -->
+        <a href="{{ lead.file_upload.url }}" class="btn btn-sm btn-success" download>⬇ Download</a>
+    {% else %}
+        <span>-</span>
+    {% endif %}
+</td>
+
+
                                         </tr>
                                         <tr>
                                             <th>Products</th>
