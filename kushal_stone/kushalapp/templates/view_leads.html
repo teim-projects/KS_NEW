@@ -1,157 +1,239 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 
     <title>All Leads</title>
     <style>
-        .form-row{
+        .form-row {
             margin-top: 90px;
-          }
-          label{
+        }
+
+        label {
             font-weight: bold;
-          }
-          .form-box {
+        }
+
+        .form-box {
             box-shadow: 0px 0px 46px #dcdcdc;
             border-radius: 10px;
             padding: 30px;
-            
-          }
-          table{
-            min-width: 400px;
-          }
-          td {
-            min-width: 140px;
+
         }
-        .form-row-inner{
+
+        table {
+            min-width: 400px;
+        }
+
+        td {
+            min-width: 140px;
+            background-color: antiquewhite;
+        }
+
+        .form-row-inner {
             min-height: 50vh;
+        }
+
+        th {
+            background-color: #000000 !important;
+            color: white !important;
         }
     </style>
 </head>
+
 <body>
     {% include 'Sales_Base.html' %}
-<!-- Include Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="main">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
+    <div class="main" style="min-height: 100vh;">
+        <div class="container" style="margin-top: 100px; ">
+            <div class="row mt-5">
+                <div class="col-md-12 bg-light shadow rounded">
 
-                <h2 class="text-center mt-3">Leads List</h2>
-                <a href="{% url 'add_lead' %}" class="btn btn-outline-info mb-3">+ Add New Lead</a>
+                    <h2 class="text-center mt-3">Leads List</h2>
+                    <a href="{% url 'add_lead' %}" class="btn btn-outline-info mb-3">+ Add New Lead</a>
 
-                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                    <table class="table table-bordered table-hover align-middle">
-                        <thead class="table-light sticky-top">
-                            <tr>
-                                <th>S.No.</th>
-                                <th>+</th>
-                                <th>Full Name</th>
-                                <th>Mobile</th>
-                                <th>Email</th>
-                                <th>Sales Person</th>
-                                <th>Follow-Up Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for lead in leads %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
-                                        +
-                                    </button>
-                                </td>
-                                <td>{{ lead.full_name }}</td>
-                                <td>{{ lead.mobile_number }}</td>
-                                <td>{{ lead.email }}</td>
-                                <td>{{ lead.sales_person.username }}</td>
-                                <td>{{ lead.next_followup_date }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-bordered table-hover align-middle table-striped">
+                            <thead class="table-light sticky-top" style="z-index: 1;">
+                                <tr>
+                                    <th>S.No.</th>
+                                    <th>Lead Details</th>
+                                    <th>Full Name</th>
+                                    <th>Mobile</th>
+                                    <th>Email</th>
+                                    <th>Sales Person</th>
+                                    <th>Follow-Up Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lead in leads %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
 
-                {% for lead in leads %}
-                <!-- Lead Detail Modal -->
-                <div class="modal fade" id="leadModal{{ forloop.counter }}" tabindex="-1" aria-labelledby="leadModalLabel{{ forloop.counter }}" aria-hidden="true">
-                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Lead Details - {{ lead.full_name }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <table class="table table-bordered">
-                                    <tbody>
-                                        <tr><th>Full Name</th><td>{{ lead.full_name }}</td></tr>
-                                        <tr><th>Mobile</th><td>{{ lead.mobile_number }}</td></tr>
-                                        <tr><th>Email</th><td>{{ lead.email }}</td></tr>
-                                        <tr><th>Address</th><td>{{ lead.address }}</td></tr>
-                                        <tr><th>Architect Name</th><td>{{ lead.architect_name }}</td></tr>
-                                        <tr><th>Architect Number</th><td>{{ lead.architect_number }}</td></tr>
-                                        <tr><th>Source</th><td>{{ lead.source }}</td></tr>
-                                        <tr><th>Other Source</th><td>{{ lead.source_other }}</td></tr>
-                                        <tr><th>Enquiry Date</th><td>{{ lead.enquiry_date }}</td></tr>
-                                        <tr><th>Sales Person</th><td>{{ lead.sales_person.username }}</td></tr>
-                                        <tr><th>Follow-Up Person</th><td>{{ lead.follow_up_person.username }}</td></tr>
-                                        <tr><th>Customer Segment</th><td>{{ lead.customer_segment }}</td></tr>
-                                        <tr><th>Follow-Up Date</th><td>{{ lead.next_followup_date }}</td></tr>
-                                        <tr><th>First Call Date</th><td>{{ lead.first_call_date }}</td></tr>
-                                        <tr><th>Customer Visited</th><td>{{ lead.customer_visited }}</td></tr>
-                                        <tr><th>Inspection Done</th><td>{{ lead.inspection_done }}</td></tr>
-                                        <tr><th>Type of Lead</th><td>{{ lead.lead_type }}</td></tr>
-                                        <tr><th>Quotation Given</th><td>{{ lead.quotation_given }}</td></tr>
-                                        <tr><th>Quotation Amount</th><td>₹{{ lead.quotation_amount|floatformat:2 }}</td></tr>
-                                        <tr><th>Description</th><td>{{ lead.description }}</td></tr>
-                                        <tr>
-                                            <th>File Upload</th>
-                                         <td>
-    {% if lead.file_upload %}
-        <!-- <a href="{% url 'view_pdf' lead.id %}" class="btn btn-sm btn-primary" target="_blank">👁️ View</a> -->
-        <a href="{{ lead.file_upload.url }}" class="btn btn-sm btn-success" download>⬇ Download</a>
-    {% else %}
-        <span>-</span>
-    {% endif %}
-</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
+                                            data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
+                                            <i class="bi-plus-circle"></i>
+                                        </button>
+                                    </td>
+
+                                    <td>{{ lead.full_name }}</td>
+                                    <td>{{ lead.mobile_number }}</td>
+                                    <td>{{ lead.email }}</td>
+                                    <td>{{ lead.sales_person.username }}</td>
+                                    <td>{{ lead.next_followup_date }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% for lead in leads %}
+                    <!-- Lead Detail Modal -->
+                    <div class="modal fade" id="leadModal{{ forloop.counter }}" tabindex="-1"
+                        aria-labelledby="leadModalLabel{{ forloop.counter }}" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Lead Details - {{ lead.full_name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th>Full Name</th>
+                                                <td>{{ lead.full_name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Mobile</th>
+                                                <td>{{ lead.mobile_number }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email</th>
+                                                <td>{{ lead.email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Address</th>
+                                                <td>{{ lead.address }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Architect Name</th>
+                                                <td>{{ lead.architect_name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Architect Number</th>
+                                                <td>{{ lead.architect_number }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Source</th>
+                                                <td>{{ lead.source }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Other Source</th>
+                                                <td>{{ lead.source_other }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Enquiry Date</th>
+                                                <td>{{ lead.enquiry_date }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Sales Person</th>
+                                                <td>{{ lead.sales_person.username }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Follow-Up Person</th>
+                                                <td>{{ lead.follow_up_person.username }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Customer Segment</th>
+                                                <td>{{ lead.customer_segment }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Follow-Up Date</th>
+                                                <td>{{ lead.next_followup_date }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>First Call Date</th>
+                                                <td>{{ lead.first_call_date }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Customer Visited</th>
+                                                <td>{{ lead.customer_visited }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Inspection Done</th>
+                                                <td>{{ lead.inspection_done }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Type of Lead</th>
+                                                <td>{{ lead.lead_type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Quotation Given</th>
+                                                <td>{{ lead.quotation_given }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Quotation Amount</th>
+                                                <td>₹{{ lead.quotation_amount|floatformat:2 }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Description</th>
+                                                <td>{{ lead.description }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>File Upload</th>
+                                                <td>
+                                                    {% if lead.file_upload %}
+                                                    <!-- <a href="{% url 'view_pdf' lead.id %}" class="btn btn-sm btn-primary" target="_blank">👁️ View</a> -->
+                                                    <a href="{{ lead.file_upload.url }}" class="btn btn-sm btn-success"
+                                                        download>⬇ Download</a>
+                                                    {% else %}
+                                                    <span>-</span>
+                                                    {% endif %}
+                                                </td>
 
 
-                                        </tr>
-                                        <tr>
-                                            <th>Products</th>
-                                            <td>
-                                                {% for product in lead.products.all %}
-                                                <span class="badge bg-secondary">{{ product.name }}</span>
-                                                {% empty %}-{% endfor %}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Services</th>
-                                            <td>
-                                                {% for service in lead.services.all %}
-                                                <span class="badge bg-primary">{{ service.name }}</span>
-                                                {% empty %}-{% endfor %}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                            </tr>
+                                            <tr>
+                                                <th>Products</th>
+                                                <td>
+                                                    {% for product in lead.products.all %}
+                                                    <span class="badge bg-secondary">{{ product.name }}</span>
+                                                    {% empty %}-{% endfor %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Services</th>
+                                                <td>
+                                                    {% for service in lead.services.all %}
+                                                    <span class="badge bg-primary">{{ service.name }}</span>
+                                                    {% empty %}-{% endfor %}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
+                    {% endfor %}
 
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Include Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     {%include 'footer.html'%}
 
 </body>
+
 </html>
