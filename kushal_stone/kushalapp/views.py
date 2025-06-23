@@ -514,6 +514,37 @@ def add_lead(request):
 
 
 
+from django.shortcuts import render, get_object_or_404
+from .models import Lead
+from django.contrib.auth.decorators import login_required
+
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+import os
+from .models import Lead
+
+@login_required
+def view_pdf(request, lead_id):
+    lead = get_object_or_404(Lead, id=lead_id)
+
+    file_url = lead.file_upload.url if lead.file_upload else None
+    file_ext = os.path.splitext(lead.file_upload.name)[1].lower() if lead.file_upload else ''
+
+    is_pdf = file_ext == '.pdf'
+    is_image = file_ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+    is_word = file_ext in ['.doc', '.docx']
+
+    return render(request, 'view_pdf.html', {
+        'lead': lead,
+        'file_url': file_url,
+        'is_pdf': is_pdf,
+        'is_image': is_image,
+        'is_word': is_word
+    })
+
+
+
 @login_required
 def view_leads(request):
     leads = Lead.objects.all()

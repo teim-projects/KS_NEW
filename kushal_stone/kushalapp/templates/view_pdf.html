@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View File - {{ lead.full_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .file-container {
+            height: 90vh;
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        .file-actions a {
+            text-decoration: none;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        .file-actions a:hover {
+            background-color: #0056b3;
+        }
+        iframe, img {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>File Uploaded by: {{ lead.full_name }}</h2>
+
+    <div class="file-actions">
+        <a href="{{ file_url }}" download>⬇ Download</a>
+        <a href="javascript:history.back()">← Back</a>
+    </div>
+
+    {% if file_url %}
+        <div class="file-container">
+            {% if is_pdf %}
+                <iframe src="{{ file_url }}"></iframe>
+            {% elif is_image %}
+                <img src="{{ file_url }}" alt="Image File">
+            {% elif is_word %}
+                <iframe src="https://docs.google.com/gview?url={{ file_url|urlencode }}&embedded=true" frameborder="0"></iframe>
+            {% else %}
+                <p>This file format is not directly viewable. <a href="{{ file_url }}" target="_blank">Click here to open</a>.</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>No file uploaded.</p>
+    {% endif %}
+</body>
+</html>
