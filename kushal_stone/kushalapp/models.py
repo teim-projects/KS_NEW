@@ -96,7 +96,7 @@ class Lead(models.Model):
 
     full_name = models.CharField(max_length=100)
     mobile_number = models.CharField(max_length=15)
-    email = models.EmailField()
+    email = models.EmailField(blank=True, null=True)
     requirements = models.CharField(max_length=50)
     products = models.ManyToManyField('Product', blank=True)
     services = models.ManyToManyField('Service', blank=True)

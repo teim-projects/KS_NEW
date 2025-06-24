@@ -444,7 +444,7 @@ def add_lead(request):
         errors = {}
 
         required_fields = [
-            'full_name', 'mobile_number', 'email', 'requirements', 'address',
+            'full_name', 'mobile_number', 'requirements', 'address',
             'architect_name', 'architect_number', 'source', 'enquiry_date',
             'sales_person', 'customer_segment', 'next_followup_date', 'follow_up_person'
         ]
@@ -472,7 +472,7 @@ def add_lead(request):
         lead = Lead.objects.create(
             full_name=data['full_name'],
             mobile_number=data['mobile_number'],
-            email=data['email'],
+            email=data.get['email'],
             requirements=data['requirements'],
             address=data['address'],
             architect_name=data['architect_name'],
