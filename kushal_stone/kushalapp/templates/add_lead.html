@@ -157,9 +157,18 @@
                         <div id="step2" class="form-step" style="display:none;">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label>Enquiry Date <span class="star"> *</span></label>
-                                    <input class="form-control" type="date" name="enquiry_date">
-                                </div>
+    <label>Enquiry Date <span class="star"> *</span></label>
+    <input class="form-control" type="date" name="enquiry_date" id="enquiry_date" required>
+</div>
+
+<script>
+    // Set today's date as the minimum
+    document.addEventListener('DOMContentLoaded', function () {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('enquiry_date').setAttribute('min', today);
+    });
+</script>
+
                                 <div class="form-group col-md-6">
                                     <label>Sales Person <span class="star"> *</span></label>
                                     <select name="sales_person" class="form-control">
