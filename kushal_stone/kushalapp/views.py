@@ -472,7 +472,7 @@ def add_lead(request):
         lead = Lead.objects.create(
             full_name=data['full_name'],
             mobile_number=data['mobile_number'],
-            email=data.get['email'],
+            email=data.get('email'),
             requirements=data['requirements'],
             address=data['address'],
             architect_name=data['architect_name'],
