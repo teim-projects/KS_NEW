@@ -122,6 +122,12 @@
                                     <input class="form-control" type="text" name="mobile_number" required>
                                 </div>
                                 <div class="form-group col-md-6">
+    <label>Secondary Mobile Number</label>
+    <input class="form-control" type="text" name="secondary_mobile_number"
+           value="{{ data.secondary_mobile_number|default_if_none:'' }}">
+</div>
+
+                                <div class="form-group col-md-6">
                                     <label>Email <span class="star"> *</span></label>
                                     <input class="form-control" type="email" name="email">
                                 </div>

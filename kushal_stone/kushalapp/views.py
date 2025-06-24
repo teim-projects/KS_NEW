@@ -472,6 +472,8 @@ def add_lead(request):
         lead = Lead.objects.create(
             full_name=data['full_name'],
             mobile_number=data['mobile_number'],
+            secondary_mobile_number=data.get('secondary_mobile_number'),  # <-- Add this
+
             email=data.get('email'),
             requirements=data['requirements'],
             address=data['address'],

@@ -49,10 +49,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <div class="main" style="min-height: 100vh;">
-        <div class="container" style="margin-top: 100px; ">
+        <div class="container" style="margin-top: 100px;">
             <div class="row mt-5">
                 <div class="col-md-12 bg-light shadow rounded">
-
                     <h2 class="text-center mt-3">Leads List</h2>
                     <a href="{% url 'add_lead' %}" class="btn btn-outline-info mb-3">+ Add New Lead</a>
 
@@ -73,16 +72,19 @@
                                 {% for lead in leads %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
                                             data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
                                             <i class="bi-plus-circle"></i>
                                         </button>
                                     </td>
-
                                     <td>{{ lead.full_name }}</td>
-                                    <td>{{ lead.mobile_number }}</td>
+                                    <td>
+                                        {{ lead.mobile_number }}
+                                        {% if lead.secondary_mobile_number %}
+                                            <br><small class="text-muted">Alt: {{ lead.secondary_mobile_number }}</small>
+                                        {% endif %}
+                                    </td>
                                     <td>{{ lead.email }}</td>
                                     <td>{{ lead.sales_person.username }}</td>
                                     <td>{{ lead.next_followup_date }}</td>
@@ -113,6 +115,16 @@
                                             <tr>
                                                 <th>Mobile</th>
                                                 <td>{{ lead.mobile_number }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Secondary Mobile</th>
+                                                <td>
+                                                    {% if lead.secondary_mobile_number %}
+                                                        {{ lead.secondary_mobile_number }}
+                                                    {% else %}
+                                                        <span>-</span>
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <th>Email</th>
@@ -190,15 +202,11 @@
                                                 <th>File Upload</th>
                                                 <td>
                                                     {% if lead.file_upload %}
-                                                    <!-- <a href="{% url 'view_pdf' lead.id %}" class="btn btn-sm btn-primary" target="_blank">👁️ View</a> -->
-                                                    <a href="{{ lead.file_upload.url }}" class="btn btn-sm btn-success"
-                                                        download>⬇ Download</a>
+                                                    <a href="{{ lead.file_upload.url }}" class="btn btn-sm btn-success" download>⬇ Download</a>
                                                     {% else %}
                                                     <span>-</span>
                                                     {% endif %}
                                                 </td>
-
-
                                             </tr>
                                             <tr>
                                                 <th>Products</th>
@@ -232,8 +240,8 @@
     <!-- Include Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    {%include 'footer.html'%}
-
+    {% include 'footer.html' %}
 </body>
+
 
 </html>
