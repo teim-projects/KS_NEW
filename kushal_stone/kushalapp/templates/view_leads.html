@@ -63,6 +63,7 @@
                                     <th>Lead Details</th>
                                     <th>Full Name</th>
                                     <th>Mobile</th>
+                                    <th>Secondary Mobile</th>
                                     <th>Email</th>
                                     <th>Sales Person</th>
                                     <th>Follow-Up Date</th>
@@ -81,9 +82,12 @@
                                     <td>{{ lead.full_name }}</td>
                                     <td>
                                         {{ lead.mobile_number }}
-                                        {% if lead.secondary_mobile_number %}
-                                            <br><small class="text-muted">Alt: {{ lead.secondary_mobile_number }}</small>
-                                        {% endif %}
+                                       
+                                    </td>
+                                    <td>
+                                         {{lead.secondary_mobile_number }}
+                                            
+
                                     </td>
                                     <td>{{ lead.email }}</td>
                                     <td>{{ lead.sales_person.username }}</td>
