@@ -69,6 +69,15 @@
     color: #343a40;
   }
     </style>
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- jQuery (required for Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -118,15 +127,40 @@
                                     <input class="form-control" type="text" name="full_name" required>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label>Mobile Number <span class="star"> </span></label>
-                                    <input class="form-control" type="text" name="mobile_number" required>
-                                </div>
-                                <div class="form-group col-md-6">
-    <label>Secondary Mobile Number</label>
-    <input class="form-control" type="text" name="secondary_mobile_number"
-           value="{{ data.secondary_mobile_number|default_if_none:'' }}">
+    <label>Mobile Number <span class="star">*</span></label>
+    <div class="input-group">
+        <select class="form-select country-select" name="mobile_country_code" style="max-width: 120px;">
+            {% for code, name in country_codes %}
+                <option value="{{ code }}" {% if data.mobile_country_code == code %}selected{% endif %}>{{ code }} {{ name }}</option>
+            {% endfor %}
+        </select>
+        <input class="form-control" type="text" name="mobile_number" required placeholder="Enter number" value="{{ data.mobile_number|default_if_none:'' }}">
+    </div>
 </div>
 
+<!-- Secondary Mobile Number Field -->
+<div class="form-group col-md-6">
+    <label>Secondary Mobile Number</label>
+    <div class="input-group">
+        <select class="form-select country-select" name="secondary_country_code" style="max-width: 120px;">
+            {% for code, name in country_codes %}
+                <option value="{{ code }}" {% if data.secondary_country_code == code %}selected{% endif %}>{{ code }} {{ name }}</option>
+            {% endfor %}
+        </select>
+        <input class="form-control" type="text" name="secondary_mobile_number" placeholder="Optional" value="{{ data.secondary_mobile_number|default_if_none:'' }}">
+    </div>
+</div>
+
+<!-- Select2 Initialization -->
+<script>
+    $(document).ready(function() {
+        $('.country-select').select2({
+            placeholder: "Select country code",
+            allowClear: false,
+            width: 'resolve'
+        });
+    });
+</script>
                                 <div class="form-group col-md-6">
                                     <label>Email <span class="star"> *</span></label>
                                     <input class="form-control" type="email" name="email">
@@ -135,14 +169,15 @@
                                     <label>Address <span class="star"> *</span></label>
                                     <textarea class="form-control" name="address" required></textarea>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label>Architect Name <span class="star"> *</span></label>
+                                                                <div class="form-group col-md-6">
+                                    <label>Architect Name <span style="color: gray; font-weight: normal;">(Optional)</span></label>
                                     <input class="form-control" type="text" name="architect_name">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label>Architect Contact <span class="star"> *</span></label>
+                                    <label>Architect Contact <span style="color: gray; font-weight: normal;">(Optional)</span></label>
                                     <input class="form-control" type="text" name="architect_number">
                                 </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-md-3"></div>

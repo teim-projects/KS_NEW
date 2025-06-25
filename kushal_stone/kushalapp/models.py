@@ -95,16 +95,16 @@ class Lead(models.Model):
     ]
 
     full_name = models.CharField(max_length=100)
-    mobile_number = models.CharField(max_length=15)
-    secondary_mobile_number = models.CharField(max_length=15, blank=True, null=True)  # <-- Add this
+    mobile_number = models.CharField(max_length=25)
+    secondary_mobile_number = models.CharField(max_length=25, blank=True, null=True)  # <-- Add this
 
     email = models.EmailField(blank=True, null=True)
     requirements = models.CharField(max_length=50)
     products = models.ManyToManyField('Product', blank=True)
     services = models.ManyToManyField('Service', blank=True)
     address = models.TextField()
-    architect_name = models.CharField(max_length=100)
-    architect_number = models.CharField(max_length=15)
+    architect_name = models.CharField(max_length=100, blank=True, null=True)
+    architect_number = models.CharField(max_length=15, blank=True, null=True)
     source = models.CharField(max_length=50, choices=SOURCE_CHOICES)
     source_other = models.CharField(max_length=100, blank=True, null=True)
     enquiry_date = models.DateField()

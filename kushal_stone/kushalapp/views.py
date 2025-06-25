@@ -431,6 +431,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Product, Service, Lead, CustomUser
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Lead, Product, Service, CustomUser
+
 @login_required
 def add_lead(request):
     products = Product.objects.all()
@@ -444,9 +449,9 @@ def add_lead(request):
         errors = {}
 
         required_fields = [
-            'full_name', 'mobile_number', 'requirements', 'address',
-            'architect_name', 'architect_number', 'source', 'enquiry_date',
-            'sales_person', 'customer_segment', 'next_followup_date', 'follow_up_person'
+            'full_name', 'mobile_number', 'mobile_country_code', 'requirements',
+            'address', 'source', 'enquiry_date', 'sales_person',
+            'customer_segment', 'next_followup_date', 'follow_up_person'
         ]
 
         for field in required_fields:
@@ -469,16 +474,22 @@ def add_lead(request):
                 'data': data
             })
 
+        # Construct full mobile numbers
+        mobile_number = f"{data.get('mobile_country_code')}{data.get('mobile_number')}"
+        secondary_mobile_number = (
+            f"{data.get('secondary_country_code')}{data.get('secondary_mobile_number')}"
+            if data.get('secondary_mobile_number') else None
+        )
+
         lead = Lead.objects.create(
             full_name=data['full_name'],
-            mobile_number=data['mobile_number'],
-            secondary_mobile_number=data.get('secondary_mobile_number'),  # <-- Add this
-
+            mobile_number=mobile_number,
+            secondary_mobile_number=secondary_mobile_number,
             email=data.get('email'),
             requirements=data['requirements'],
             address=data['address'],
-            architect_name=data['architect_name'],
-            architect_number=data['architect_number'],
+            architect_name=data.get('architect_name'),
+            architect_number=data.get('architect_number'),
             source=data['source'],
             source_other=data.get('source_other'),
             enquiry_date=data['enquiry_date'],
@@ -496,6 +507,7 @@ def add_lead(request):
             file_upload=files.get('file_upload')
         )
 
+        # Handle many-to-many for products/services
         if data['requirements'] == 'products':
             lead.products.set(data.getlist('products'))
         elif data['requirements'] == 'services':
@@ -507,11 +519,31 @@ def add_lead(request):
         messages.success(request, 'Lead added successfully!')
         return redirect('view_leads')
 
+    # For GET request
+    country_codes = [
+        ('+1', '🇺🇸 United States'),
+        ('+44', '🇬🇧 United Kingdom'),
+        ('+91', '🇮🇳 India'),
+        ('+61', '🇦🇺 Australia'),
+        ('+971', '🇦🇪 UAE'),
+        ('+81', '🇯🇵 Japan'),
+        ('+49', '🇩🇪 Germany'),
+        ('+33', '🇫🇷 France'),
+        ('+86', '🇨🇳 China'),
+        ('+966', '🇸🇦 Saudi Arabia'),
+        ('+92', '🇵🇰 Pakistan'),
+        ('+880', '🇧🇩 Bangladesh'),
+        ('+7', '🇷🇺 Russia'),
+        ('+27', '🇿🇦 South Africa'),
+        
+    ]
+
     return render(request, 'add_lead.html', {
         'products': products,
         'services': services,
         'sales_persons': sales_persons,
-        'follow_up_persons': follow_up_persons
+        'follow_up_persons': follow_up_persons,
+        'country_codes': country_codes
     })
 
 
