@@ -40,6 +40,9 @@
             background-color: #000000 !important;
             color: white !important;
         }
+        td {
+    min-width: auto !important;
+}
     </style>
 </head>
 
@@ -60,8 +63,7 @@
                             <thead class="table-light sticky-top" style="z-index: 1;">
                                 <tr>
                                     <th>S.No.</th>
-                                    <th>Lead Details</th>
-                                    <th>Full Name</th>
+                                     <th>Full Name</th>
                                     <th>Mobile</th>
                                     <th>Secondary Mobile</th>
                                     <th>Email</th>
@@ -72,13 +74,13 @@
                             <tbody>
                                 {% for lead in leads %}
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
+                                    <td>{{ forloop.counter }}
+                                                                                <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
                                             data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
                                             <i class="bi-plus-circle"></i>
                                         </button>
                                     </td>
+ 
                                     <td>{{ lead.full_name }}</td>
                                     <td>
                                         {{ lead.mobile_number }}
