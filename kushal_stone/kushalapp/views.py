@@ -475,9 +475,9 @@ def add_lead(request):
             })
 
         # Construct full mobile numbers
-        mobile_number = f"{data.get('mobile_country_code')}{data.get('mobile_number')}"
+        mobile_number = f"{data.get('mobile_country_code')} {data.get('mobile_number')}"
         secondary_mobile_number = (
-            f"{data.get('secondary_country_code')}{data.get('secondary_mobile_number')}"
+            f"{data.get('secondary_country_code')} {data.get('secondary_mobile_number')}"
             if data.get('secondary_mobile_number') else None
         )
 
