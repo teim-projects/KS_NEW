@@ -50,6 +50,8 @@ urlpatterns = [
     path('view-leads/', views.view_leads, name='view_leads'),
    #  path('edit-lead/<int:pk>/', views.edit_lead, name='edit_lead'),
     path('my-work/', views.my_work, name='my_work'),
+    path('pending-work/', views.pending_work, name='pending_work'),
+
     path('completed-follow-up/', views.completed_follow_up, name='completed_follow_up'),
 
     path('followup1/<int:lead_id>/', views.follow_up_1, name='follow_up_1'),

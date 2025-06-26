@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Work</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS (v5.3) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Optional: FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+            color: #333;
+        }
+        .table thead th {
+            vertical-align: middle;
+        }
+        .badge-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    {% include 'Sales_Base.html' %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Pending Work</h2>
+
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Requirements</th>
+                    <th>Next Follow-Up Date</th>
+                    <th>Action</th>
+                    <th>View History</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lead_data %}
+                <tr>
+                    <td>{{ item.lead.full_name }}</td>
+                    <td>{{ item.lead.mobile_number }}</td>
+                    <td>{{ item.lead.email }}</td>
+                    <td>{{ item.lead.requirements }}</td>
+                    <td>
+                        {% if item.followup_date %}
+                            {{ item.followup_date|date:"M d, Y" }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.status.url_name %}
+                            <a href="{% url item.status.url_name item.lead.id %}" class="btn btn-success btn-sm">
+                                <i class="fas fa-arrow-circle-right"></i> {{ item.status.label }}
+                            </a>
+                        {% else %}
+                            <span class="badge badge-secondary p-2">{{ item.status.label }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'work_history' item.lead.id %}" class="btn btn-info btn-sm">
+                            <i class="fas fa-history"></i> View History
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">No pending work today.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Bootstrap JS (for future use if needed) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

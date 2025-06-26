@@ -745,22 +745,16 @@ def view_leads(request):
 
 
 
-
-# views.py
-from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Lead, CustomUser, FollowUp1
-from django.contrib.auth.decorators import login_required
+from datetime import datetime, date, time
 from django.shortcuts import render
 from .models import Lead
-from django.utils import timezone
-from datetime import datetime, time, date
-
 
 @login_required
 def my_work(request):
     user = request.user
+    today = now().date()
     leads = Lead.objects.filter(is_closed=False).distinct()
     lead_data = []
 
@@ -772,10 +766,10 @@ def my_work(request):
         # 1st Follow-Up
         if not hasattr(lead, 'followup1'):
             if lead.follow_up_person == user:
+                followup_date = lead.next_followup_date
                 status = {'label': '1st Follow Up', 'url_name': 'follow_up_1'}
                 assigned_to_user = True
 
-        # 2nd Follow-Up
         elif not hasattr(lead, 'followup2'):
             f1 = lead.followup1
             if f1.next_followup_person == user:
@@ -783,7 +777,6 @@ def my_work(request):
                 status = {'label': '2nd Follow Up', 'url_name': 'follow_up_2'}
                 assigned_to_user = True
 
-        # 3rd Follow-Up
         elif not hasattr(lead, 'followup3'):
             f2 = lead.followup2
             if f2.next_followup_person == user:
@@ -791,7 +784,6 @@ def my_work(request):
                 status = {'label': '3rd Follow Up', 'url_name': 'follow_up_3'}
                 assigned_to_user = True
 
-        # 4th Follow-Up
         elif not hasattr(lead, 'followup4'):
             f3 = lead.followup3
             if f3.next_followup_person == user:
@@ -799,7 +791,6 @@ def my_work(request):
                 status = {'label': '4th Follow Up', 'url_name': 'follow_up_4'}
                 assigned_to_user = True
 
-        # 5th Follow-Up
         elif not hasattr(lead, 'followup5'):
             f4 = lead.followup4
             if f4.next_followup_person == user:
@@ -807,7 +798,6 @@ def my_work(request):
                 status = {'label': '5th Follow Up', 'url_name': 'follow_up_5'}
                 assigned_to_user = True
 
-        # 6th Follow-Up
         elif not hasattr(lead, 'followup6'):
             f5 = lead.followup5
             if f5.next_followup_person == user:
@@ -815,7 +805,6 @@ def my_work(request):
                 status = {'label': '6th Follow Up', 'url_name': 'follow_up_6'}
                 assigned_to_user = True
 
-        # 7th Follow-Up
         elif not hasattr(lead, 'followup7'):
             f6 = lead.followup6
             if f6.next_followup_person == user:
@@ -823,7 +812,6 @@ def my_work(request):
                 status = {'label': '7th Follow Up', 'url_name': 'follow_up_7'}
                 assigned_to_user = True
 
-        # 8th Follow-Up
         elif not hasattr(lead, 'followup8'):
             f7 = lead.followup7
             if f7.next_followup_person == user:
@@ -831,7 +819,6 @@ def my_work(request):
                 status = {'label': '8th Follow Up', 'url_name': 'follow_up_8'}
                 assigned_to_user = True
 
-        # 9th Follow-Up
         elif not hasattr(lead, 'followup9'):
             f8 = lead.followup8
             if f8.next_followup_person == user:
@@ -839,7 +826,6 @@ def my_work(request):
                 status = {'label': '9th Follow Up', 'url_name': 'follow_up_9'}
                 assigned_to_user = True
 
-        # 10th Follow-Up
         elif not hasattr(lead, 'followup10'):
             f9 = lead.followup9
             if f9.next_followup_person == user:
@@ -847,29 +833,21 @@ def my_work(request):
                 status = {'label': '10th Follow Up', 'url_name': 'follow_up_10'}
                 assigned_to_user = True
 
-        # Lead Closed (after 10th follow-up)
-        else:
-            f10 = lead.followup10
-            followup_date = f10.next_followup_date
-            close_status = getattr(f10, 'close_status', 'Closed')
-            status = {'label': f'Closed ({close_status})', 'url_name': None}
-            # Skipping adding this to lead_data unless you want to display closed leads
-
-        if assigned_to_user:
+        # ✅ Show if today's followup OR followup_date is None (N/A)
+        if assigned_to_user and (followup_date == today or followup_date is None):
             lead_data.append({
                 'lead': lead,
                 'status': status,
                 'followup_date': followup_date
             })
 
-
     lead_data.sort(
         key=lambda x: (
-        datetime.combine(x['followup_date'], time.min)
-        if isinstance(x['followup_date'], date) and not isinstance(x['followup_date'], datetime)
-        else x['followup_date'] or datetime.max
+            datetime.combine(x['followup_date'], time.min)
+            if isinstance(x['followup_date'], date) and not isinstance(x['followup_date'], datetime)
+            else x['followup_date'] or datetime.max
+        )
     )
-)
 
     return render(request, 'my_work.html', {'lead_data': lead_data})
 
@@ -895,6 +873,110 @@ def work_history(request, lead_id):
         'lead': lead,
         'followups': followups,
     })
+
+
+
+
+
+from django.utils.timezone import now
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from datetime import date
+from .models import Lead
+
+@login_required
+def pending_work(request):
+    user = request.user
+    today = now().date()
+    leads = Lead.objects.filter(is_closed=False).distinct()
+    lead_data = []
+
+    for lead in leads:
+        status = None
+        followup_date = None
+        assigned_to_user = False
+
+        if not hasattr(lead, 'followup1'):
+            if lead.follow_up_person == user:
+                followup_date = lead.next_followup_date
+                status = {'label': '1st Follow Up', 'url_name': 'follow_up_1'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup2'):
+            f1 = lead.followup1
+            if f1.next_followup_person == user:
+                followup_date = f1.next_followup_date
+                status = {'label': '2nd Follow Up', 'url_name': 'follow_up_2'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup3'):
+            f2 = lead.followup2
+            if f2.next_followup_person == user:
+                followup_date = f2.next_followup_date
+                status = {'label': '3rd Follow Up', 'url_name': 'follow_up_3'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup4'):
+            f3 = lead.followup3
+            if f3.next_followup_person == user:
+                followup_date = f3.next_followup_date
+                status = {'label': '4th Follow Up', 'url_name': 'follow_up_4'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup5'):
+            f4 = lead.followup4
+            if f4.next_followup_person == user:
+                followup_date = f4.next_followup_date
+                status = {'label': '5th Follow Up', 'url_name': 'follow_up_5'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup6'):
+            f5 = lead.followup5
+            if f5.next_followup_person == user:
+                followup_date = f5.next_followup_date
+                status = {'label': '6th Follow Up', 'url_name': 'follow_up_6'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup7'):
+            f6 = lead.followup6
+            if f6.next_followup_person == user:
+                followup_date = f6.next_followup_date
+                status = {'label': '7th Follow Up', 'url_name': 'follow_up_7'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup8'):
+            f7 = lead.followup7
+            if f7.next_followup_person == user:
+                followup_date = f7.next_followup_date
+                status = {'label': '8th Follow Up', 'url_name': 'follow_up_8'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup9'):
+            f8 = lead.followup8
+            if f8.next_followup_person == user:
+                followup_date = f8.next_followup_date
+                status = {'label': '9th Follow Up', 'url_name': 'follow_up_9'}
+                assigned_to_user = True
+
+        elif not hasattr(lead, 'followup10'):
+            f9 = lead.followup9
+            if f9.next_followup_person == user:
+                followup_date = f9.next_followup_date
+                status = {'label': '10th Follow Up', 'url_name': 'follow_up_10'}
+                assigned_to_user = True
+
+        # Show only overdue (follow-up date before today)
+        if assigned_to_user and followup_date and followup_date < today:
+            lead_data.append({
+                'lead': lead,
+                'status': status,
+                'followup_date': followup_date
+            })
+
+    return render(request, 'pending_work.html', {'lead_data': lead_data})
+
+
+
 
 
 @login_required
