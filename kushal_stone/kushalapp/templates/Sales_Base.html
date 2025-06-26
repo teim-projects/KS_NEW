@@ -53,6 +53,8 @@ body {
 .dark-mode .sidebar a:hover {
   background: #98a9a9;
   color: white;
+    padding: 5px;
+
 }
 
 .dark-mode .main {
@@ -177,15 +179,14 @@ body {
   font-family: "Cardo", serif;
   font-size: 18px;
   padding: 6.5px;
-  margin: 10px 0;
+  margin: 0px 0;
   cursor: pointer;
   border-radius: 5px;
-  transition: background 0.3s;
 }
 
 .sidebar ul li a {
   color: inherit;
-  font-size: 25px;
+  font-size: 16px;
   text-decoration: none;
   display: block;
   padding: 2px;
@@ -199,9 +200,10 @@ body {
   display: block;
   text-decoration: none;
   color: black;
-  transition: 0.7s;
-}
-
+  margin-top: 0px;
+  padding-top: 0%;
+ }
+ 
 .sidebar .anac:hover {
   background: #ddd;
   color: black;
@@ -221,7 +223,6 @@ body {
   margin-top: 10px;
   padding-left: 20px;
   border-radius: 5px;
-  transition: all 0.3s ease;
 }
 
 .submenu.show {
@@ -249,13 +250,8 @@ body {
   background: #495057;
 }
 
-.has-submenu i.fa-chevron-down {
-  transition: transform 0.3s ease;
-}
-
-.has-submenu .submenu.show + i.fa-chevron-down {
-  transform: rotate(180deg);
-}
+ 
+ 
 
 /* Arrows */
 .arrow-down,
@@ -778,33 +774,42 @@ li{
   .nbmobile {
     display: block;
   }
-} .custom-dropdown-toggle {
-    background-color: transparent;
-    border: none;
-    font-size: 14px;
-  }
+}
+.ull li {
+  list-style: none;
+}
 
-  .custom-dropdown-toggle:focus {
-    box-shadow: none;
-  }
+.ull .collapse li a {
+  font-size: 20px;
+   color: black;
+}
+.sidebar .anac {
+    display: block;
+    text-decoration: none;
+    color: black;
+    /* transition: 0.7s; */
+}
 
-  .custom-dropdown-menu {
-    min-width: 140px;
-    font-size: 13px;
-    border: 1px solid #ddd;
-    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
-    padding: 5px 0;
-  }
+.sidebar ul li a {
+    color: inherit;
+    font-size: 20px;
+    text-decoration: none;
+    display: block;
+    padding: 2px;
+}
 
-  .custom-dropdown-menu .dropdown-item {
-    padding: 6px 15px;
-    color: #333;
-  }
+.dropdown-caret {
+  transition: transform 0.3s ease;
+}
 
-  .custom-dropdown-menu .dropdown-item:hover {
-    background-color: #f2f2f2;
-    color: #000;
-  }
+.dropdown-caret.rotate {
+  transform: rotate(180deg);
+}
+.dropdown-li{
+  padding: 0px !important;
+  margin: 0px !important;
+ 
+ }
 </style>
   <link rel='stylesheet' href='https://unpkg.com/aos@2.3.0/dist/aos.css'>
 
@@ -878,60 +883,98 @@ li{
       <i class="fas fa-times"></i>
     </div>
     
-    <div class="siderbar-inner mt-5">
-      <a class="navbar-brand nbmobile" href="https://www.kushalstone.com/" target="_blank">
-        <span class="navbar-header_logo" style="color: #1C144D; font-weight: 700;">
-          Kushal Stone
-        </span>
-      <ul class="ull">
-        <a class="anac" href="{% url 'sales_dashboard' %}">
-          <li><i class="fas fa-chart-line"></i> Sales Dashboard</li>
-        </a><!-- CRM-style Dropdown -->
+<div class="siderbar-inner mt-5">
+  <a class="navbar-brand nbmobile" href="https://www.kushalstone.com/" target="_blank">
+    <span class="navbar-header_logo" style="color: #1C144D; font-weight: 700;">
+      Kushal Stone
+    </span>
+  </a>
+
+  <ul class="ull">
+
+    <a class="anac" href="{% url 'sales_dashboard' %}">
+      <li><i class="fas fa-chart-line"></i> Sales Dashboard</li>
+    </a>
+
+<li>
+  <a class="anac d-flex justify-content-between align-items-center" data-toggle="collapse" href="#leadMenu" role="button" aria-expanded="false" aria-controls="leadMenu">
+    <span><i class="fas fa-address-book"></i> Leads</span>
+    <i class="fas fa-caret-down dropdown-caret"></i>
+  </a>
+  <ul class="collapse ml-3" id="leadMenu">
+    <li><a class="anac mt-2" href="{% url 'add_lead' %}"><i class="fas fa-user-plus"></i> Add Lead</a></li>
+    <li><a class="anac mt-2" href="{% url 'view_leads' %}"><i class="fas fa-eye"></i> View Lead</a></li>
+    <li><a class="anac mt-2" href="{% url 'closed_leads' %}"><i class="fas fa-user-slash"></i> Close Leads</a></li>
+  </ul>
+</li>
+
+<li>
+  <a class="anac d-flex justify-content-between align-items-center" data-toggle="collapse" href="#workMenu" role="button" aria-expanded="false" aria-controls="workMenu">
+    <span><i class="fas fa-briefcase"></i> Work
+</span>
+    <i class="fas fa-caret-down dropdown-caret"></i>
+  </a>
+  <ul class="collapse ml-3" id="workMenu">
+    <li><a class="anac mt-2" href="{% url 'my_work' %}"><i class="fas fa-eye"></i> Today's Work</a></li>
+    <li><a class="anac mt-2" href="{% url 'pending_work' %}"><i class="fas fa-user-plus"></i> Pending Work</a></li>
+  </ul>
+</li>
+
+
+
+<li>
+  <a class="anac d-flex justify-content-between align-items-center" data-toggle="collapse" href="#quotationMenu" role="button" aria-expanded="false" aria-controls="quotationMenu">
+    <span><i class="fas fa-file-invoice"></i> Quotation
+</span>
+    <i class="fas fa-caret-down dropdown-caret"></i>
+  </a>
+  <ul class="collapse ml-3" id="quotationMenu">
+        <li><a class="anac mt-2" href="{% url 'add_quotation_term' %}"><i class="fas fa-eye"></i>Create Terms </a></li>
+    <li><a class="anac mt-2" href="{% url 'quotation_term_list' %}"><i class="fas fa-user-plus"></i> View Terms</a></li>
+
+    <li><a class="anac mt-2" href="{% url 'quotation' %}"><i class="fas fa-eye"></i> Create Quotation</a></li>
+    <li><a class="anac mt-2" href="/quotations"><i class="fas fa-eye"></i> View Quotation</a></li>
+  </ul>
+</li>
+
+
+
+<li>
+  <a class="anac d-flex justify-content-between align-items-center" data-toggle="collapse" href="#invoiceMenu" role="button" aria-expanded="false" aria-controls="invoiceMenu">
+    <span><i class="fas fa-file-invoice-dollar"></i> Invoice
+</span>
+    <i class="fas fa-caret-down dropdown-caret"></i>
+  </a>
+  <ul class="collapse ml-3" id="invoiceMenu">
+    <li><a class="anac mt-2" href="{% url 'add_invoice_term' %}"><i class="fas fa-eye"></i> Create Invoice Term</a></li>
+    <li><a class="anac mt-2" href="{% url 'invoice_term_list' %}"><i class="fas fa-user-plus"></i> View Invoice Terms</a></li>
+  </ul>
+</li>
+
  
-        <a class="anac" href="{% url 'add_lead' %}">
-          <li><i class="fas fa-user-plus"></i> Add Lead</li>
-        </a>
-        <a class="anac" href="{% url 'view_leads' %}">
-          <li><i class="fas fa-user-plus"></i> View Lead</li>
-        </a>
-        <a class="anac" href="{% url 'my_work' %}">
-          <li><i class="fas fa-tasks"></i> My Work</li>
-        </a>
-        <a class="anac" href="{% url 'pending_work' %}">
-          <li><i class="fas fa-clock"></i> Pending Work</li>
-        </a>
+  </ul>
 
-        <a class="anac" href="{% url 'add_quotation_term' %}">
-          <li><i class="fas fa-file-signature"></i> Create Quotation Term</li>
-        </a>
-        <a class="anac" href="{% url 'quotation_term_list' %}">
-          <li><i class="fas fa-list"></i> View Quotation Terms</li>
-        </a>
-        <a class="anac" href="{% url 'quotation' %}">
-          <li><i class="fas fa-file-invoice"></i> Quotation</li>
-        </a>
-        <a class="anac" href="/quotations">
-          <li><i class="fas fa-file-alt"></i> Quotation Details</li>
-        </a>
-        <a class="anac" href="{% url 'add_invoice_term' %}">
-          <li><i class="fas fa-file-invoice-dollar"></i> Create Invoice Term</li>
-        </a>
-        <a class="anac" href="{% url 'invoice_term_list' %}">
-          <li><i class="fas fa-clipboard-list"></i> View Invoice Terms</li>
-        </a>
-        <a class="anac" href="{% url 'closed_leads' %}">
-          <li><i class="fas fa-user-slash"></i> Close Leads</li>
-        </a>
-      </ul>
+  <center>
+    <button class="mb-5 mt-5 logoutbtn">
+      <a href="/logout">Logout</a>
+      <div class="arrow-wrapper"><div class="arrow"></div></div>
+    </button>
+  </center>
+</div>
 
-      <center>
-        <button class="mb-5 mt-5 logoutbtn">
-          <a href="/logout">  Logout</a>
-          <div class="arrow-wrapper"><div class="arrow"></div></div>
-        </button>
-      </center>
-    </div>
   </div>
+<script>
+  $(document).ready(function () {
+    $('.collapse').on('show.bs.collapse', function () {
+      $(this).prev('a').find('.dropdown-caret').addClass('rotate');
+    });
+
+    $('.collapse').on('hide.bs.collapse', function () {
+      $(this).prev('a').find('.dropdown-caret').removeClass('rotate');
+    });
+  });
+</script>
+
 
   <!-- Sidebar Logic -->
   <script>
