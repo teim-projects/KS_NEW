@@ -521,6 +521,7 @@ def add_lead(request):
 
     # For GET request
     country_codes = [
+    ('+91', '🇮🇳 India'),
     ('+93', '🇦🇫 Afghanistan'),
     ('+355', '🇦🇱 Albania'),
     ('+213', '🇩🇿 Algeria'),
@@ -592,7 +593,7 @@ def add_lead(request):
     ('+509', '🇭🇹 Haiti'),
     ('+504', '🇭🇳 Honduras'),
     ('+36', '🇭🇺 Hungary'),
-    ('+91', '🇮🇳 India'),
+   
     ('+62', '🇮🇩 Indonesia'),
     ('+98', '🇮🇷 Iran'),
     ('+964', '🇮🇶 Iraq'),
