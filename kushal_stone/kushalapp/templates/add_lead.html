@@ -133,7 +133,7 @@
 <div class="form-group col-md-6">
     <label>Mobile Number <span class="star">*</span></label>
     <div class="input-group">
-        <select class="form-select country-select" name="mobile_country_code" style="max-width: 120px;">
+        <select class="form-select country-select bg-dark text-light" name="mobile_country_code" style="max-width: 120px;">
             {% for code, name in country_codes %}
                 <option value="{{ code }}" {% if data.mobile_country_code == code %}selected{% endif %}>
                     {{ code }} {{ name }}
@@ -149,7 +149,7 @@
 <div class="form-group col-md-6">
     <label>Secondary Mobile Number</label>
     <div class="input-group">
-        <select class="form-select country-select" name="secondary_country_code" style="max-width: 120px;">
+        <select class="form-select country-select  bg-dark text-light" name="secondary_country_code" style="max-width: 120px;">
             {% for code, name in country_codes %}
                 <option value="{{ code }}" {% if data.secondary_country_code == code %}selected{% endif %}>
                     {{ code }} {{ name }}
