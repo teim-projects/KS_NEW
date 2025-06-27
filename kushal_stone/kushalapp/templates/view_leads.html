@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <title>All Leads</title>
     <style>
         .form-row {
@@ -20,7 +18,6 @@
             box-shadow: 0px 0px 46px #dcdcdc;
             border-radius: 10px;
             padding: 30px;
-
         }
 
         table {
@@ -40,283 +37,349 @@
             background-color: #000000 !important;
             color: white !important;
         }
+
         td {
-    min-width: auto !important;
+            min-width: auto !important;
+        }
+
+        /* 🎨 Modal Wrapper Animation */
+        .custom-modal-dialog {
+            transition: transform 0.3s ease-out;
+            transform: translateY(-100px);
+        }
+
+        .custom-modal.fade.show .custom-modal-dialog {
+            transform: translateY(0);
+        }
+
+        .custom-modal-header {
+            background-color: #343a40;
+            color: #fff;
+            border-bottom: 3px solid #007bff;
+        }
+
+        .custom-modal-title {
+            font-weight: bold;
+         }
+
+        .custom-table-body {
+            background-color: #f9f9f9;
+        }
+
+        .custom-table-th {
+            background-color: #eaeaea;
+            width: 50%;
+            font-weight: 500;
+        }
+.custom-table-td{
+
+        width: 50%;
+ }
+        .custom-badge {
+            display: inline-block;
+            margin: 2px;
+            padding: 5px 10px;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .custom-badge:hover {
+            transform: scale(1.1);
+        }
+
+        .badge-secondary-custom {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .badge-primary-custom {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .custom-download-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .custom-download-btn:hover {
+            background-color: #218838;
+            color: white;
+        }.custom-x {
+  font-size: 1.5rem;
+  color: #eaeaea;
+}.modal-dialog-auto {
+  max-width: fit-content;
+  width: auto;
+  margin: 1.75rem auto;
 }
+
+@media (max-width: 768px) {
+  .modal-dialog-auto {
+    width: 95%; /* Fallback for small devices */
+    max-width: 95%;
+  }
+}
+
+ 
+
+
     </style>
 </head>
-
 <body>
     {% include 'Sales_Base.html' %}
-    <!-- Include Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <div class="main" style="min-height: 100vh;">
         <div class="container" style="margin-top: 100px;">
             <div class="row mt-5">
                 <div class="col-md-12 bg-light shadow rounded">
-                    
-<div class="container ">
-<h2 class="text-center mt-3">Leads List</h2>
-                    <a href="{% url 'add_lead' %}" class="btn btn-outline-info mb-3">+ Add New Lead</a>
+                    <div class="container" >
+                        <h2 class="text-center mt-3">Leads List</h2>
+                        <a href="{% url 'add_lead' %}" class="btn btn-outline-info mb-3">+ Add New Lead</a>
+                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead class="thead-light sticky-top" style="z-index: 1;">
+                                    <tr>
+                                        <th>S.No.</th>
+                                        <th>Full Name</th>
+                                        <th>Mobile</th>
+                                        <th>Secondary Mobile</th>
+                                        <th>Email</th>
+                                        <th>Sales Person</th>
+                                        <th>Follow-Up Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadTableBody">
+                                    {% for lead in leads %}
+                                    <tr class="lead-row">
+                                        <td>{{ forloop.counter }}
+                                            <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
+                                                data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
+                                                <i class="bi bi-plus-circle"></i>
+                                            </button>
+                                        </td>
+                                        <td>{{ lead.full_name }}</td>
+                                        <td>{{ lead.mobile_number }}</td>
+                                        <td>{{ lead.secondary_mobile_number }}</td>
+                                        <td>{{ lead.email }}</td>
+                                        <td>{{ lead.sales_person.username }}</td>
+                                        <td>{{ lead.next_followup_date }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- 🔄 Pagination Controls -->
+                        <nav aria-label="Lead Table Pagination" class="mt-3">
+                            <ul class="pagination justify-content-center" id="pagination">
+                                <!-- JS fills here -->
+                            </ul>
+                        </nav>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const rows = document.querySelectorAll(".lead-row");
+                            const rowsPerPage = 10;
+                            const pagination = document.getElementById("pagination");
+                            let currentPage = 1;
 
-  <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-    <table class="table table-bordered table-hover table-striped">
-      <thead class="thead-light sticky-top">
-        <tr>
-          <th>S.No.</th>
-          <th>Full Name</th>
-          <th>Mobile</th>
-          <th>Secondary Mobile</th>
-          <th>Email</th>
-          <th>Sales Person</th>
-          <th>Follow-Up Date</th>
-        </tr>
-      </thead>
-      <tbody id="leadTableBody">
-        {% for lead in leads %}
-        <tr class="lead-row">
-          <td>{{ forloop.counter }}
-            <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
-              data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
-              <i class="bi bi-plus-circle"></i>
-            </button>
-          </td>
-          <td>{{ lead.full_name }}</td>
-          <td>{{ lead.mobile_number }}</td>
-          <td>{{ lead.secondary_mobile_number }}</td>
-          <td>{{ lead.email }}</td>
-          <td>{{ lead.sales_person.username }}</td>
-          <td>{{ lead.next_followup_date }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+                            function showPage(page) {
+                                const start = (page - 1) * rowsPerPage;
+                                const end = start + rowsPerPage;
 
-  <!-- 🔄 Pagination Controls -->
-  <nav aria-label="Lead Table Pagination" class="mt-3">
-    <ul class="pagination justify-content-center" id="pagination">
-      <!-- JS fills here -->
-    </ul>
-  </nav>
-</div>
+                                rows.forEach((row, index) => {
+                                    row.style.display = (index >= start && index < end) ? "" : "none";
+                                });
 
-<!-- 📌 jQuery + Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+                                updatePagination(page);
+                            }
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const rows = document.querySelectorAll(".lead-row");
-    const rowsPerPage = 10;
-    const pagination = document.getElementById("pagination");
-    let currentPage = 1;
+                            function updatePagination(activePage) {
+                                const pageCount = Math.ceil(rows.length / rowsPerPage);
+                                pagination.innerHTML = "";
 
-    function showPage(page) {
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
+                                // Previous button
+                                const prevLi = document.createElement("li");
+                                prevLi.className = "page-item" + (activePage === 1 ? " disabled" : "");
+                                const prevLink = document.createElement("a");
+                                prevLink.className = "page-link";
+                                prevLink.href = "#";
+                                prevLink.textContent = "Previous";
+                                prevLink.addEventListener("click", function (e) {
+                                    e.preventDefault();
+                                    if (currentPage > 1) {
+                                        currentPage--;
+                                        showPage(currentPage);
+                                    }
+                                });
+                                prevLi.appendChild(prevLink);
+                                pagination.appendChild(prevLi);
 
-      rows.forEach((row, index) => {
-        row.style.display = (index >= start && index < end) ? "" : "none";
-      });
+                                // Page numbers
+                                for (let i = 1; i <= pageCount; i++) {
+                                    const li = document.createElement("li");
+                                    li.className = "page-item" + (i === activePage ? " active" : "");
+                                    const link = document.createElement("a");
+                                    link.className = "page-link";
+                                    link.href = "#";
+                                    link.textContent = i;
+                                    link.addEventListener("click", function (e) {
+                                        e.preventDefault();
+                                        currentPage = i;
+                                        showPage(currentPage);
+                                    });
+                                    li.appendChild(link);
+                                    pagination.appendChild(li);
+                                }
 
-      updatePagination(page);
-    }
+                                // Next button
+                                const nextLi = document.createElement("li");
+                                nextLi.className = "page-item" + (activePage === pageCount ? " disabled" : "");
+                                const nextLink = document.createElement("a");
+                                nextLink.className = "page-link";
+                                nextLink.href = "#";
+                                nextLink.textContent = "Next";
+                                nextLink.addEventListener("click", function (e) {
+                                    e.preventDefault();
+                                    if (currentPage < pageCount) {
+                                        currentPage++;
+                                        showPage(currentPage);
+                                    }
+                                });
+                                nextLi.appendChild(nextLink);
+                                pagination.appendChild(nextLi);
+                            }
 
-    function updatePagination(activePage) {
-      const pageCount = Math.ceil(rows.length / rowsPerPage);
-      pagination.innerHTML = "";
-
-      // Previous button
-      const prevLi = document.createElement("li");
-      prevLi.className = "page-item" + (activePage === 1 ? " disabled" : "");
-      const prevLink = document.createElement("a");
-      prevLink.className = "page-link";
-      prevLink.href = "#";
-      prevLink.textContent = "Previous";
-      prevLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        if (currentPage > 1) {
-          currentPage--;
-          showPage(currentPage);
-        }
-      });
-      prevLi.appendChild(prevLink);
-      pagination.appendChild(prevLi);
-
-      // Page numbers
-      for (let i = 1; i <= pageCount; i++) {
-        const li = document.createElement("li");
-        li.className = "page-item" + (i === activePage ? " active" : "");
-
-        const link = document.createElement("a");
-        link.className = "page-link";
-        link.href = "#";
-        link.textContent = i;
-
-        link.addEventListener("click", function (e) {
-          e.preventDefault();
-          currentPage = i;
-          showPage(currentPage);
-        });
-
-        li.appendChild(link);
-        pagination.appendChild(li);
-      }
-
-      // Next button
-      const nextLi = document.createElement("li");
-      nextLi.className = "page-item" + (activePage === pageCount ? " disabled" : "");
-      const nextLink = document.createElement("a");
-      nextLink.className = "page-link";
-      nextLink.href = "#";
-      nextLink.textContent = "Next";
-      nextLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        if (currentPage < pageCount) {
-          currentPage++;
-          showPage(currentPage);
-        }
-      });
-      nextLi.appendChild(nextLink);
-      pagination.appendChild(nextLi);
-    }
-
-    if (rows.length > 0) {
-      showPage(currentPage);
-    }
-  });
-</script>
-
-
+                            if (rows.length > 0) {
+                                showPage(currentPage);
+                            }
+                        });
+                    </script>
                     {% for lead in leads %}
                     <!-- Lead Detail Modal -->
-                    <div class="modal fade" id="leadModal{{ forloop.counter }}" tabindex="-1"
+                    <div  class="modal fade custom-modal" id="leadModal{{ forloop.counter }}" tabindex="-1"
                         aria-labelledby="leadModalLabel{{ forloop.counter }}" aria-hidden="true">
-                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Lead Details - {{ lead.full_name }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                        <div style="z-index: -1;" class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-auto custom-modal-dialog" role="document">
+                            <div class="modal-content shadow">
+                                <div class="modal-header custom-modal-header">
+                                    <h5 class="modal-title custom-modal-title text-center w-100" id="leadModalLabel{{ forloop.counter }}">
+                                        📋 Lead Details - {{ lead.full_name }}</h5>
+                                  <button type="button" class="btn custom-x-close" data-bs-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true" class="custom-x">&times;</span>
+</button>
+
                                 </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered">
+                                <div class="modal-body custom-table-body">
+                                    <table class="table table-bordered table-striped">
                                         <tbody>
                                             <tr>
-                                                <th>Full Name</th>
-                                                <td>{{ lead.full_name }}</td>
+                                                <td class="custom-table-th">Full Name</td>
+                                                <td class="custom-table-td">{{ lead.full_name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Mobile</th>
-                                                <td>{{ lead.mobile_number }}</td>
+                                                <td class="custom-table-th">Mobile</td>
+                                                <td class="custom-table-td">{{ lead.mobile_number }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Secondary Mobile</th>
-                                                <td>
-                                                    {% if lead.secondary_mobile_number %}
-                                                        {{ lead.secondary_mobile_number }}
-                                                    {% else %}
-                                                        <span>-</span>
-                                                    {% endif %}
-                                                </td>
+                                                <td class="custom-table-th">Secondary Mobile</td>
+                                                <td>{% if lead.secondary_mobile_number %}{{ lead.secondary_mobile_number }}{% else %}-{% endif %}</td>
                                             </tr>
                                             <tr>
-                                                <th>Email</th>
-                                                <td>{{ lead.email }}</td>
+                                                <td class="custom-table-th">Email</td>
+                                                <td class="custom-table-td">{{ lead.email }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Address</th>
-                                                <td>{{ lead.address }}</td>
+                                                <td class="custom-table-th">Address</td>
+                                                <td class="custom-table-td">{{ lead.address }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Architect Name</th>
-                                                <td>{{ lead.architect_name }}</td>
+                                                <td class="custom-table-th">Architect Name</td>
+                                                <td class="custom-table-td">{{ lead.architect_name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Architect Number</th>
-                                                <td>{{ lead.architect_number }}</td>
+                                                <td class="custom-table-th">Architect Number</td>
+                                                <td class="custom-table-td">{{ lead.architect_number }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Source</th>
-                                                <td>{{ lead.source }}</td>
+                                                <td class="custom-table-th">Source</td>
+                                                <td class="custom-table-td">{{ lead.source }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Other Source</th>
-                                                <td>{{ lead.source_other }}</td>
+                                                <td class="custom-table-th">Other Source</td>
+                                                <td class="custom-table-td">{{ lead.source_other }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Enquiry Date</th>
-                                                <td>{{ lead.enquiry_date }}</td>
+                                                <td class="custom-table-th">Enquiry Date</td>
+                                                <td class="custom-table-td">{{ lead.enquiry_date }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Sales Person</th>
-                                                <td>{{ lead.sales_person.username }}</td>
+                                                <td class="custom-table-th">Sales Person</td>
+                                                <td class="custom-table-td">{{ lead.sales_person.username }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Follow-Up Person</th>
-                                                <td>{{ lead.follow_up_person.username }}</td>
+                                                <td class="custom-table-th">Follow-Up Person</td>
+                                                <td class="custom-table-td">{{ lead.follow_up_person.username }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Customer Segment</th>
-                                                <td>{{ lead.customer_segment }}</td>
+                                                <td class="custom-table-th">Customer Segment</td>
+                                                <td class="custom-table-td">{{ lead.customer_segment }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Follow-Up Date</th>
-                                                <td>{{ lead.next_followup_date }}</td>
+                                                <td class="custom-table-th">Follow-Up Date</td>
+                                                <td class="custom-table-td">{{ lead.next_followup_date }}</td>
                                             </tr>
                                             <tr>
-                                                <th>First Call Date</th>
-                                                <td>{{ lead.first_call_date }}</td>
+                                                <td class="custom-table-th">First Call Date</td>
+                                                <td class="custom-table-td">{{ lead.first_call_date }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Customer Visited</th>
-                                                <td>{{ lead.customer_visited }}</td>
+                                                <td class="custom-table-th">Customer Visited</td>
+                                                <td class="custom-table-td">{{ lead.customer_visited }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Inspection Done</th>
-                                                <td>{{ lead.inspection_done }}</td>
+                                                <td class="custom-table-th">Inspection Done</td>
+                                                <td class="custom-table-td">{{ lead.inspection_done }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Type of Lead</th>
-                                                <td>{{ lead.lead_type }}</td>
+                                                <td class="custom-table-th">Type of Lead</td>
+                                                <td class="custom-table-td">{{ lead.lead_type }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Quotation Given</th>
-                                                <td>{{ lead.quotation_given }}</td>
+                                                <td class="custom-table-th">Quotation Given</td>
+                                                <td class="custom-table-td">{{ lead.quotation_given }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Quotation Amount</th>
+                                                <td class="custom-table-th">Quotation Amount</td>
                                                 <td>₹{{ lead.quotation_amount|floatformat:2 }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Description</th>
-                                                <td>{{ lead.description }}</td>
+                                                <td class="custom-table-th">Description</td>
+                                                <td class="custom-table-td">{{ lead.description }}</td>
                                             </tr>
                                             <tr>
-                                                <th>File Upload</th>
+                                                <td class="custom-table-th">File Upload</td>
                                                 <td>
                                                     {% if lead.file_upload %}
-                                                    <a href="{{ lead.file_upload.url }}" class="btn btn-sm btn-success" download>⬇ Download</a>
-                                                    {% else %}
-                                                    <span>-</span>
-                                                    {% endif %}
+                                                    <a href="{{ lead.file_upload.url }}" class="custom-download-btn" download>⬇ Download</a>
+                                                    {% else %}-{% endif %}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Products</th>
+                                                <td class="custom-table-th">Products</td>
                                                 <td>
                                                     {% for product in lead.products.all %}
-                                                    <span class="badge bg-secondary">{{ product.name }}</span>
+                                                    <span class="custom-badge badge-secondary-custom">{{ product.name }}</span>
                                                     {% empty %}-{% endfor %}
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <th>Services</th>
+                                                <td class="custom-table-th">Services</td>
                                                 <td>
                                                     {% for service in lead.services.all %}
-                                                    <span class="badge bg-primary">{{ service.name }}</span>
+                                                    <span class="custom-badge badge-primary-custom">{{ service.name }}</span>
                                                     {% empty %}-{% endfor %}
                                                 </td>
                                             </tr>
@@ -327,17 +390,11 @@
                         </div>
                     </div>
                     {% endfor %}
-
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Include Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     {% include 'footer.html' %}
 </body>
-
-
 </html>
