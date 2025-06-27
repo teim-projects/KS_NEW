@@ -737,10 +737,23 @@ def view_pdf(request, lead_id):
 
 
 
+
+from django.db.models import Q
+from .models import Lead
+
 @login_required
 def view_leads(request):
+    query = request.GET.get('q')
     leads = Lead.objects.all()
-    return render(request, 'view_leads.html', {'leads': leads})
+
+    if query:
+        leads = leads.filter(
+            Q(full_name__icontains=query) |
+            Q(mobile_number__icontains=query) |
+            Q(email__icontains=query)
+        )
+
+    return render(request, 'view_leads.html', {'leads': leads, 'query': query})
 
 
 
