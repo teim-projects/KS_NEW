@@ -448,10 +448,30 @@ def add_lead(request):
         files = request.FILES
         errors = {}
 
+        close_lead = data.get('close_lead')  # Checkbox
+        win_status = data.get('win_status')
+
+        status = None
+        is_closed = False  # Default: not closed
+
+        if close_lead == 'on':
+            is_closed = True
+            if win_status == 'win':
+                status = 'Win'
+            elif win_status == 'loss':
+                status = 'Loss'
+            else:
+                errors['win_status'] = "Please select Win or Loss."
+        else:
+            # Only required when not closing the lead
+            if not data.get('next_followup_date'):
+                errors['next_followup_date'] = "This field can't be empty."
+            if not data.get('follow_up_person'):
+                errors['follow_up_person'] = "This field can't be empty."
+
         required_fields = [
             'full_name', 'mobile_number', 'mobile_country_code', 'requirements',
-            'address', 'source', 'enquiry_date', 'sales_person',
-            'customer_segment', 'next_followup_date', 'follow_up_person'
+            'address', 'source', 'enquiry_date', 'sales_person', 'customer_segment'
         ]
 
         for field in required_fields:
@@ -471,7 +491,8 @@ def add_lead(request):
                 'sales_persons': sales_persons,
                 'follow_up_persons': follow_up_persons,
                 'errors': errors,
-                'data': data
+                'data': data,
+                'country_codes': [('+91', '🇮🇳 India')],
             })
 
         # Construct full mobile numbers
@@ -495,8 +516,8 @@ def add_lead(request):
             enquiry_date=data['enquiry_date'],
             sales_person_id=data['sales_person'],
             customer_segment=data['customer_segment'],
-            next_followup_date=data['next_followup_date'],
-            follow_up_person_id=data['follow_up_person'],
+            next_followup_date=None if close_lead == 'on' else data.get('next_followup_date'),
+            follow_up_person_id=None if close_lead == 'on' else data.get('follow_up_person'),
             first_call_date=data.get('first_call_date') or None,
             customer_visited=data.get('customer_visited'),
             inspection_done=data.get('inspection_done'),
@@ -504,7 +525,9 @@ def add_lead(request):
             quotation_given=data.get('quotation_given'),
             quotation_amount=data.get('quotation_amount') or None,
             description=data.get('description'),
-            file_upload=files.get('file_upload')
+            file_upload=files.get('file_upload'),
+            status=status,
+            is_closed=is_closed,
         )
 
         # Handle many-to-many for products/services
@@ -520,8 +543,12 @@ def add_lead(request):
         return redirect('view_leads')
 
     # For GET request
-    country_codes = [
-    ('+91', '🇮🇳 India'),
+    return render(request, 'add_lead.html', {
+        'products': products,
+        'services': services,
+        'sales_persons': sales_persons,
+        'follow_up_persons': follow_up_persons,
+        'country_codes': [ ('+91', '🇮🇳 India'),
     ('+93', '🇦🇫 Afghanistan'),
     ('+355', '🇦🇱 Albania'),
     ('+213', '🇩🇿 Algeria'),
@@ -689,20 +716,9 @@ def add_lead(request):
     ('+84', '🇻🇳 Vietnam'),
     ('+967', '🇾🇪 Yemen'),
     ('+260', '🇿🇲 Zambia'),
-    ('+263', '🇿🇼 Zimbabwe')
-    ]
-
-    # country_codes.sort(key=lambda x: x[1])
-
-
-
-    return render(request, 'add_lead.html', {
-        'products': products,
-        'services': services,
-        'sales_persons': sales_persons,
-        'follow_up_persons': follow_up_persons,
-        'country_codes': country_codes
+    ('+263', '🇿🇼 Zimbabwe')],
     })
+
 
 
 
@@ -1006,7 +1022,12 @@ def completed_follow_up(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Lead, CustomUser, FollowUp1, FollowUp2, FollowUp3, FollowUp4, FollowUp5, FollowUp6, FollowUp7, FollowUp8, FollowUp9, FollowUp10
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Lead, CustomUser, FollowUp1
 from django.contrib.auth import get_user_model
+from datetime import datetime
+
 User = get_user_model()
 
 @login_required
@@ -1025,23 +1046,37 @@ def follow_up_1(request, lead_id):
         description = request.POST.get('description')
         quotation_file = request.FILES.get('quotation_file')
         lead_type = request.POST.get('lead_type')
-        close_lead = request.POST.get('close_lead')
+        close_lead = request.POST.get('close_lead') == 'on'  # Checkbox is "on" when selected
         win_status = request.POST.get('win_status')  # 'win' or 'loss'
 
+        # Default values
         close_status = None
         next_followup_date = None
         next_followup_person = None
 
-        if close_lead == 'yes':
+        if close_lead:
             if win_status == 'win':
                 close_status = 'Win'
             elif win_status == 'loss':
                 close_status = 'Loss'
         else:
             close_status = 'Open'
-            next_followup_date = request.POST.get('next_followup_date')
+
+            # Safely parse date
+            next_followup_date_str = request.POST.get('next_followup_date')
+            if next_followup_date_str:
+                try:
+                    next_followup_date = datetime.strptime(next_followup_date_str, '%Y-%m-%d').date()
+                except ValueError:
+                    next_followup_date = None
+
+            # Get next follow-up person
             next_followup_person_id = request.POST.get('next_followup_person')
-            next_followup_person = CustomUser.objects.get(id=next_followup_person_id) if next_followup_person_id else None
+            if next_followup_person_id:
+                try:
+                    next_followup_person = CustomUser.objects.get(id=next_followup_person_id)
+                except CustomUser.DoesNotExist:
+                    next_followup_person = None
 
         # Create FollowUp1 record
         FollowUp1.objects.create(
@@ -1054,19 +1089,18 @@ def follow_up_1(request, lead_id):
             quotation_file=quotation_file,
             lead_type=lead_type,
             followup_person=request.user,
-            next_followup_date=next_followup_date if close_lead != 'yes' else None,
-            next_followup_person=next_followup_person if close_lead != 'yes' else None,
+            next_followup_date=next_followup_date,
+            next_followup_person=next_followup_person,
             close_status=close_status
         )
 
-        # Update lead if it's closed
+        # Update lead status
         if close_status in ['Win', 'Loss']:
             lead.is_closed = True
             lead.win_status = True if close_status == 'Win' else False
             lead.closed_by = request.user
             lead.save()
         else:
-            # Assign next followup person
             if next_followup_person:
                 lead.follow_up_person = next_followup_person
                 lead.save()
@@ -1077,7 +1111,6 @@ def follow_up_1(request, lead_id):
         'lead': lead,
         'sales_persons': sales_persons
     })
-
 
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -1617,14 +1650,32 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Lead, CustomUser
 from django.contrib import messages
 
+# @login_required
+# def closed_leads(request):
+#     closed = Lead.objects.filter(is_closed=True, follow_up_person=request.user)
+#     operation_users = CustomUser.objects.filter(role='Operations')
+#     return render(request, 'close_lead.html', {
+#         'closed_leads': closed,
+#         'operation_users': operation_users
+#     })
+
+
 @login_required
 def closed_leads(request):
-    closed = Lead.objects.filter(is_closed=True, follow_up_person=request.user)
+    # Leads closed via follow-up (as you're already displaying)
+    closed_followup = Lead.objects.filter(is_closed=True, follow_up_person=request.user)
+
+    # Leads closed directly (without follow-up)
+    direct_closed = Lead.objects.filter(is_closed=True, follow_up_person__isnull=True)
+
     operation_users = CustomUser.objects.filter(role='Operations')
+
     return render(request, 'close_lead.html', {
-        'closed_leads': closed,
+        'closed_leads': closed_followup,
+        'direct_closed_leads': direct_closed,
         'operation_users': operation_users
     })
+
 
 
 

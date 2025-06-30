@@ -93,7 +93,8 @@ class Lead(models.Model):
         ('Yes', 'Yes'),
         ('No', 'No'),
     ]
-
+    
+    status = models.CharField(max_length=20, blank=True, null=True) 
     full_name = models.CharField(max_length=100)
     mobile_number = models.CharField(max_length=25)
     secondary_mobile_number = models.CharField(max_length=25, blank=True, null=True)  # <-- Add this
@@ -111,7 +112,7 @@ class Lead(models.Model):
     sales_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='sales_person')
     customer_segment = models.CharField(max_length=50, choices=CUSTOMER_SEGMENT_CHOICES)
     next_followup_date = models.DateField(null=True, blank=True)
-    follow_up_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='follow_up_person')
+    follow_up_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='follow_up_person',blank=True)
     is_closed = models.BooleanField(default=False)
     win_status = models.BooleanField(null=True, blank=True)
     closed_by = models.ForeignKey(CustomUser, null=True, blank=True, on_delete=models.SET_NULL, related_name='closed_leads')
@@ -166,7 +167,7 @@ class FollowUp1(FollowUpBase):
     description = models.TextField(blank=True, null=True)
     quotation_file = models.FileField(upload_to='quotations/', null=True, blank=True)
     next_followup_date = models.DateField(null=True, blank=True)
-    next_followup_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='followup2_person')
+    next_followup_person = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='followup2_person',blank=True,)
 
 
 class FollowUp2(FollowUpBase):

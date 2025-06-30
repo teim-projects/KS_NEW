@@ -80,9 +80,11 @@
       <label>Upload Quotation File</label>
       <input type="file" name="quotation_file">
     </div>
+<div class="form-group" id="followup_date_section">
+  <label>Next Follow-up Date</label>
+  <input class="form-control" type="date" name="next_followup_date">
+</div>
 
-    <label>Next Follow-up Date</label>
-    <input class="form-control" type="date" name="next_followup_date">
 
     <!-- Outcome and Close Button -->
     <label><strong>Close Lead?</strong></label><br>
@@ -91,8 +93,9 @@
 
     <div id="outcome_section" class="hidden">
       <label><strong>Outcome:</strong></label><br>
-      <label><input type="radio" name="win_status" value="win"> Win</label><br>
-      <label><input type="radio" name="win_status" value="lose"> Loss</label><br>
+     <label><input type="radio" name="win_status" value="win"> Win</label><br>
+<label><input type="radio" name="win_status" value="loss"> Loss</label><br>
+
     </div>
 
     <!-- Reassign Section -->
@@ -111,18 +114,13 @@
   </form>
 
   <script>
-    // Toggle quotation fields
-    document.getElementById('quotation_given').addEventListener('change', function () {
-      const display = this.value === 'yes' ? 'block' : 'none';
-      document.getElementById('quotation_fields').style.display = display;
-    });
-
-    // Toggle outcome and reassign sections
     document.getElementById('close_lead').addEventListener('change', function () {
-      const isChecked = this.checked;
-      document.getElementById('outcome_section').style.display = isChecked ? 'block' : 'none';
-      document.getElementById('reassign_section').style.display = isChecked ? 'none' : 'block';
-    });
+  const isChecked = this.checked;
+  document.getElementById('outcome_section').style.display = isChecked ? 'block' : 'none';
+  document.getElementById('reassign_section').style.display = isChecked ? 'none' : 'block';
+  document.getElementById('followup_date_section').style.display = isChecked ? 'none' : 'block';
+});
+
   </script>
 </div>
 <div class="col-md-3"></div>
