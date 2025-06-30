@@ -346,8 +346,12 @@
 
 
                                 <div id="followup_fields">
-    <label>Follow-Up Person*</label>
-    <input type="text" name="followup_person" class="form-control">
+     <label>Follow-Up Person <span class="star"> *</span></label>
+                                    <select class="form-control" name="follow_up_person">
+                                        {% for person in follow_up_persons %}
+                                        <option value="{{ person.id }}">{{ person.username }}</option>
+                                        {% endfor %}
+                                    </select>
 
     <label>Follow-Up Date*</label>
     <input type="date" name="followup_date" class="form-control">
