@@ -1,541 +1,425 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Add Lead</title>
-
     <!-- Include Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-<!-- Include jQuery (required for Select2) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Include Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Include jQuery (required for Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <style>
-        .error {
-            color: red;
-        }
+      .error {
+        color: red;
+      }
 
-        .hidden {
-            display: none;
-        }
+      .hidden {
+        display: none;
+      }
 
-        .main {
-            min-height: 100vh;
-        }
+      .main {
+        min-height: 100vh;
+      }
 
-        label {
-            font-weight: bold;
-        }
+      label {
+        font-weight: bold;
+      }
 
-        .form-box {
-            box-shadow: 0px 0px 46px #dcdcdc;
-            border-radius: 10px;
-            padding-top: 20px;
+      .form-box {
+        box-shadow: 0px 0px 46px #dcdcdc;
+        border-radius: 10px;
+        padding-top: 20px;
+      }
 
-        }
+      form {
+        padding-right: 20px;
+        padding-left: 20px;
+      }
 
-        form {
-            padding-right: 20px;
-            padding-left: 20px;
+      .col-md-6 {
+        margin-bottom: 10px;
+      }
 
+      .form-step {
+        margin-top: 20px;
+        border-radius: 10px;
+      }
 
+      .drop-zone {
+        border: 2px dashed #353535;
+        padding: 50px;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 6px;
+        color: #6c757d;
+        background-color: #f8f9fa;
+        transition: background-color 0.2s;
+      }
 
-        }
+      .drop-zone.dragover {
+        background-color: #e9ecef;
+        border-color: #0056b3;
+      }
 
-        .col-md-6 {
-            margin-bottom: 10px;
-        }
+      .drop-zone input {
+        display: none;
+      }
 
-        .form-step {
-            margin-top: 20px;
-            border-radius: 10px;
-        }
-          .drop-zone {
-    border: 2px dashed #353535;
-    padding: 50px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 6px;
-    color: #6c757d;
-    background-color: #f8f9fa;
-    transition: background-color 0.2s;
-  }
-
-  .drop-zone.dragover {
-    background-color: #e9ecef;
-    border-color: #0056b3;
-  }
-
-  .drop-zone input {
-    display: none;
-  }
-
-  .file-name {
-    margin-top: 10px;
-    font-weight: bold;
-    color: #343a40;
-  }
+      .file-name {
+        margin-top: 10px;
+        font-weight: bold;
+        color: #343a40;
+      }
     </style>
-
-
-</head>
-
-<body>
+  </head>
+  <body>
     <script>
-        function nextStep(step) {
-            const totalSteps = 3;
-            for (let i = 1; i <= totalSteps; i++) {
-                document.getElementById('step' + i).style.display = (i === step) ? 'block' : 'none';
-            }
+      function nextStep(step) {
+        const totalSteps = 3;
+        for (let i = 1; i <= totalSteps; i++) {
+          document.getElementById('step' + i).style.display = (i === step) ? 'block' : 'none';
         }
+      }
 
-        function toggleOtherSource(select) {
-            document.getElementById('other_source_field').style.display = (select.value === 'Other') ? 'block' : 'none';
-        }
+      function toggleOtherSource(select) {
+        document.getElementById('other_source_field').style.display = (select.value === 'Other') ? 'block' : 'none';
+      }
 
-        function toggleProducts() {
-            const checkbox = document.getElementById('show_products');
-            document.getElementById('product_list').style.display = checkbox.checked ? 'block' : 'none';
-        }
+      function toggleProducts() {
+        document.getElementById('product_list').style.display = document.getElementById('show_products').checked ? 'block' : 'none';
+      }
 
-        function toggleServices() {
-            const checkbox = document.getElementById('show_services');
-            document.getElementById('service_list').style.display = checkbox.checked ? 'block' : 'none';
-        }
+      function toggleServices() {
+        document.getElementById('service_list').style.display = document.getElementById('show_services').checked ? 'block' : 'none';
+      }
 
-        function toggleQuotationAmount(select) {
-            document.getElementById('quotation_amount_field').style.display = (select.value === 'Yes') ? 'block' : 'none';
-        }
+      function toggleQuotationAmount(select) {
+        document.getElementById('quotation_amount_field').style.display = (select.value === 'Yes') ? 'block' : 'none';
+      }
     </script>
-
     {% include 'Sales_Base.html' %}
     <div class="main">
-        <div class="container" style="margin-top: 100px;">
-            <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-8 col-12 form-box">
-
-                    <h2 class="text-center mt-2 ">Add New Lead</h2>
-
-                    <form method="post" id="leadForm" enctype="multipart/form-data">
-                        {% csrf_token %}
-
-                        <div id="step1" class="form-step">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>Full Name <span class="star"> *</span></label>
-                                    <input class="form-control" type="text" name="full_name" required>
-                                </div>
-          <!-- Mobile Number Field -->
-<div class="form-group col-md-6">
-    <label>Mobile Number <span class="star">*</span></label>
-    <div class="input-group">
-        <select class="form-select country-select bg-dark text-light" name="mobile_country_code" style="max-width: 120px;">
-            {% for code, name in country_codes %}
-                <option value="{{ code }}" {% if data.mobile_country_code == code %}selected{% endif %}>
-                    {{ code }} {{ name }}
-                </option>
-            {% endfor %}
-        </select>
-        <input class="form-control" type="text" name="mobile_number" required placeholder="Enter number"
-               value="{{ data.mobile_number|default_if_none:'' }}">
-    </div>
-</div>
-
-<!-- Secondary Mobile Number Field -->
-<div class="form-group col-md-6">
-    <label>Secondary Mobile Number</label>
-    <div class="input-group">
-        <select class="form-select country-select  bg-dark text-light" name="secondary_country_code" style="max-width: 120px;">
-            {% for code, name in country_codes %}
-                <option value="{{ code }}" {% if data.secondary_country_code == code %}selected{% endif %}>
-                    {{ code }} {{ name }}
-                </option>
-            {% endfor %}
-        </select>
-        <input class="form-control" type="text" name="secondary_mobile_number" placeholder="Optional"
-               value="{{ data.secondary_mobile_number|default_if_none:'' }}">
-    </div>
-</div>
-
-
-<!-- Select2 Initialization -->
-<script>
-    $(document).ready(function() {
-        $('.country-select').select2({
-            width: 'resolve',  // auto-width
-            placeholder: 'Select country code',
-            allowClear: true
-        });
-    });
-</script>
-
-                                <div class="form-group col-md-6">
-                                    <label>Email <span class="star"> *</span></label>
-                                    <input class="form-control" type="email" name="email">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Address <span class="star"> *</span></label>
-                                    <textarea class="form-control" name="address" required></textarea>
-                                </div>
-                                                                <div class="form-group col-md-6">
-                                    <label>Architect Name <span style="color: gray; font-weight: normal;">(Optional)</span></label>
-                                    <input class="form-control" type="text" name="architect_name">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Architect Contact <span style="color: gray; font-weight: normal;">(Optional)</span></label>
-                                    <input class="form-control" type="text" name="architect_number">
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-3">
-                                    <a href="{% url 'view_leads' %}"
-                                        class="btn btn-dark mt-3 mb-3 form-control  w-100">View All
-                                        Leads</a>
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="button" class="btn btn-primary w-100 mb-3 mt-3"
-                                        onclick="nextStep(2)">Next</button>
-                                </div>
-                                <div class="col-md-3"></div>
-                            </div>
-
-                        </div>
-
-                        <div id="step2" class="form-step" style="display:none;">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-    <label>Enquiry Date <span class="star"> *</span></label>
-    <input class="form-control" type="date" name="enquiry_date" id="enquiry_date" required>
-</div>
-
-<script>
-    // Set today's date as the minimum
-    document.addEventListener('DOMContentLoaded', function () {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('enquiry_date').setAttribute('min', today);
-    });
-</script>
-
-                                <div class="form-group col-md-6">
-                                    <label>Sales Person <span class="star"> *</span></label>
-                                    <select name="sales_person" class="form-control">
-                                        {% for person in sales_persons %}
-                                        <option value="{{ person.id }}">{{ person.username }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                               
-                                <div class="form-group col-md-6">
-                                    <label>Customer Segment <span class="star"> *</span></label>
-                                    <select class="form-control" name="customer_segment">
-                                        <option value="Retail/individual">Retail/individual</option>
-                                        <option value="B2B">B2B</option>
-                                        <option value="Reseller">Reseller</option>
-                                        <option value="Commercial/Corporate">Commercial/Corporate</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group col-md-6">
-                                    <label>Source <span class="star"> *</span></label>
-                                    <select class="form-control" name="source" onchange="toggleOtherSource(this)">
-                                        <option value="">--Select--</option>
-                                        <option value="Instagram">Instagram</option>
-                                        <option value="Facebook">Facebook</option>
-                                        <option value="Indiamart">Indiamart</option>
-                                        <option value="Google">Google</option>
-                                        <option value="Reference">Reference</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6" id="other_source_field" style="display:none;">
-                                    <label>Other Source <span class="star"> *</span></label>
-                                    <input class="form-control" type="text" name="source_other">
-                                </div>
-                                <div class="form-group col-md-12 mt-3">
-                                    <label><input type="checkbox" id="show_products" onchange="toggleProducts()">
-                                        Products</label>
-                                    <label class="ml-4"><input type="checkbox" id="show_services"
-                                            onchange="toggleServices()"> Services</label>
-                                </div>
-                                <div class="form-group col-md-6" id="product_list" style="display:none;">
-                                    <p><strong>Choose Products:</strong></p>
-                                    {% for product in products %}
-                                    <label><input type="checkbox" name="products" value="{{ product.id }}">
-                                        {{ product.name }}</label><br>
-                                    {% endfor %}
-                                </div>
-                                <div class="form-group col-md-6" id="service_list" style="display:none;">
-                                    <p><strong>Choose Services:</strong></p>
-                                    {% for service in services %}
-                                    <label><input type="checkbox" name="services" value="{{ service.id }}"> 
-                                        {{service.name }}</label><br>
-                                    {% endfor %}
-                                </div>
-                                                        <input class="form-control" type="hidden" name="requirements" id="requirements">
-
-                            </div>
-
-
-                            <div class="row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-3">
-                                    <button type="button" class="btn btn-secondary mt-3 mb-3 w-100"
-                                        onclick="nextStep(1)">Previous</button>
-
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="button" class="btn btn-primary  w-100 mt-3 mb-3"
-                                        onclick="nextStep(3)">Next</button>
-                                </div>
-                                <div class="col-md-3"></div>
-                            </div>
-                        </div>
-
-                        <div id="step3" class="form-step" style="display:none;">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label>First Call Date <span class="star"> *</span></label>
-                                    <input class="form-control" type="date" name="first_call_date">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Customer Visited <span class="star"> *</span></label>
-                                    <select class="form-control" name="customer_visited">
-                                        <option value="">--Select--</option>
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Inspection Onsite Done?</label>
-                                    <select class="form-control" name="inspection_done">
-                                        <option value="">--Select--</option>
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Type of Lead <span class="star"> *</span></label>
-                                    <select class="form-control" name="lead_type">
-                                        <option value="">--Select--</option>
-                                        <option value="Hot">Hot</option>
-                                        <option value="Warm">Warm</option>
-                                        <option value="Cold">Cold</option>
-                                        <option value="Not Interested">Not Interested</option>
-                                        <option value="Irrelevant">Irrelevant</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Quotation Given <span class="star"> *</span></label>
-                                    <select class="form-control" name="quotation_given"
-                                        onchange="toggleQuotationAmount(this)">
-                                        <option value="">--Select--</option>
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6" id="quotation_amount_field" style="display:none;">
-                                    <label>Quotation Amount (₹) <span class="star"> *</span></label>
-                                    <input class="form-control" type="number" name="quotation_amount" step="0.01">
-                                </div>
-
-
-                                <div id="followup_fields">
-     <label>Follow-Up Person <span class="star"> *</span></label>
-                                    <select class="form-control" name="follow_up_person">
-                                        {% for person in follow_up_persons %}
-                                        <option value="{{ person.id }}">{{ person.username }}</option>
-                                        {% endfor %}
-                                    </select>
-
-    <label>Follow-Up Date <span class="star"> *</span></label>
-                                    <input class="form-control" type="date" name="next_followup_date">
-  </div>
-
-  <!-- Close This Lead -->
-  <label><input type="checkbox" id="close_lead_checkbox" name="close_lead"> Close this lead</label>
-
-  <!-- Win/Loss Radio Buttons -->
-  <div id="win_loss_options" style="display: none; margin-top:10px;">
-    <label><input type="radio" name="win_status" value="win"> Win</label><br>
-    <label><input type="radio" name="win_status" value="loss"> Loss</label><br>
-  </div>
-
-
-
-
-
-
-                                <div class="form-group col-md-12">
-                                    <label>Description <span class="star"> *</span></label>
-                                    <textarea class="form-control" name="description" rows="4"></textarea>
-                                </div>
-                              
-<div class="form-group col-md-12">
-  <label>Upload File (PDF/Image) <span class="star"> *</span></label>
-  <div class="drop-zone" id="dropZone">
-    <span>Drag & Drop or Click to Upload</span>
-    <input type="file" id="fileInput" name="file_upload" accept=".pdf,image/*">
-  </div>
-  <div class="file-name" id="fileName">No file selected</div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const closeLeadCheckbox = document.getElementById('close_lead_checkbox');
-  const followupFields = document.getElementById('followup_fields');
-  const winLossOptions = document.getElementById('win_loss_options');
-
-  closeLeadCheckbox.addEventListener('change', function() {
-    if (this.checked) {
-      // Hide follow-up fields and show win/loss options
-      followupFields.style.display = 'none';
-      winLossOptions.style.display = 'block';
-    } else {
-      // Show follow-up fields and hide win/loss options
-      followupFields.style.display = 'block';
-      winLossOptions.style.display = 'none';
-    }
-  });
-});
-</script>
-
-
-<script>
-  const dropZone = document.getElementById("dropZone");
-  const fileInput = document.getElementById("fileInput");
-  const fileName = document.getElementById("fileName");
-
-  dropZone.addEventListener("click", () => fileInput.click());
-
-  dropZone.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    dropZone.classList.add("dragover");
-  });
-
-  dropZone.addEventListener("dragleave", () => {
-    dropZone.classList.remove("dragover");
-  });
-
-  dropZone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    dropZone.classList.remove("dragover");
-    const files = e.dataTransfer.files;
-    if (files.length) {
-      fileInput.files = files;
-      fileName.textContent = files[0].name;
-    }
-  });
-
-  fileInput.addEventListener("change", () => {
-    if (fileInput.files.length) {
-      fileName.textContent = fileInput.files[0].name;
-    }
-  });
-</script>
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-3"></div>
-                                <div class="col-md-3">
-                                    <button type="button" class="btn btn-secondary mt-3 mb-3 w-100"
-                                        onclick="nextStep(2)">Previous</button>
-
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="submit" class="btn btn-success w-100 mt-3 mb-3 ">Submit</button>
-
-                                </div>
-                                <div class="col-md-3"></div>
-                            </div>
-                        </div>
-                    </form>
-
-
-                    <script>
-                        function toggleOtherSource(select) {
-                            document.getElementById('other_source_field').style.display = (select.value === 'Other') ? 'block' : 'none';
-                        }
-
-                        function toggleQuotationAmount(select) {
-                            document.getElementById('quotation_amount_field').style.display = (select.value === 'Yes') ? 'block' : 'none';
-                        }
-
-                        function toggleProducts() {
-                            const products = document.getElementById('product_list');
-                            const services = document.getElementById('service_list');
-                            document.getElementById('requirements').value = 'products';
-                            products.style.display = 'block';
-                            services.style.display = 'none';
-                        }
-
-                        function toggleServices() {
-                            const products = document.getElementById('product_list');
-                            const services = document.getElementById('service_list');
-                            document.getElementById('requirements').value = 'services';
-                            services.style.display = 'block';
-                            products.style.display = 'none';
-                        }
-                    </script>
-
-                    {% if errors %}
-                    <div class="error">
-                        <ul>
-                            {% for field, msg in errors.items %}
-                            <li>{{ field }}: {{ msg }}</li>
-                            {% endfor %}
-                        </ul>
+      <div class="container" style="margin-top: 100px;">
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-md-8 col-12 form-box">
+            <h2 class="text-center mt-2">Add New Lead</h2>
+            <form method="post" id="leadForm" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div id="step1" class="form-step">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label>Full Name <span class="star">*</span></label>
+                    <input class="form-control" type="text" name="full_name" required>
+                  </div>
+                  <!-- Mobile Number Field -->
+                  <div class="form-group col-md-6">
+                    <label>Mobile Number <span class="star">*</span></label>
+                    <div class="input-group">
+                      <select class="form-select country-select bg-dark text-light" name="mobile_country_code" style="max-width: 120px;">
+                        {% for code, name in country_codes %}
+                        <option value="{{ code }}" {% if data.mobile_country_code == code %}selected{% endif %}>
+                          {{ code }} {{ name }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                      <input class="form-control" type="text" name="mobile_number" required placeholder="Enter number" value="{{ data.mobile_number|default_if_none:'' }}">
                     </div>
-                    {% endif %}
-
+                  </div>
+                  <!-- Secondary Mobile Number Field -->
+                  <div class="form-group col-md-6">
+                    <label>Secondary Mobile Number</label>
+                    <div class="input-group">
+                      <select class="form-select country-select bg-dark text-light" name="secondary_country_code" style="max-width: 120px;">
+                        {% for code, name in country_codes %}
+                        <option value="{{ code }}" {% if data.secondary_country_code == code %}selected{% endif %}>
+                          {{ code }} {{ name }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                      <input class="form-control" type="text" name="secondary_mobile_number" placeholder="Optional" value="{{ data.secondary_mobile_number|default_if_none:'' }}">
+                    </div>
+                  </div>
+                  <!-- Select2 Initialization -->
+                  <script>
+                    $(document).ready(function() {
+                      $('.country-select').select2({
+                        width: 'resolve',
+                        placeholder: 'Select country code',
+                        allowClear: true
+                      });
+                    });
+                  </script>
+                  <div class="form-group col-md-6">
+                    <label>Email <span class="star">*</span></label>
+                    <input class="form-control" type="email" name="email">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Address <span class="star">*</span></label>
+                    <textarea class="form-control" name="address" required></textarea>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Architect Name <span style="color: gray; font-weight: normal;">(Optional)</span></label>
+                    <input class="form-control" type="text" name="architect_name">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Architect Contact <span style="color: gray; font-weight: normal;">(Optional)</span></label>
+                    <input class="form-control" type="text" name="architect_number">
+                  </div>
                 </div>
-                <div class="col-md-2"></div>
+                <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="col-md-3">
+                    <a href="{% url 'view_leads' %}" class="btn btn-dark mt-3 mb-3 form-control w-100">View All Leads</a>
+                  </div>
+                  <div class="col-md-3">
+                    <button type="button" class="btn btn-primary w-100 mb-3 mt-3" onclick="nextStep(2)">Next</button>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              </div>
+              <div id="step2" class="form-step" style="display:none;">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label>Enquiry Date <span class="star">*</span></label>
+                    <input class="form-control" type="date" name="enquiry_date" id="enquiry_date" required>
+                  </div>
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      const today = new Date().toISOString().split('T')[0];
+                      document.getElementById('enquiry_date').setAttribute('min', today);
+                    });
+                  </script>
+                  <div class="form-group col-md-6">
+                    <label>Sales Person <span class="star">*</span></label>
+                    <select name="sales_person" class="form-control">
+                      {% for person in sales_persons %}
+                      <option value="{{ person.id }}">{{ person.username }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Customer Segment <span class="star">*</span></label>
+                    <select class="form-control" name="customer_segment">
+                      <option value="Retail/individual">Retail/individual</option>
+                      <option value="B2B">B2B</option>
+                      <option value="Reseller">Reseller</option>
+                      <option value="Commercial/Corporate">Commercial/Corporate</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Source <span class="star">*</span></label>
+                    <select class="form-control" name="source" onchange="toggleOtherSource(this)">
+                      <option value="">--Select--</option>
+                      <option value="Instagram">Instagram</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="Indiamart">Indiamart</option>
+                      <option value="Google">Google</option>
+                      <option value="Reference">Reference</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6" id="other_source_field" style="display:none;">
+                    <label>Other Source <span class="star">*</span></label>
+                    <input class="form-control" type="text" name="source_other">
+                  </div>
+                  <div class="form-group col-md-12 mt-3">
+                    <label><input type="checkbox" id="show_products" onchange="toggleProducts()"> Products</label>
+                    <label class="ml-4"><input type="checkbox" id="show_services" onchange="toggleServices()"> Services</label>
+                  </div>
+                  <div class="form-group col-md-6" id="product_list" style="display:none;">
+                    <p><strong>Choose Products:</strong></p>
+                    {% for product in products %}
+                    <label><input type="checkbox" name="products" value="{{ product.id }}"> {{ product.name }}</label><br>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-md-6" id="service_list" style="display:none;">
+                    <p><strong>Choose Services:</strong></p>
+                    {% for service in services %}
+                    <label><input type="checkbox" name="services" value="{{ service.id }}"> {{ service.name }}</label><br>
+                    {% endfor %}
+                  </div>
+                  <input class="form-control" type="hidden" name="requirements" id="requirements">
+                </div>
+                <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary mt-3 mb-3 w-100" onclick="nextStep(1)">Previous</button>
+                  </div>
+                  <div class="col-md-3">
+                    <button type="button" class="btn btn-primary w-100 mt-3 mb-3" onclick="nextStep(3)">Next</button>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              </div>
+              <div id="step3" class="form-step" style="display:none;">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label>First Call Date <span class="star">*</span></label>
+                    <input class="form-control" type="date" name="first_call_date">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Customer Visited <span class="star">*</span></label>
+                    <select class="form-control" name="customer_visited">
+                      <option value="">--Select--</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Inspection Onsite Done?</label>
+                    <select class="form-control" name="inspection_done">
+                      <option value="">--Select--</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Type of Lead <span class="star">*</span></label>
+                    <select class="form-control" name="lead_type">
+                      <option value="">--Select--</option>
+                      <option value="Hot">Hot</option>
+                      <option value="Warm">Warm</option>
+                      <option value="Cold">Cold</option>
+                      <option value="Not Interested">Not Interested</option>
+                      <option value="Irrelevant">Irrelevant</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Quotation Given <span class="star">*</span></label>
+                    <select class="form-control" name="quotation_given" onchange="toggleQuotationAmount(this)">
+                      <option value="">--Select--</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6" id="quotation_amount_field" style="display:none;">
+                    <label>Quotation Amount (₹) <span class="star">*</span></label>
+                    <input class="form-control" type="number" name="quotation_amount" step="0.01">
+                  </div>
+                                    <div class="form-group col-md-12">
+                    <label><input type="checkbox" id="close_lead_checkbox" name="close_lead"> Close this lead</label>
+                    <div id="win_loss_options" style="display: none; margin-top:10px;">
+                      <label><input type="radio" name="win_status" value="win"> Win</label><br>
+                      <label><input type="radio" name="win_status" value="loss"> Loss</label><br>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Follow-Up Person <span class="star">*</span></label>
+                    <select class="form-control" name="follow_up_person" id="followup_fields">
+                      {% for person in follow_up_persons %}
+                      <option value="{{ person.id }}">{{ person.username }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label>Follow-Up Date <span class="star">*</span></label>
+                    <input class="form-control" type="date" name="next_followup_date">
+                  </div>
+
+                  <div class="form-group col-md-12">
+                    <label>Description <span class="star">*</span></label>
+                    <textarea class="form-control" name="description" rows="4"></textarea>
+                  </div>
+                  <div class="form-group col-md-12">
+                    <label>Upload File (PDF/Image) <span class="star">*</span></label>
+                    <div class="drop-zone" id="dropZone">
+                      <span>Drag & Drop or Click to Upload</span>
+                      <input type="file" id="fileInput" name="file_upload" accept=".pdf,image/*">
+                    </div>
+                    <div class="file-name" id="fileName">No file selected</div>
+                  </div>
+                </div>
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    const closeLeadCheckbox = document.getElementById('close_lead_checkbox');
+                    const followupFields = document.getElementById('followup_fields');
+                    const winLossOptions = document.getElementById('win_loss_options');
+                    closeLeadCheckbox.addEventListener('change', function() {
+                      if (this.checked) {
+                        followupFields.style.display = 'none';
+                        document.querySelector('input[name="next_followup_date"]').closest('.form-group').style.display = 'none';
+                        winLossOptions.style.display = 'block';
+                      } else {
+                        followupFields.style.display = 'block';
+                        document.querySelector('input[name="next_followup_date"]').closest('.form-group').style.display = 'block';
+                        winLossOptions.style.display = 'none';
+                      }
+                    });
+                  });
+                </script>
+                <script>
+                  const dropZone = document.getElementById("dropZone");
+                  const fileInput = document.getElementById("fileInput");
+                  const fileName = document.getElementById("fileName");
+                  dropZone.addEventListener("click", () => fileInput.click());
+                  dropZone.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add("dragover");
+                  });
+                  dropZone.addEventListener("dragleave", () => {
+                    dropZone.classList.remove("dragover");
+                  });
+                  dropZone.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove("dragover");
+                    const files = e.dataTransfer.files;
+                    if (files.length) {
+                      fileInput.files = files;
+                      fileName.textContent = files[0].name;
+                    }
+                  });
+                  fileInput.addEventListener("change", () => {
+                    if (fileInput.files.length) {
+                      fileName.textContent = fileInput.files[0].name;
+                    }
+                  });
+                </script>
+                <div class="row">
+                  <div class="col-md-3"></div>
+                  <div class="col-md-3">
+                    <button type="button" class="btn btn-secondary mt-3 mb-3 w-100" onclick="nextStep(2)">Previous</button>
+                  </div>
+                  <div class="col-md-3">
+                    <button type="submit" class="btn btn-success w-100 mt-3 mb-3">Submit</button>
+                  </div>
+                  <div class="col-md-3"></div>
+                </div>
+              </div>
+            </form>
+            <script>
+              function updateRequirementField() {
+                const productsChecked = document.getElementById('show_products').checked;
+                const servicesChecked = document.getElementById('show_services').checked;
+                let requirementValue = '';
+                if (productsChecked && servicesChecked) {
+                  requirementValue = 'both';
+                } else if (productsChecked) {
+                  requirementValue = 'products';
+                } else if (servicesChecked) {
+                  requirementValue = 'services';
+                }
+                document.getElementById('requirements').value = requirementValue;
+              }
+
+              document.getElementById('leadForm').addEventListener('submit', function() {
+                updateRequirementField();
+              });
+            </script>
+            {% if errors %}
+            <div class="error">
+              <ul>
+                {% for field, msg in errors.items %}
+                <li>{{ field }}: {{ msg }}</li>
+                {% endfor %}
+              </ul>
             </div>
+            {% endif %}
+          </div>
+          <div class="col-md-2"></div>
         </div>
+      </div>
     </div>
-    <script>
-        function toggleProducts() {
-            document.getElementById("product_list").style.display =
-                document.getElementById("show_products").checked ? "block" : "none";
-        }
-
-        function toggleServices() {
-            document.getElementById("service_list").style.display =
-                document.getElementById("show_services").checked ? "block" : "none";
-        }
-
-        function updateRequirementField() {
-            const productsChecked = document.getElementById('show_products').checked;
-            const servicesChecked = document.getElementById('show_services').checked;
-
-            let requirementValue = '';
-            if (productsChecked && servicesChecked) {
-                requirementValue = 'both';
-            } else if (productsChecked) {
-                requirementValue = 'products';
-            } else if (servicesChecked) {
-                requirementValue = 'services';
-            }
-            document.getElementById('requirements').value = requirementValue;
-        }
-
-        function toggleOtherSource(select) {
-            document.getElementById('other_source_field').style.display =
-                select.value === 'Other' ? 'block' : 'none';
-        }
-
-        document.getElementById('leadForm').addEventListener('submit', function () {
-            updateRequirementField();
-        });
-    </script>
-    {%include 'footer.html'%}
-
-</body>
-
+    {% include 'footer.html' %}
+  </body>
 </html>
