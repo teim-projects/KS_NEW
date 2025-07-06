@@ -192,16 +192,23 @@ def sales_dashboard(request):
     completed_leads = Lead.objects.filter(is_closed=True).count()
     my_work_total = Lead.objects.filter(sales_person=request.user).count()
 
-    # Get selected follow-up model based on query param
+    # Get selected follow-up model if required
     follow_up_type = request.GET.get('follow_up_type', 'FollowUp1')
     follow_up_model = globals().get(follow_up_type, FollowUp1)
 
-    # Lead type counts from selected follow-up
-    # lead_types = follow_up_model.objects.values('lead_type').annotate(count=Count('lead_type'))
-    # lead_type_labels = [entry['lead_type'] for entry in lead_types]
-    # lead_type_counts = [entry['count'] for entry in lead_types]
+    # Lead Type chart
+    lead_types = Lead.objects.exclude(lead_type__isnull=True).exclude(lead_type='') \
+    .values('lead_type').annotate(count=Count('lead_type'))
 
-    # Win/Loss Status
+    lead_type_labels = [entry['lead_type'] for entry in lead_types]
+    lead_type_counts = [entry['count'] for entry in lead_types]
+
+
+    print("Lead Type Labels:", lead_type_labels)
+    print("Lead Type Counts:", lead_type_counts)
+
+
+    # Win/Loss
     win_loss = Lead.objects.filter(is_closed=True).values('win_status').annotate(count=Count('win_status'))
     win_loss_labels = ['Win' if entry['win_status'] else 'Loss' for entry in win_loss]
     win_loss_counts = [entry['count'] for entry in win_loss]
@@ -220,8 +227,8 @@ def sales_dashboard(request):
         'total_leads': total_leads,
         'completed_leads': completed_leads,
         'my_work_total': my_work_total,
-        # 'lead_type_labels': lead_type_labels,
-        # 'lead_type_counts': lead_type_counts,
+        'lead_type_labels': lead_type_labels,
+        'lead_type_counts': lead_type_counts,
         'win_loss_labels': win_loss_labels,
         'win_loss_counts': win_loss_counts,
         'customer_segment_labels': customer_segment_labels,

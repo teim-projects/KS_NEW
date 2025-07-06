@@ -11,12 +11,26 @@
       font-size: 2rem;
       color: #007bff;
     }
+
     .chart-container {
-      position: relative;
-      height: 300px;
-      width: 100%;
+        position: relative;
+        width: 100%;
+        height: 420px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
- 
+
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+    }
+
+    .card h5 {
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -25,137 +39,109 @@
 
 <div class="main" style="min-height: 100vh;">
   <div class="container mt-5 pt-5">
-   <!-- Dashboard cards -->
+    <!-- Dashboard Summary Cards -->
     <div class="row text-center">
-    <div class="col-md-4 mb-4">
-      <div class="card shadow-sm p-4">
-        <h5>Total Leads</h5>
-        <h3>{{ total_leads }}</h3>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm p-4">
+          <h5>Total Leads</h5>
+          <h3>{{ total_leads }}</h3>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm p-4">
+          <h5>Completed Leads</h5>
+          <h3>{{ completed_leads }}</h3>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm p-4">
+          <h5>My Work</h5>
+          <h3>{{ my_work_total }}</h3>
+        </div>
       </div>
     </div>
-    <div class="col-md-4 mb-4">
-      <div class="card shadow-sm p-4">
-        <h5>Completed Leads</h5>
-        <h3>{{ completed_leads }}</h3>
+
+    <!-- Chart Row -->
+    <div class="row">
+      <!-- Lead Type Chart -->
+      <div class="col-md-6 mt-4">
+        <div class="card p-3 text-center">
+          <h5>Lead Type</h5>
+          <div class="chart-container">
+            <canvas id="leadTypeChart"></canvas>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="col-md-4 mb-4">
-      <div class="card shadow-sm p-4">
-        <h5>My Work</h5>
-        <h3>{{ my_work_total }}</h3>
+
+      <!-- Customer Segment Chart -->
+      <div class="col-md-6 mt-4">
+        <div class="card p-3 text-center">
+          <h5>Customer Segment</h5>
+          <div class="chart-container">
+            <canvas id="customerSegmentChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lead Source Chart -->
+      <div class="col-md-6 mt-4">
+        <div class="card p-3 text-center">
+          <h5>Lead Source</h5>
+          <div class="chart-container">
+            <canvas id="sourceChart"></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="row">
-    
-    <!-- <div class="col-md-6">
-      <div class="card p-3">
-        <h5>Lead Type</h5>
-        <canvas id="leadTypeChart"></canvas>
-      </div>
-    </div> --> 
-  
-
-
-
-    <div class="col-md-6 mt-4">
-      <div class="card p-3">
-        <h5>Customer Segment</h5>
-        <canvas id="customerSegmentChart"></canvas>
-      </div>
-    </div>
-  
-    <div class="col-md-6 mt-4">
-      <div class="card p-3">
-        <h5>Lead Source</h5>
-        <canvas id="sourceChart"></canvas>
-      </div>
-    </div>
-
-    <div class="col-md-7 mt-4">
-      <div class="card p-3">
-        <h5>Win/Loss</h5>
-        <canvas id="winLossChart"></canvas>
-      </div>
-    </div>
-  
-  </div>
-
-</div>
 </div>
 
 {% include 'footer.html' %}
 
-  <script>
-  // // Lead Type Chart
-  // const leadTypeCtx = document.getElementById('leadTypeChart').getContext('2d');
-  // new Chart(leadTypeCtx, {
-  //   type: 'bar',
-  //   data: {
-  //     labels: {{ lead_type_labels|safe }},
-  //     datasets: [{
-  //       label: 'Lead Type',
-  //       data: {{ lead_type_counts|safe }},
-  //       backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0'],
-  //       borderColor: '#fff',
-  //       borderWidth: 1
-  //     }]
-  //   },
-  //   options: {
-  //     responsive: true,
-  //     scales: {
-  //       x: {
-  //         beginAtZero: true,
-  //         ticks: {
-  //           stepSize: 1 // Ensure whole numbers without decimals
-  //         }
-  //       },
-  //       y: {
-  //         beginAtZero: true,
-  //         ticks: {
-  //           stepSize: 1 // Ensure whole numbers without decimals
-  //         }
-  //       }
-  //     }
-  //   }
-  // });
-
-  // Win/Loss Chart
-  const winLossCtx = document.getElementById('winLossChart').getContext('2d');
-  new Chart(winLossCtx, {
-    type: 'bar',
+<script>
+  // Lead Type Doughnut Chart
+  const leadTypeCtx = document.getElementById('leadTypeChart').getContext('2d');
+  new Chart(leadTypeCtx, {
+    type: 'doughnut',
     data: {
-      labels: {{ win_loss_labels|safe }},
+      labels: {{ lead_type_labels|safe }},
       datasets: [{
-        label: 'Win/Loss',
-        data: {{ win_loss_counts|safe }},
-        backgroundColor: ['#28a745', '#dc3545'],
-        borderColor: '#fff',
-        borderWidth: 1
+        label: 'Lead Types',
+        data: {{ lead_type_counts|safe }},
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+        borderColor: '#ffffff',
+        borderWidth: 2,
+        hoverOffset: 12
       }]
     },
     options: {
       responsive: true,
-      indexAxis: 'y', // Horizontal bar chart
-      scales: {
-        x: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 1 // Ensure whole numbers without decimals
+      cutout: '50%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 13, weight: 'bold' },
+            color: '#343a40'
           }
         },
-        y: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 1 // Ensure whole numbers without decimals
-          }
+        tooltip: {
+          backgroundColor: '#343a40',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          borderWidth: 1,
+          borderColor: '#ccc',
+          padding: 10
         }
+      },
+      animation: {
+        animateScale: true,
+        animateRotate: true
       }
     }
   });
 
-  // Customer Segment Chart
+  // Customer Segment Bar Chart
   const customerSegmentCtx = document.getElementById('customerSegmentChart').getContext('2d');
   new Chart(customerSegmentCtx, {
     type: 'bar',
@@ -174,89 +160,74 @@
       scales: {
         x: {
           beginAtZero: true,
-          ticks: {
-            stepSize: 1 // Ensure whole numbers without decimals
-          }
+          ticks: { stepSize: 1 }
         },
         y: {
           beginAtZero: true,
-          ticks: {
-            stepSize: 1 // Ensure whole numbers without decimals
-          }
+          ticks: { stepSize: 1 }
         }
       }
     }
   });
 
-  // Lead Source Chart
+  // Lead Source Bar Chart with Gradient
   const sourceCtx = document.getElementById('sourceChart').getContext('2d');
 
-// Instagram Gradient
-const instagramGradient = sourceCtx.createLinearGradient(0, 0, 0, 400);
-instagramGradient.addColorStop(0, '#F58529');   // Orange-Red
-instagramGradient.addColorStop(0.5, '#DD2A7B'); // Pink
-instagramGradient.addColorStop(1, '#8134AF');   // Purple
+  // Gradients
+  const instagramGradient = sourceCtx.createLinearGradient(0, 0, 0, 400);
+  instagramGradient.addColorStop(0, '#F58529');
+  instagramGradient.addColorStop(0.5, '#DD2A7B');
+  instagramGradient.addColorStop(1, '#8134AF');
 
-// Google Gradient
-const googleGradient = sourceCtx.createLinearGradient(0, 0, 0, 400);
-googleGradient.addColorStop(0, '#EA4335'); // Blueberry
-googleGradient.addColorStop(0.20, '#4285F4'); // Cinnabar
-googleGradient.addColorStop(0.40, '#4285F4'); // Cinnabar
-googleGradient.addColorStop(0.60, '#FBBC05'); // Yellow
-googleGradient.addColorStop(0.80, '#EA4335'); // Yellow
-googleGradient.addColorStop(1, '#FBBC05'); // Sea Green
+  const googleGradient = sourceCtx.createLinearGradient(0, 0, 0, 400);
+  googleGradient.addColorStop(0, '#EA4335');
+  googleGradient.addColorStop(0.20, '#4285F4');
+  googleGradient.addColorStop(0.60, '#FBBC05');
+  googleGradient.addColorStop(1, '#34A853');
 
-const sourceLabels = {{ source_labels|safe }};
-const sourceCounts = {{ source_counts|safe }};
+  const sourceLabels = {{ source_labels|safe }};
+  const sourceCounts = {{ source_counts|safe }};
 
-// Map sources to specific gradients or colors
-const sourceColorsMap = {
-  'Instagram': instagramGradient,
-  'Facebook': '#1877F2',
-  'Indiamart': '#8A1538',
-  'Reference': '#28a745',
-  'Google': googleGradient,
-  'Other': '#000000'
-};
+  const sourceColorsMap = {
+    'Instagram': instagramGradient,
+    'Facebook': '#1877F2',
+    'Indiamart': '#8A1538',
+    'Reference': '#28a745',
+    'Google': googleGradient,
+    'Other': '#6c757d'
+  };
 
-// Generate background colors based on labels
-const backgroundColors = sourceLabels.map(label => sourceColorsMap[label] || '#6c757d'); // fallback gray
+  const backgroundColors = sourceLabels.map(label => sourceColorsMap[label] || '#6c757d');
 
-new Chart(sourceCtx, {
-  type: 'bar',
-  data: {
-    labels: sourceLabels,
-    datasets: [{
-      label: 'Lead Sources',
-      data: sourceCounts,
-      backgroundColor: backgroundColors,
-      borderColor: '#fff',
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false
-      }
+  new Chart(sourceCtx, {
+    type: 'bar',
+    data: {
+      labels: sourceLabels,
+      datasets: [{
+        label: 'Lead Sources',
+        data: sourceCounts,
+        backgroundColor: backgroundColors,
+        borderColor: '#fff',
+        borderWidth: 1
+      }]
     },
-    scales: {
-      x: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 1
-        }
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
       },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 1
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
         }
       }
     }
-  }
-});
+  });
 </script>
 
 </body>
