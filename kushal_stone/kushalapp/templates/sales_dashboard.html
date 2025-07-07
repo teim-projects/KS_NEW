@@ -92,6 +92,19 @@
           </div>
         </div>
       </div>
+
+      
+      
+<!-- Win/Loss Chart -->
+<div class="col-md-6 mt-4">
+  <div class="card p-3 text-center">
+    <h5>Closed Lead Status</h5>
+    <div class="chart-container">
+      <canvas id="winLossChart"></canvas>
+    </div>
+  </div>
+</div>
+
     </div>
   </div>
 </div>
@@ -99,6 +112,50 @@
 {% include 'footer.html' %}
 
 <script>
+
+// Win/Loss Doughnut Chart
+const winLossCtx = document.getElementById('winLossChart').getContext('2d');
+new Chart(winLossCtx, {
+  type: 'doughnut',
+  data: {
+    labels: {{ win_loss_labels|safe }},
+    datasets: [{
+      label: 'Closed Leads',
+      data: {{ win_loss_counts|safe }},
+      backgroundColor: ['#28a745', '#dc3545'],  // Green for Win, Red for Loss
+      borderColor: '#ffffff',
+      borderWidth: 2,
+      hoverOffset: 12
+    }]
+  },
+  options: {
+    responsive: true,
+    cutout: '50%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: { size: 13, weight: 'bold' },
+          color: '#343a40'
+        }
+      },
+      tooltip: {
+        backgroundColor: '#343a40',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10
+      }
+    },
+    animation: {
+      animateScale: true,
+      animateRotate: true
+    }
+  }
+});
+
+
   // Lead Type Doughnut Chart
   const leadTypeCtx = document.getElementById('leadTypeChart').getContext('2d');
   new Chart(leadTypeCtx, {
