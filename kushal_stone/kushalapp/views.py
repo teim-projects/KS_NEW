@@ -186,39 +186,50 @@ from .models import (
     FollowUp9, FollowUp10, FollowUpBase
 )
 
+
+from django.db.models import Q, Count
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Lead
+
 @login_required
 def sales_dashboard(request):
     total_leads = Lead.objects.count()
     completed_leads = Lead.objects.filter(is_closed=True).count()
     my_work_total = Lead.objects.filter(sales_person=request.user).count()
 
-    # Get selected follow-up model if required
-    follow_up_type = request.GET.get('follow_up_type', 'FollowUp1')
-    follow_up_model = globals().get(follow_up_type, FollowUp1)
+    # Get WIN leads
+    win_leads = Lead.objects.filter(Q(is_closed=True, win_status=True) | Q(status='Win')).distinct()
+    win_ids = win_leads.values_list('id', flat=True)
 
-    # Lead Type chart
+    # Get LOSS leads
+    loss_leads = Lead.objects.filter(Q(is_closed=True, win_status=False) | Q(status='Loss')).distinct()
+    loss_ids = loss_leads.values_list('id', flat=True)
+
+    # WIN and LOSS counts
+    win_count = win_leads.count()
+    loss_count = loss_leads.exclude(id__in=win_ids).count()  # Avoid overlap
+
+    # Unclosed = total leads - win - loss
+    closed_ids = list(win_ids) + list(loss_ids)
+    unclosed_count = Lead.objects.exclude(id__in=closed_ids).count()
+
+    win_loss_labels = ['Win', 'Loss', 'Unclosed']
+    win_loss_counts = [win_count, loss_count, unclosed_count]
+
+    # Lead Type Chart
     lead_types = Lead.objects.exclude(lead_type__isnull=True).exclude(lead_type='') \
-    .values('lead_type').annotate(count=Count('lead_type'))
+        .values('lead_type').annotate(count=Count('lead_type'))
 
     lead_type_labels = [entry['lead_type'] for entry in lead_types]
     lead_type_counts = [entry['count'] for entry in lead_types]
 
-
-    print("Lead Type Labels:", lead_type_labels)
-    print("Lead Type Counts:", lead_type_counts)
-
-
-    # Win/Loss
-    win_loss = Lead.objects.filter(is_closed=True).values('win_status').annotate(count=Count('win_status'))
-    win_loss_labels = ['Win' if entry['win_status'] else 'Loss' for entry in win_loss]
-    win_loss_counts = [entry['count'] for entry in win_loss]
-
-    # Customer Segment
+    # Customer Segment Chart
     customer_segments = Lead.objects.values('customer_segment').annotate(count=Count('customer_segment'))
     customer_segment_labels = [entry['customer_segment'] for entry in customer_segments]
     customer_segment_counts = [entry['count'] for entry in customer_segments]
 
-    # Lead Source
+    # Source Chart
     sources = Lead.objects.values('source').annotate(count=Count('source'))
     source_labels = [entry['source'] for entry in sources]
     source_counts = [entry['count'] for entry in sources]
@@ -235,10 +246,10 @@ def sales_dashboard(request):
         'customer_segment_counts': customer_segment_counts,
         'source_labels': source_labels,
         'source_counts': source_counts,
-        'follow_up_type': follow_up_type
     }
 
     return render(request, 'sales_dashboard.html', context)
+
 
 
 

@@ -118,11 +118,11 @@ const winLossCtx = document.getElementById('winLossChart').getContext('2d');
 new Chart(winLossCtx, {
   type: 'doughnut',
   data: {
-    labels: {{ win_loss_labels|safe }},
+    labels: {{ win_loss_labels|safe }},  // ['Win', 'Loss', 'Unclosed']
     datasets: [{
-      label: 'Closed Leads',
+      label: 'Lead Status',
       data: {{ win_loss_counts|safe }},
-      backgroundColor: ['#28a745', '#dc3545'],  // Green for Win, Red for Loss
+      backgroundColor: ['#28a745', '#dc3545', '#ffc107'],  // Win (green), Loss (red), Unclosed (yellow)
       borderColor: '#ffffff',
       borderWidth: 2,
       hoverOffset: 12
