@@ -192,61 +192,106 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import Lead
 
+
+from datetime import datetime
+from django.utils.timezone import make_aware
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
+from .models import Lead
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
+from collections import defaultdict
+from .models import Lead
+
 @login_required
 def sales_dashboard(request):
-    total_leads = Lead.objects.count()
-    completed_leads = Lead.objects.filter(is_closed=True).count()
-    my_work_total = Lead.objects.filter(sales_person=request.user).count()
-
-    # Get WIN leads
-    win_leads = Lead.objects.filter(Q(is_closed=True, win_status=True) | Q(status='Win')).distinct()
-    win_ids = win_leads.values_list('id', flat=True)
-
-    # Get LOSS leads
-    loss_leads = Lead.objects.filter(Q(is_closed=True, win_status=False) | Q(status='Loss')).distinct()
-    loss_ids = loss_leads.values_list('id', flat=True)
-
-    # WIN and LOSS counts
-    win_count = win_leads.count()
-    loss_count = loss_leads.exclude(id__in=win_ids).count()  # Avoid overlap
-
-    # Unclosed = total leads - win - loss
-    closed_ids = list(win_ids) + list(loss_ids)
-    unclosed_count = Lead.objects.exclude(id__in=closed_ids).count()
-
-    win_loss_labels = ['Win', 'Loss', 'Unclosed']
-    win_loss_counts = [win_count, loss_count, unclosed_count]
-
-    # Lead Type Chart
-    lead_types = Lead.objects.exclude(lead_type__isnull=True).exclude(lead_type='') \
-        .values('lead_type').annotate(count=Count('lead_type'))
-
-    lead_type_labels = [entry['lead_type'] for entry in lead_types]
-    lead_type_counts = [entry['count'] for entry in lead_types]
-
-    # Customer Segment Chart
-    customer_segments = Lead.objects.values('customer_segment').annotate(count=Count('customer_segment'))
-    customer_segment_labels = [entry['customer_segment'] for entry in customer_segments]
-    customer_segment_counts = [entry['count'] for entry in customer_segments]
-
-    # Source Chart
-    sources = Lead.objects.values('source').annotate(count=Count('source'))
-    source_labels = [entry['source'] for entry in sources]
-    source_counts = [entry['count'] for entry in sources]
+    leads = Lead.objects.all()
+    selected_charts = request.GET.getlist('charts')
 
     context = {
-        'total_leads': total_leads,
-        'completed_leads': completed_leads,
-        'my_work_total': my_work_total,
-        'lead_type_labels': lead_type_labels,
-        'lead_type_counts': lead_type_counts,
-        'win_loss_labels': win_loss_labels,
-        'win_loss_counts': win_loss_counts,
-        'customer_segment_labels': customer_segment_labels,
-        'customer_segment_counts': customer_segment_counts,
-        'source_labels': source_labels,
-        'source_counts': source_counts,
+        'total_leads': leads.count(),
+        'completed_leads': leads.filter(is_closed=True).count(),
+        'my_work_total': leads.filter(sales_person=request.user).count(),
+        'selected_charts': selected_charts,
     }
+
+    def get_date_filtered_leads(queryset, prefix):
+        from_date = request.GET.get(f'{prefix}_from')
+        to_date = request.GET.get(f'{prefix}_to')
+        if from_date:
+            queryset = queryset.filter(enquiry_date__gte=from_date)
+        if to_date:
+            queryset = queryset.filter(enquiry_date__lte=to_date)
+        return queryset
+
+    if 'win_loss' in selected_charts:
+        filtered_leads = get_date_filtered_leads(leads, 'win_loss')
+        win_leads = filtered_leads.filter(Q(is_closed=True, win_status=True) | Q(status='Win'))
+        loss_leads = filtered_leads.filter(Q(is_closed=True, win_status=False) | Q(status='Loss'))
+        closed_ids = win_leads.values_list('id', flat=True) | loss_leads.values_list('id', flat=True)
+        unclosed_count = filtered_leads.exclude(id__in=closed_ids).count()
+        context.update({
+            'win_loss_labels': ['Win', 'Loss', 'Unclosed'],
+            'win_loss_counts': [win_leads.count(), loss_leads.count(), unclosed_count]
+        })
+
+    if 'lead_type' in selected_charts:
+        filtered_leads = get_date_filtered_leads(leads, 'lead_type')
+        lead_types = filtered_leads.exclude(lead_type__isnull=True).exclude(lead_type='') \
+            .values('lead_type').annotate(count=Count('lead_type'))
+        context.update({
+            'lead_type_labels': [lt['lead_type'] for lt in lead_types],
+            'lead_type_counts': [lt['count'] for lt in lead_types]
+        })
+
+    if 'customer_segment' in selected_charts:
+        filtered_leads = get_date_filtered_leads(leads, 'customer_segment')
+        customer_segments = filtered_leads.exclude(customer_segment__isnull=True).exclude(customer_segment='') \
+            .values('customer_segment').annotate(count=Count('customer_segment'))
+        context.update({
+            'customer_segment_labels': [cs['customer_segment'] for cs in customer_segments],
+            'customer_segment_counts': [cs['count'] for cs in customer_segments]
+        })
+
+    if 'source' in selected_charts:
+        filtered_leads = get_date_filtered_leads(leads, 'source')
+        sources = filtered_leads.exclude(source__isnull=True).exclude(source='') \
+            .values('source').annotate(count=Count('source'))
+        context.update({
+            'source_labels': [s['source'] for s in sources],
+            'source_counts': [s['count'] for s in sources]
+        })
+
+    if 'customer_visited' in selected_charts:
+        filtered_leads = get_date_filtered_leads(leads, 'customer_visited')
+        visited = filtered_leads.values('customer_visited').annotate(count=Count('customer_visited'))
+        context.update({
+            'customer_visited_labels': [v['customer_visited'] or 'N/A' for v in visited],
+            'customer_visited_counts': [v['count'] for v in visited]
+        })
+
+    if 'inspection_done' in selected_charts:
+        filtered_leads = get_date_filtered_leads(leads, 'inspection_done')
+        inspection_data = filtered_leads.values('inspection_done').annotate(count=Count('inspection_done'))
+        counts = defaultdict(int)
+        for item in inspection_data:
+            key = item['inspection_done']
+            if key is True or key == 'Yes':
+                counts['Yes'] += item['count']
+            elif key is False or key == 'No':
+                counts['No'] += item['count']
+        context['inspection_done_counts'] = [counts['Yes'], counts['No']]
+
+    if 'close_open' in selected_charts:
+        filtered_leads = get_date_filtered_leads(leads, 'close_open')
+        closed_count = filtered_leads.filter(is_closed=True).count()
+        open_count = filtered_leads.filter(is_closed=False).count()
+        context.update({
+            'close_open_labels': ['Closed', 'Open'],
+            'close_open_counts': [closed_count, open_count]
+        })
 
     return render(request, 'sales_dashboard.html', context)
 

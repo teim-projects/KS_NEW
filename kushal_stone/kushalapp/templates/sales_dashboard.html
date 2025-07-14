@@ -6,31 +6,196 @@
   <title>Sales Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-  <style>
-    .card h3 {
-      font-size: 2rem;
-      color: #007bff;
+<style>
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .chart-container {
-        position: relative;
-        width: 100%;
-        height: 420px;
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .main {
+      padding-top: 80px;
     }
 
     .card {
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+      transition: all 0.3s ease-in-out;
+      background: #ffffff;
+      border: none;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
     }
 
     .card h5 {
       font-weight: 600;
-      margin-bottom: 1rem;
+      color: #343a40;
     }
+
+    .card h3 {
+      color: #007bff;
+      font-weight: 700;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dashboard-summary .card {
+      background-color: #ffffff;
+    }
+
+    .chart-filter-section {
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+
+    .chart-filter-section label {
+      font-weight: 600;
+      margin-right: 15px;
+    }
+
+    .form-check-inline {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+    }
+
+    .form-check-inline input {
+      margin-left: 5px;
+    }
+
+    .form-check-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chart-row > div {
+      margin-bottom: 30px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+      padding: 6px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      width: auto;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    input[type="date"] {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ced4da;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .text-center h5 {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: #495057;
+    }
+
+    @media (min-width: 768px) {
+      .row .col-md-6 {
+        flex: 0 0 auto;
+        width: 33.3333%;
+      }
+    }
+
+    /* Toggle switch style (from Uiverse.io) */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+
+    .toggle-switch input[type="checkbox"] {
+      display: none;
+    }
+
+    .toggle-switch-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ddd;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 2px #ccc;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    .toggle-switch-handle {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 22px;
+      height: 22px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .toggle-switch input[type="checkbox"]:checked + .toggle-switch-background .toggle-switch-handle {
+      transform: translateX(30px);
+    }
+
+    .toggle-switch input[type="checkbox"]:checked + .toggle-switch-background {
+      background-color: #05c46b;
+      box-shadow: inset 0 0 0 2px #04b360;
+    }
+
+    .chart-toggle-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.chart-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  padding: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s;
+}
+
+.chart-toggle:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.chart-toggle span {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
   </style>
 </head>
 <body>
@@ -61,231 +226,482 @@
       </div>
     </div>
 
-    <!-- Chart Row -->
-    <div class="row">
-      <!-- Lead Type Chart -->
-      <div class="col-md-6 mt-4">
-        <div class="card p-3 text-center">
-          <h5>Lead Type</h5>
-          <div class="chart-container">
-            <canvas id="leadTypeChart"></canvas>
-          </div>
-        </div>
-      </div>
+<form method="get" id="chartFilterForm" class="mb-4">
+  <div class="row">
+    <div class="col-md-12">
+      <label><strong>Select Charts to View:</strong></label>
+      <div class="chart-toggle-group">
 
-      <!-- Customer Segment Chart -->
-      <div class="col-md-6 mt-4">
-        <div class="card p-3 text-center">
-          <h5>Customer Segment</h5>
-          <div class="chart-container">
-            <canvas id="customerSegmentChart"></canvas>
-          </div>
-        </div>
-      </div>
+        <label class="chart-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" name="charts" value="lead_type" {% if 'lead_type' in selected_charts %}checked{% endif %}>
+            <div class="toggle-switch-background">
+              <div class="toggle-switch-handle"></div>
+            </div>
+          </label>
+          <span>Lead Type</span>
+        </label>
 
-      <!-- Lead Source Chart -->
-      <div class="col-md-6 mt-4">
-        <div class="card p-3 text-center">
-          <h5>Lead Source</h5>
-          <div class="chart-container">
-            <canvas id="sourceChart"></canvas>
-          </div>
-        </div>
-      </div>
+        <label class="chart-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" name="charts" value="customer_segment" {% if 'customer_segment' in selected_charts %}checked{% endif %}>
+            <div class="toggle-switch-background">
+              <div class="toggle-switch-handle"></div>
+            </div>
+          </label>
+          <span>Customer Segment</span>
+        </label>
 
-      
-      
-<!-- Win/Loss Chart -->
-<div class="col-md-6 mt-4">
-  <div class="card p-3 text-center">
-    <h5>Closed Lead Status</h5>
-    <div class="chart-container">
-      <canvas id="winLossChart"></canvas>
+        <label class="chart-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" name="charts" value="source" {% if 'source' in selected_charts %}checked{% endif %}>
+            <div class="toggle-switch-background">
+              <div class="toggle-switch-handle"></div>
+            </div>
+          </label>
+          <span>Source</span>
+        </label>
+
+        <label class="chart-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" name="charts" value="close_open" {% if 'close_open' in selected_charts %}checked{% endif %}>
+            <div class="toggle-switch-background">
+              <div class="toggle-switch-handle"></div>
+            </div>
+          </label>
+          <span>Closed/Open</span>
+        </label>
+
+        <label class="chart-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" name="charts" value="win_loss" {% if 'win_loss' in selected_charts %}checked{% endif %}>
+            <div class="toggle-switch-background">
+              <div class="toggle-switch-handle"></div>
+            </div>
+          </label>
+          <span>Win/Loss</span>
+        </label>
+
+        <label class="chart-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" name="charts" value="customer_visited" {% if 'customer_visited' in selected_charts %}checked{% endif %}>
+            <div class="toggle-switch-background">
+              <div class="toggle-switch-handle"></div>
+            </div>
+          </label>
+          <span>Customer Visited</span>
+        </label>
+
+        <label class="chart-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" name="charts" value="inspection_done" {% if 'inspection_done' in selected_charts %}checked{% endif %}>
+            <div class="toggle-switch-background">
+              <div class="toggle-switch-handle"></div>
+            </div>
+          </label>
+          <span>Inspection Done</span>
+        </label>
+
+      </div>
     </div>
   </div>
-</div>
+</form>
 
-    </div>
+
+
+<div class="row">
+  {% if 'lead_type' in selected_charts %}
+  <div class="col-md-6 mt-4">
+    <form method="get">
+      {% for chart in selected_charts %}
+        <input type="hidden" name="charts" value="{{ chart }}">
+      {% endfor %}
+      <div class="card p-3 text-center">
+        <h5>Lead Type</h5>
+        <div class="row mb-3">
+          <div class="col">
+            <label>From:</label>
+            <input type="date" name="lead_type_from" class="form-control date-input" value="{{ request.GET.lead_type_from }}">
+          </div>
+          <div class="col">
+            <label>To:</label>
+            <input type="date" name="lead_type_to" class="form-control date-input" value="{{ request.GET.lead_type_to }}">
+          </div>
+        </div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+
+        <div class="chart-container">
+          <canvas id="leadTypeChart"></canvas>
+        </div>
+      </div>
+    </form>
   </div>
+  {% endif %}
+
+  {% if 'close_open' in selected_charts %}
+  <div class="col-md-6 mt-4">
+    <form method="get">
+      {% for chart in selected_charts %}
+        <input type="hidden" name="charts" value="{{ chart }}">
+      {% endfor %}
+      <div class="card p-3 text-center">
+        <h5>Closed vs Open</h5>
+        <div class="row mb-3">
+          <div class="col">
+            <label>From:</label>
+            <input type="date" name="close_open_from" class="form-control date-input" value="{{ request.GET.close_open_from }}">
+          </div>
+          <div class="col">
+            <label>To:</label>
+            <input type="date" name="close_open_to" class="form-control date-input" value="{{ request.GET.close_open_to }}">
+          </div>
+        </div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+
+        <div class="chart-container">
+          <canvas id="closeOpenChart"></canvas>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if 'win_loss' in selected_charts %}
+  <div class="col-md-6 mt-4">
+    <form method="get">
+      {% for chart in selected_charts %}
+        <input type="hidden" name="charts" value="{{ chart }}">
+      {% endfor %}
+      <div class="card p-3 text-center">
+        <h5>Win vs Loss</h5>
+        <div class="row mb-3">
+          <div class="col">
+            <label>From:</label>
+            <input type="date" name="win_loss_from" class="form-control date-input" value="{{ request.GET.win_loss_from }}">
+          </div>
+          <div class="col">
+            <label>To:</label>
+            <input type="date" name="win_loss_to" class="form-control date-input" value="{{ request.GET.win_loss_to }}">
+          </div>
+        </div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+
+        <div class="chart-container">
+          <canvas id="winLossChart"></canvas>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if 'customer_segment' in selected_charts %}
+  <div class="col-md-6 mt-4">
+    <form method="get">
+      {% for chart in selected_charts %}
+        <input type="hidden" name="charts" value="{{ chart }}">
+      {% endfor %}
+      <div class="card p-3 text-center">
+        <h5>Customer Segment</h5>
+        <div class="row mb-3">
+          <div class="col">
+            <label>From:</label>
+            <input type="date" name="customer_segment_from" class="form-control date-input" value="{{ request.GET.customer_segment_from }}">
+          </div>
+          <div class="col">
+            <label>To:</label>
+            <input type="date" name="customer_segment_to" class="form-control date-input" value="{{ request.GET.customer_segment_to }}">
+          </div>
+        </div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+
+        <div class="chart-container">
+          <canvas id="customerSegmentChart"></canvas>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if 'source' in selected_charts %}
+  <div class="col-md-6 mt-4">
+    <form method="get">
+      {% for chart in selected_charts %}
+        <input type="hidden" name="charts" value="{{ chart }}">
+      {% endfor %}
+      <div class="card p-3 text-center">
+        <h5>Lead Source</h5>
+        <div class="row mb-3">
+          <div class="col">
+            <label>From:</label>
+            <input type="date" name="source_from" class="form-control date-input" value="{{ request.GET.source_from }}">
+          </div>
+          <div class="col">
+            <label>To:</label>
+            <input type="date" name="source_to" class="form-control date-input" value="{{ request.GET.source_to }}">
+          </div>
+        </div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+
+        <div class="chart-container">
+          <canvas id="sourceChart"></canvas>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if 'customer_visited' in selected_charts %}
+  <div class="col-md-6 mt-4">
+    <form method="get">
+      {% for chart in selected_charts %}
+        <input type="hidden" name="charts" value="{{ chart }}">
+      {% endfor %}
+      <div class="card p-3 text-center">
+        <h5>Customer Visited</h5>
+        <div class="row mb-3">
+          <div class="col">
+            <label>From:</label>
+            <input type="date" name="customer_visited_from" class="form-control date-input" value="{{ request.GET.customer_visited_from }}">
+          </div>
+          <div class="col">
+            <label>To:</label>
+            <input type="date" name="customer_visited_to" class="form-control date-input" value="{{ request.GET.customer_visited_to }}">
+          </div>
+        </div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+
+        <div class="chart-container">
+          <canvas id="customerVisitedChart"></canvas>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if 'inspection_done' in selected_charts %}
+  <div class="col-md-6 mt-4">
+    <form method="get">
+      {% for chart in selected_charts %}
+        <input type="hidden" name="charts" value="{{ chart }}">
+      {% endfor %}
+      <div class="card p-3 text-center">
+        <h5>Inspection Done</h5>
+        <div class="row mb-3">
+          <div class="col">
+            <label>From:</label>
+            <input type="date" name="inspection_done_from" class="form-control date-input" value="{{ request.GET.inspection_done_from }}">
+          </div>
+          <div class="col">
+            <label>To:</label>
+            <input type="date" name="inspection_done_to" class="form-control date-input" value="{{ request.GET.inspection_done_to }}">
+          </div>
+        </div>
+            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+
+        <div class="chart-container">
+          <canvas id="inspectionDoneChart"></canvas>
+        </div>
+      </div>
+    </form>
+  </div>
+  {% endif %}
 </div>
 
-{% include 'footer.html' %}
 
+{% if 'lead_type' in selected_charts %}
 <script>
-
-// Win/Loss Doughnut Chart
-const winLossCtx = document.getElementById('winLossChart').getContext('2d');
-new Chart(winLossCtx, {
-  type: 'doughnut',
-  data: {
-    labels: {{ win_loss_labels|safe }},  // ['Win', 'Loss', 'Unclosed']
-    datasets: [{
-      label: 'Lead Status',
-      data: {{ win_loss_counts|safe }},
-      backgroundColor: ['#28a745', '#dc3545', '#ffc107'],  // Win (green), Loss (red), Unclosed (yellow)
-      borderColor: '#ffffff',
-      borderWidth: 2,
-      hoverOffset: 12
-    }]
-  },
-  options: {
-    responsive: true,
-    cutout: '50%',
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: {
-          font: { size: 13, weight: 'bold' },
-          color: '#343a40'
-        }
-      },
-      tooltip: {
-        backgroundColor: '#343a40',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10
-      }
-    },
-    animation: {
-      animateScale: true,
-      animateRotate: true
-    }
-  }
-});
-
-
-  // Lead Type Doughnut Chart
   const leadTypeCtx = document.getElementById('leadTypeChart').getContext('2d');
   new Chart(leadTypeCtx, {
     type: 'doughnut',
     data: {
       labels: {{ lead_type_labels|safe }},
       datasets: [{
-        label: 'Lead Types',
         data: {{ lead_type_counts|safe }},
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-        borderColor: '#ffffff',
-        borderWidth: 2,
-        hoverOffset: 12
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        borderWidth: 1
       }]
     },
     options: {
       responsive: true,
-      cutout: '50%',
       plugins: {
         legend: {
-          position: 'bottom',
-          labels: {
-            font: { size: 13, weight: 'bold' },
-            color: '#343a40'
-          }
-        },
-        tooltip: {
-          backgroundColor: '#343a40',
-          titleColor: '#fff',
-          bodyColor: '#fff',
-          borderWidth: 1,
-          borderColor: '#ccc',
-          padding: 10
-        }
-      },
-      animation: {
-        animateScale: true,
-        animateRotate: true
-      }
-    }
-  });
-
-  // Customer Segment Bar Chart
-  const customerSegmentCtx = document.getElementById('customerSegmentChart').getContext('2d');
-  new Chart(customerSegmentCtx, {
-    type: 'bar',
-    data: {
-      labels: {{ customer_segment_labels|safe }},
-      datasets: [{
-        label: 'Customer Segments',
-        data: {{ customer_segment_counts|safe }},
-        backgroundColor: ['#17a2b8', '#ffc107', '#fd7e14', '#6610f2'],
-        borderColor: '#fff',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: {
-          beginAtZero: true,
-          ticks: { stepSize: 1 }
-        },
-        y: {
-          beginAtZero: true,
-          ticks: { stepSize: 1 }
-        }
-      }
-    }
-  });
-
-  // Lead Source Bar Chart with Gradient
-  const sourceCtx = document.getElementById('sourceChart').getContext('2d');
-
-  // Gradients
-  const instagramGradient = sourceCtx.createLinearGradient(0, 0, 0, 400);
-  instagramGradient.addColorStop(0, '#F58529');
-  instagramGradient.addColorStop(0.5, '#DD2A7B');
-  instagramGradient.addColorStop(1, '#8134AF');
-
-  const googleGradient = sourceCtx.createLinearGradient(0, 0, 0, 400);
-  googleGradient.addColorStop(0, '#EA4335');
-  googleGradient.addColorStop(0.20, '#4285F4');
-  googleGradient.addColorStop(0.60, '#FBBC05');
-  googleGradient.addColorStop(1, '#34A853');
-
-  const sourceLabels = {{ source_labels|safe }};
-  const sourceCounts = {{ source_counts|safe }};
-
-  const sourceColorsMap = {
-    'Instagram': instagramGradient,
-    'Facebook': '#1877F2',
-    'Indiamart': '#8A1538',
-    'Reference': '#28a745',
-    'Google': googleGradient,
-    'Other': '#6c757d'
-  };
-
-  const backgroundColors = sourceLabels.map(label => sourceColorsMap[label] || '#6c757d');
-
-  new Chart(sourceCtx, {
-    type: 'bar',
-    data: {
-      labels: sourceLabels,
-      datasets: [{
-        label: 'Lead Sources',
-        data: sourceCounts,
-        backgroundColor: backgroundColors,
-        borderColor: '#fff',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        x: {
-          beginAtZero: true,
-          ticks: { stepSize: 1 }
-        },
-        y: {
-          beginAtZero: true,
-          ticks: { stepSize: 1 }
+          position: 'bottom'
         }
       }
     }
   });
 </script>
+{% endif %}
+
+
+
+{% if 'close_open' in selected_charts %}
+<script>
+  const closeOpenCtx = document.getElementById('closeOpenChart').getContext('2d');
+  new Chart(closeOpenCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Closed', 'Open'],
+      datasets: [{
+        label: 'Leads',
+        data: {{ close_open_counts|safe }},  // Example: [10, 25]
+        backgroundColor: ['#28a745', '#ffc107'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+</script>
+{% endif %}
+
+
+{% if 'win_loss' in selected_charts %}
+<script>
+  const winLossCtx = document.getElementById('winLossChart').getContext('2d');
+  new Chart(winLossCtx, {
+    type: 'pie',
+    data: {
+      labels: {{ win_loss_labels|safe }},  // ['Win', 'Loss', 'Unclosed']
+      datasets: [{
+        data: {{ win_loss_counts|safe }},
+        backgroundColor: ['#007bff', '#dc3545', '#ffc107'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+</script>
+{% endif %}
+
+
+{% if 'customer_segment' in selected_charts %}
+<script>
+  const customerSegmentCtx = document.getElementById('customerSegmentChart').getContext('2d');
+  new Chart(customerSegmentCtx, {
+    type: 'doughnut',
+    data: {
+      labels: {{ customer_segment_labels|safe }},
+      datasets: [{
+        data: {{ customer_segment_counts|safe }},
+        backgroundColor: ['#17a2b8', '#fd7e14', '#6610f2', '#6f42c1'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+</script>
+{% endif %}
+
+
+{% if 'source' in selected_charts %}
+<script>
+  const sourceCtx = document.getElementById('sourceChart').getContext('2d');
+  new Chart(sourceCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ source_labels|safe }},
+      datasets: [{
+        label: 'Source Count',
+        data: {{ source_counts|safe }},
+        backgroundColor: ['#1877F2', '#F58529', '#8A1538', '#EA4335', '#28a745', '#6c757d'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',  // for horizontal bar
+      scales: {
+        x: { beginAtZero: true }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+</script>
+{% endif %}
+
+
+{% if 'customer_visited' in selected_charts %}
+<script>
+  const customerVisitedCtx = document.getElementById('customerVisitedChart').getContext('2d');
+  new Chart(customerVisitedCtx, {
+    type: 'pie',
+    data: {
+      labels: ['Yes', 'No'],
+      datasets: [{
+        data: {{ customer_visited_counts|safe }},
+        backgroundColor: ['#20c997', '#dc3545'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+</script>
+{% endif %}
+
+{% if 'inspection_done' in selected_charts %}
+<script>
+  const inspectionDoneCtx = document.getElementById('inspectionDoneChart').getContext('2d');
+  new Chart(inspectionDoneCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Yes', 'No'],
+      datasets: [{
+        data: {{ inspection_done_counts|default:"[0,0]"|safe }},
+        backgroundColor: ['#007bff', '#6c757d'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+</script>
+{% endif %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("chartFilterForm");
+
+    // ✅ Submit form when any chart checkbox is toggled
+    document.querySelectorAll('input[type="checkbox"][name="charts"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        form.submit();
+      });
+    });
+
+    // ❌ No auto-submit for date inputs (manually handled with buttons in each chart)
+  });
+</script>
+
 
 </body>
+
 </html>
