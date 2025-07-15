@@ -36,7 +36,15 @@
         th {
             background-color: #000000 !important;
             color: white !important;
+            white-space: nowrap !important;
+
         }
+        th {
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            }
 
         td {
             min-width: auto !important;
@@ -201,21 +209,7 @@
     color: #fff;
 }
 
-/* Download button */
-.custom-download-btn {
-    display: inline-block;
-    padding: 6px 12px;
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-}
 
-.custom-download-btn:hover {
-    background-color: #218838;
-    color: white;
-}
 
 /* Responsive Modal Width */
 .modal-dialog.modal-xl {
@@ -294,6 +288,129 @@
     transform: scale(1.05);
 }
 
+/* Apply background color per column */
+  td:nth-child(1), th:nth-child(1) { background-color: #fdfdfd; } /* S.No. */
+  td:nth-child(2), th:nth-child(2) { background-color: #f5f7fa; } /* Full Name */
+  td:nth-child(3), th:nth-child(3) { background-color: #f1f9ff; } /* Mobile */
+  td:nth-child(4), th:nth-child(4) { background-color: #f9f5ff; } /* Secondary Mobile */
+  td:nth-child(5), th:nth-child(5) { background-color: #f9fff1; } /* Email */
+  td:nth-child(6), th:nth-child(6) { background-color: #fff9f3; } /* Sales Person */
+  td:nth-child(7), th:nth-child(7) { background-color: #f3f9ff; } /* Follow-Up Date */
+  td:nth-child(8), th:nth-child(8) { background-color: #fef7fa; }
+  td:nth-child(9), th:nth-child(9) { background-color: #f0fff6; }
+  td:nth-child(10), th:nth-child(10) { background-color: #fffef1; }
+  td:nth-child(11), th:nth-child(11) { background-color: #f4f4ff; }
+  td:nth-child(12), th:nth-child(12) { background-color: #f9f9f9; }
+  td:nth-child(13), th:nth-child(13) { background-color: #f0f5ff; }
+  td:nth-child(14), th:nth-child(14) { background-color: #fdf3ff; }
+  td:nth-child(15), th:nth-child(15) { background-color: #f3fff7; }
+  td:nth-child(16), th:nth-child(16) { background-color: #fff0f0; }
+  td:nth-child(17), th:nth-child(17) { background-color: #f4fcff; }
+  td:nth-child(18), th:nth-child(18) { background-color: #fff7f0; }
+  td:nth-child(19), th:nth-child(19) { background-color: #f2fff6; }
+  td:nth-child(20), th:nth-child(20) { background-color: #fff5f5; }
+  td:nth-child(21), th:nth-child(21) { background-color: #f4f9ff; }
+  td:nth-child(22), th:nth-child(22) { background-color: #f7fff4; }
+  td:nth-child(23), th:nth-child(23) { background-color: #fffaf0; }
+  td:nth-child(24), th:nth-child(24) { background-color: #f7f7f7; }
+  td:nth-child(25), th:nth-child(25) { background-color: #effaff; }
+
+  /* Optional: Sticky header and first two columns */
+  /* th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  } */
+  td:nth-child(1), th:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+  }
+  td:nth-child(2), th:nth-child(2) {
+    position: sticky;
+    left: 60px;
+    z-index: 3;
+  }
+
+  td {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  max-width: unset !important;
+}
+
+
+.table td, .table th {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  vertical-align: top;
+  border: 1px solid #343a40 !important;
+}
+
+.table {
+  table-layout: auto !important;
+  width: auto !important;
+  min-width: 100%;
+}
+
+
+
+.table td {
+  padding: 8px;
+  font-size: 14px;
+}
+
+.custom-download-btn {
+  position: relative;
+  overflow: hidden;
+  height: 2.5rem;
+  padding: 0 1.5rem;
+  border-radius: 1.5rem;
+  background: #3d3a4e;
+  background-size: 400%;
+  color: #fff !important;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.custom-download-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.custom-download-btn .button-content {
+  position: relative;
+  z-index: 1;
+}
+
+.custom-download-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    82.3deg,
+    rgba(150, 93, 233, 1) 10.8%,
+    rgba(99, 88, 238, 1) 94.3%
+  );
+  transition: all 0.475s ease-in-out;
+  z-index: 0;
+    text-decoration: none;
+
+}
+
 
     </style>
 </head>
@@ -315,39 +432,92 @@
 </form>
 
                         <a href="{% url 'add_lead' %}" class="btn btn-outline-info mb-3">+ Add New Lead</a>
-                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                            <table class="table table-bordered table-hover table-striped">
-                                <thead class="thead-light sticky-top" style="z-index: 1;">
-                                    <tr>
-                                        <th>S.No.</th>
-                                        <th>Full Name</th>
-                                        <th>Mobile</th>
-                                        <th>Secondary Mobile</th>
-                                        <th>Email</th>
-                                        <th>Sales Person</th>
-                                        <th>Follow-Up Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="leadTableBody">
-                                    {% for lead in leads %}
-                                    <tr class="lead-row">
-                                        <td>{{ forloop.counter }}
-                                            <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
-                                                data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
-                                                <i class="bi bi-plus-circle"></i>
-                                            </button>
-                                        </td>
-                                        <td>{{ lead.full_name }}</td>
-                                        <td>{{ lead.mobile_number }}</td>
-                                        <td>{{ lead.secondary_mobile_number }}</td>
-                                        <td>{{ lead.email }}</td>
-                                        <td>{{ lead.sales_person.username }}</td>
-                                        <td>{{ lead.next_followup_date }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                       <div class="table-responsive" style="overflow-x: auto; max-height: 500px;">
+<table class="table table-bordered table-hover table-striped"
+       style="width: max-content; table-layout: auto; min-width: 100%;">
+
+
+    <thead class="thead-light sticky-top" style="z-index: 2; top: 0;">
+      <tr>
+        <th style="position: sticky; left: 0; background: #f8f9fa; z-index: 3;">S.No.</th>
+        <th style="position: sticky; left: 60px; background: #f8f9fa; z-index: 3;">Full Name</th>
+        <th>Mobile</th>
+        <th>Secondary Mobile</th>
+        <th>Email</th>
+        <th>Sales Person</th>
+        <th>Follow-Up Date</th>
+        <th>Status</th>
+        <th>Requirements</th>
+        <th>Address</th>
+        <th>Architect Name</th>
+        <th>Architect Number</th>
+        <th>Source</th>
+        <th>Customer Segment</th>
+        <th>Enquiry Date</th>
+        <th>Follow-Up Person</th>
+        <th>Closed</th>
+        <th>Win Status</th>
+        <th>First Call</th>
+        <th>Customer Visited</th>
+        <th>Inspection Done</th>
+        <th>Lead Type</th>
+        <th>Quotation Given</th>
+        <th>Quotation Amount</th>
+        <th>Description</th>
+        <th>File Upload</th>
+
+      </tr>
+    </thead>
+    <tbody id="leadTableBody">
+      {% for lead in leads %}
+      <tr class="lead-row">
+        <td style="position: sticky; left: 0; background: white; z-index: 1;">
+          {{ forloop.counter }}
+          <button class="btn btn-sm btn-primary rounded-circle" title="View Details"
+            data-bs-toggle="modal" data-bs-target="#leadModal{{ forloop.counter }}">
+            <i class="bi bi-plus-circle"></i>
+          </button>
+        </td>
+        <td style="position: sticky; left: 60px; background: white; z-index: 1;">{{ lead.full_name }}</td>
+        <td>{{ lead.mobile_number }}</td>
+        <td>{{ lead.secondary_mobile_number }}</td>
+        <td>{{ lead.email }}</td>
+        <td>{{ lead.sales_person.username }}</td>
+        <td>{{ lead.next_followup_date }}</td>
+        <td>{{ lead.status }}</td>
+        <td>{{ lead.requirements }}</td>
+        <td>{{ lead.address }}</td>
+        <td>{{ lead.architect_name }}</td>
+        <td>{{ lead.architect_number }}</td>
+        <td>{{ lead.source }}</td>
+        <td>{{ lead.customer_segment }}</td>
+        <td>{{ lead.enquiry_date }}</td>
+        <td>{{ lead.follow_up_person.username }}</td>
+        <td>{{ lead.is_closed }}</td>
+        <td>{{ lead.win_status }}</td>
+        <td>{{ lead.first_call_date }}</td>
+        <td>{{ lead.customer_visited }}</td>
+        <td>{{ lead.inspection_done }}</td>
+        <td>{{ lead.lead_type }}</td>
+        <td>{{ lead.quotation_given }}</td>
+        <td>{{ lead.quotation_amount }}</td>
+        <td>{{ lead.description }}</td>
+       <td>
+  {% if lead.file_upload %}
+    <a href="{{ lead.file_upload.url }}" class="custom-download-btn" download>
+      <span class="button-content">Download</span>
+    </a>
+  {% else %}
+    -
+  {% endif %}
+</td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
                         <!-- 🔄 Pagination Controls -->
                         <nav aria-label="Lead Table Pagination" class="mt-3">
                             <ul class="pagination justify-content-center" id="pagination">
@@ -443,11 +613,8 @@
                                 <div class="modal-header custom-modal-header">
                                     <h5 class="modal-title custom-modal-title text-center w-100 text-center" id="leadModalLabel{{ forloop.counter }}">
                                         📋 Lead Details - {{ lead.full_name }}</h5>
-                                  <button type="button" class="custom-close-button" data-bs-dismiss="modal" aria-label="Close" title="Close">
-    <i class="bi bi-x-lg"></i>
-</button>
-
-</button>
+                                  <button type="button" class="custom-close-button" data-bs-dismiss="modal" aria-label="Close" title="Close"><i class="bi bi-x-lg"></i></button> 
+                                </button>
 
                                 </div>
                                 <div class="modal-body custom-table-body">
@@ -539,11 +706,16 @@
                                             </tr>
                                             <tr>
                                                 <td class="custom-table-th">File Upload</td>
-                                                <td>
+                                               <td>
                                                     {% if lead.file_upload %}
-                                                    <a href="{{ lead.file_upload.url }}" class="custom-download-btn" download>⬇ Download</a>
-                                                    {% else %}-{% endif %}
+                                                        <a href="{{ lead.file_upload.url }}" class="custom-download-btn" download>
+                                                        <span class="button-content">⬇ Download</span>
+                                                        </a>
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
                                                 </td>
+
                                             </tr>
                                             <tr>
                                                 <td class="custom-table-th">Products</td>
